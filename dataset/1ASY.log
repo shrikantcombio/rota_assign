@@ -1,0 +1,1979 @@
+ ACCALL - Accessibility calculations
+ MAX RESIDUES     8000
+ MAX ATOMS/RES     100
+ PDB FILE INPUT /home/labuser/my_work/protein_rotamer/PRDBv3_rotamer/1ASY.pdb
+ PROBE SIZE       1.40
+ Z-SLICE WIDTH   0.050
+ VDW RADII FILE /home/labuser/naccess2.1.1/vdw.radii
+ EXCL HETATOMS
+ EXCL HYDROGENS
+ EXCL WATERS
+ READVDW  32 residues input
+ NON-STANDARD atom.| OP3| in residue>   U R 601 
+ GUESSED vdw of  OP3 in   U R 601  =  1.40
+ NON-STANDARD atom.| P  | in residue>   U R 601 
+ ASSUMED vdw of  P   in   U R 601  =  1.90 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   U R 601 
+ GUESSED vdw of  OP1 in   U R 601  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 601 
+ GUESSED vdw of  OP2 in   U R 601  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 601 
+ GUESSED vdw of  O5' in   U R 601  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 601 
+ GUESSED vdw of  C5' in   U R 601  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 601 
+ GUESSED vdw of  C4' in   U R 601  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 601 
+ GUESSED vdw of  O4' in   U R 601  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 601 
+ GUESSED vdw of  C3' in   U R 601  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 601 
+ GUESSED vdw of  O3' in   U R 601  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 601 
+ GUESSED vdw of  C2' in   U R 601  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 601 
+ GUESSED vdw of  O2' in   U R 601  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 601 
+ GUESSED vdw of  C1' in   U R 601  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 601 
+ ASSUMED vdw of  N1  in   U R 601  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 601 
+ ASSUMED vdw of  O2  in   U R 601  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 601 
+ ASSUMED vdw of  O4  in   U R 601  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   C R 602 
+ GUESSED vdw of  OP1 in   C R 602  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 602 
+ GUESSED vdw of  OP2 in   C R 602  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 602 
+ GUESSED vdw of  O5' in   C R 602  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 602 
+ GUESSED vdw of  C5' in   C R 602  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 602 
+ GUESSED vdw of  C4' in   C R 602  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 602 
+ GUESSED vdw of  O4' in   C R 602  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 602 
+ GUESSED vdw of  C3' in   C R 602  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 602 
+ GUESSED vdw of  O3' in   C R 602  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 602 
+ GUESSED vdw of  C2' in   C R 602  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 602 
+ GUESSED vdw of  O2' in   C R 602  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 602 
+ GUESSED vdw of  C1' in   C R 602  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 602 
+ ASSUMED vdw of  N1  in   C R 602  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 602 
+ ASSUMED vdw of  O2  in   C R 602  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   C R 603 
+ GUESSED vdw of  OP1 in   C R 603  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 603 
+ GUESSED vdw of  OP2 in   C R 603  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 603 
+ GUESSED vdw of  O5' in   C R 603  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 603 
+ GUESSED vdw of  C5' in   C R 603  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 603 
+ GUESSED vdw of  C4' in   C R 603  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 603 
+ GUESSED vdw of  O4' in   C R 603  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 603 
+ GUESSED vdw of  C3' in   C R 603  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 603 
+ GUESSED vdw of  O3' in   C R 603  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 603 
+ GUESSED vdw of  C2' in   C R 603  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 603 
+ GUESSED vdw of  O2' in   C R 603  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 603 
+ GUESSED vdw of  C1' in   C R 603  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 603 
+ ASSUMED vdw of  N1  in   C R 603  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 603 
+ ASSUMED vdw of  O2  in   C R 603  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   G R 604 
+ GUESSED vdw of  OP1 in   G R 604  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 604 
+ GUESSED vdw of  OP2 in   G R 604  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 604 
+ GUESSED vdw of  O5' in   G R 604  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 604 
+ GUESSED vdw of  C5' in   G R 604  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 604 
+ GUESSED vdw of  C4' in   G R 604  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 604 
+ GUESSED vdw of  O4' in   G R 604  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 604 
+ GUESSED vdw of  C3' in   G R 604  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 604 
+ GUESSED vdw of  O3' in   G R 604  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 604 
+ GUESSED vdw of  C2' in   G R 604  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 604 
+ GUESSED vdw of  O2' in   G R 604  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 604 
+ GUESSED vdw of  C1' in   G R 604  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 604 
+ ASSUMED vdw of  N9  in   G R 604  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 604 
+ ASSUMED vdw of  O6  in   G R 604  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   U R 605 
+ GUESSED vdw of  OP1 in   U R 605  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 605 
+ GUESSED vdw of  OP2 in   U R 605  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 605 
+ GUESSED vdw of  O5' in   U R 605  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 605 
+ GUESSED vdw of  C5' in   U R 605  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 605 
+ GUESSED vdw of  C4' in   U R 605  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 605 
+ GUESSED vdw of  O4' in   U R 605  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 605 
+ GUESSED vdw of  C3' in   U R 605  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 605 
+ GUESSED vdw of  O3' in   U R 605  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 605 
+ GUESSED vdw of  C2' in   U R 605  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 605 
+ GUESSED vdw of  O2' in   U R 605  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 605 
+ GUESSED vdw of  C1' in   U R 605  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 605 
+ ASSUMED vdw of  N1  in   U R 605  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 605 
+ ASSUMED vdw of  O2  in   U R 605  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 605 
+ ASSUMED vdw of  O4  in   U R 605  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   G R 606 
+ GUESSED vdw of  OP1 in   G R 606  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 606 
+ GUESSED vdw of  OP2 in   G R 606  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 606 
+ GUESSED vdw of  O5' in   G R 606  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 606 
+ GUESSED vdw of  C5' in   G R 606  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 606 
+ GUESSED vdw of  C4' in   G R 606  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 606 
+ GUESSED vdw of  O4' in   G R 606  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 606 
+ GUESSED vdw of  C3' in   G R 606  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 606 
+ GUESSED vdw of  O3' in   G R 606  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 606 
+ GUESSED vdw of  C2' in   G R 606  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 606 
+ GUESSED vdw of  O2' in   G R 606  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 606 
+ GUESSED vdw of  C1' in   G R 606  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 606 
+ ASSUMED vdw of  N9  in   G R 606  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 606 
+ ASSUMED vdw of  O6  in   G R 606  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   A R 607 
+ GUESSED vdw of  OP1 in   A R 607  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 607 
+ GUESSED vdw of  OP2 in   A R 607  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 607 
+ GUESSED vdw of  O5' in   A R 607  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 607 
+ GUESSED vdw of  C5' in   A R 607  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 607 
+ GUESSED vdw of  C4' in   A R 607  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 607 
+ GUESSED vdw of  O4' in   A R 607  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 607 
+ GUESSED vdw of  C3' in   A R 607  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 607 
+ GUESSED vdw of  O3' in   A R 607  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 607 
+ GUESSED vdw of  C2' in   A R 607  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 607 
+ GUESSED vdw of  O2' in   A R 607  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 607 
+ GUESSED vdw of  C1' in   A R 607  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 607 
+ ASSUMED vdw of  N9  in   A R 607  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   U R 608 
+ GUESSED vdw of  OP1 in   U R 608  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 608 
+ GUESSED vdw of  OP2 in   U R 608  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 608 
+ GUESSED vdw of  O5' in   U R 608  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 608 
+ GUESSED vdw of  C5' in   U R 608  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 608 
+ GUESSED vdw of  C4' in   U R 608  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 608 
+ GUESSED vdw of  O4' in   U R 608  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 608 
+ GUESSED vdw of  C3' in   U R 608  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 608 
+ GUESSED vdw of  O3' in   U R 608  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 608 
+ GUESSED vdw of  C2' in   U R 608  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 608 
+ GUESSED vdw of  O2' in   U R 608  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 608 
+ GUESSED vdw of  C1' in   U R 608  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 608 
+ ASSUMED vdw of  N1  in   U R 608  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 608 
+ ASSUMED vdw of  O2  in   U R 608  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 608 
+ ASSUMED vdw of  O4  in   U R 608  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   A R 609 
+ GUESSED vdw of  OP1 in   A R 609  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 609 
+ GUESSED vdw of  OP2 in   A R 609  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 609 
+ GUESSED vdw of  O5' in   A R 609  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 609 
+ GUESSED vdw of  C5' in   A R 609  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 609 
+ GUESSED vdw of  C4' in   A R 609  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 609 
+ GUESSED vdw of  O4' in   A R 609  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 609 
+ GUESSED vdw of  C3' in   A R 609  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 609 
+ GUESSED vdw of  O3' in   A R 609  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 609 
+ GUESSED vdw of  C2' in   A R 609  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 609 
+ GUESSED vdw of  O2' in   A R 609  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 609 
+ GUESSED vdw of  C1' in   A R 609  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 609 
+ ASSUMED vdw of  N9  in   A R 609  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   G R 610 
+ GUESSED vdw of  OP1 in   G R 610  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 610 
+ GUESSED vdw of  OP2 in   G R 610  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 610 
+ GUESSED vdw of  O5' in   G R 610  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 610 
+ GUESSED vdw of  C5' in   G R 610  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 610 
+ GUESSED vdw of  C4' in   G R 610  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 610 
+ GUESSED vdw of  O4' in   G R 610  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 610 
+ GUESSED vdw of  C3' in   G R 610  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 610 
+ GUESSED vdw of  O3' in   G R 610  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 610 
+ GUESSED vdw of  C2' in   G R 610  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 610 
+ GUESSED vdw of  O2' in   G R 610  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 610 
+ GUESSED vdw of  C1' in   G R 610  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 610 
+ ASSUMED vdw of  N9  in   G R 610  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 610 
+ ASSUMED vdw of  O6  in   G R 610  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   U R 611 
+ GUESSED vdw of  OP1 in   U R 611  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 611 
+ GUESSED vdw of  OP2 in   U R 611  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 611 
+ GUESSED vdw of  O5' in   U R 611  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 611 
+ GUESSED vdw of  C5' in   U R 611  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 611 
+ GUESSED vdw of  C4' in   U R 611  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 611 
+ GUESSED vdw of  O4' in   U R 611  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 611 
+ GUESSED vdw of  C3' in   U R 611  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 611 
+ GUESSED vdw of  O3' in   U R 611  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 611 
+ GUESSED vdw of  C2' in   U R 611  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 611 
+ GUESSED vdw of  O2' in   U R 611  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 611 
+ GUESSED vdw of  C1' in   U R 611  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 611 
+ ASSUMED vdw of  N1  in   U R 611  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 611 
+ ASSUMED vdw of  O2  in   U R 611  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 611 
+ ASSUMED vdw of  O4  in   U R 611  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   U R 612 
+ GUESSED vdw of  OP1 in   U R 612  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 612 
+ GUESSED vdw of  OP2 in   U R 612  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 612 
+ GUESSED vdw of  O5' in   U R 612  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 612 
+ GUESSED vdw of  C5' in   U R 612  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 612 
+ GUESSED vdw of  C4' in   U R 612  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 612 
+ GUESSED vdw of  O4' in   U R 612  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 612 
+ GUESSED vdw of  C3' in   U R 612  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 612 
+ GUESSED vdw of  O3' in   U R 612  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 612 
+ GUESSED vdw of  C2' in   U R 612  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 612 
+ GUESSED vdw of  O2' in   U R 612  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 612 
+ GUESSED vdw of  C1' in   U R 612  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 612 
+ ASSUMED vdw of  N1  in   U R 612  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 612 
+ ASSUMED vdw of  O2  in   U R 612  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 612 
+ ASSUMED vdw of  O4  in   U R 612  =  1.40 (same as   T)
+ NON-STANDARD atom.| C1'| in residue>   U R 613 
+ GUESSED vdw of  C1' in   U R 613  =  1.80
+ NON-STANDARD atom.| C2'| in residue>   U R 613 
+ GUESSED vdw of  C2' in   U R 613  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 613 
+ GUESSED vdw of  O2' in   U R 613  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 613 
+ GUESSED vdw of  C3' in   U R 613  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 613 
+ GUESSED vdw of  C4' in   U R 613  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 613 
+ GUESSED vdw of  O3' in   U R 613  =  1.40
+ NON-STANDARD atom.| O4'| in residue>   U R 613 
+ GUESSED vdw of  O4' in   U R 613  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 613 
+ GUESSED vdw of  C5' in   U R 613  =  1.80
+ NON-STANDARD atom.| O5'| in residue>   U R 613 
+ GUESSED vdw of  O5' in   U R 613  =  1.40
+ NON-STANDARD atom.| P  | in residue>   U R 613 
+ ASSUMED vdw of  P   in   U R 613  =  1.90 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   U R 613 
+ GUESSED vdw of  OP1 in   U R 613  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 613 
+ GUESSED vdw of  OP2 in   U R 613  =  1.40
+ NON-STANDARD atom.| OP1| in residue>   A R 614 
+ GUESSED vdw of  OP1 in   A R 614  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 614 
+ GUESSED vdw of  OP2 in   A R 614  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 614 
+ GUESSED vdw of  O5' in   A R 614  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 614 
+ GUESSED vdw of  C5' in   A R 614  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 614 
+ GUESSED vdw of  C4' in   A R 614  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 614 
+ GUESSED vdw of  O4' in   A R 614  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 614 
+ GUESSED vdw of  C3' in   A R 614  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 614 
+ GUESSED vdw of  O3' in   A R 614  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 614 
+ GUESSED vdw of  C2' in   A R 614  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 614 
+ GUESSED vdw of  O2' in   A R 614  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 614 
+ GUESSED vdw of  C1' in   A R 614  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 614 
+ ASSUMED vdw of  N9  in   A R 614  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   A R 615 
+ GUESSED vdw of  OP1 in   A R 615  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 615 
+ GUESSED vdw of  OP2 in   A R 615  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 615 
+ GUESSED vdw of  O5' in   A R 615  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 615 
+ GUESSED vdw of  C5' in   A R 615  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 615 
+ GUESSED vdw of  C4' in   A R 615  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 615 
+ GUESSED vdw of  O4' in   A R 615  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 615 
+ GUESSED vdw of  C3' in   A R 615  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 615 
+ GUESSED vdw of  O3' in   A R 615  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 615 
+ GUESSED vdw of  C2' in   A R 615  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 615 
+ GUESSED vdw of  O2' in   A R 615  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 615 
+ GUESSED vdw of  C1' in   A R 615  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 615 
+ ASSUMED vdw of  N9  in   A R 615  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   U R 616 
+ GUESSED vdw of  OP1 in   U R 616  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 616 
+ GUESSED vdw of  OP2 in   U R 616  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 616 
+ GUESSED vdw of  O5' in   U R 616  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 616 
+ GUESSED vdw of  C5' in   U R 616  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 616 
+ GUESSED vdw of  C4' in   U R 616  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 616 
+ GUESSED vdw of  O4' in   U R 616  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 616 
+ GUESSED vdw of  C3' in   U R 616  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 616 
+ GUESSED vdw of  O3' in   U R 616  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 616 
+ GUESSED vdw of  C1' in   U R 616  =  1.80
+ NON-STANDARD atom.| C2'| in residue>   U R 616 
+ GUESSED vdw of  C2' in   U R 616  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 616 
+ GUESSED vdw of  O2' in   U R 616  =  1.40
+ NON-STANDARD atom.| N1 | in residue>   U R 616 
+ ASSUMED vdw of  N1  in   U R 616  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 616 
+ ASSUMED vdw of  O2  in   U R 616  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 616 
+ ASSUMED vdw of  O4  in   U R 616  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   G R 617 
+ GUESSED vdw of  OP1 in   G R 617  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 617 
+ GUESSED vdw of  OP2 in   G R 617  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 617 
+ GUESSED vdw of  O5' in   G R 617  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 617 
+ GUESSED vdw of  C5' in   G R 617  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 617 
+ GUESSED vdw of  C4' in   G R 617  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 617 
+ GUESSED vdw of  O4' in   G R 617  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 617 
+ GUESSED vdw of  C3' in   G R 617  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 617 
+ GUESSED vdw of  O3' in   G R 617  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 617 
+ GUESSED vdw of  C2' in   G R 617  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 617 
+ GUESSED vdw of  O2' in   G R 617  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 617 
+ GUESSED vdw of  C1' in   G R 617  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 617 
+ ASSUMED vdw of  N9  in   G R 617  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 617 
+ ASSUMED vdw of  O6  in   G R 617  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   G R 618 
+ GUESSED vdw of  OP1 in   G R 618  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 618 
+ GUESSED vdw of  OP2 in   G R 618  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 618 
+ GUESSED vdw of  O5' in   G R 618  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 618 
+ GUESSED vdw of  C5' in   G R 618  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 618 
+ GUESSED vdw of  C4' in   G R 618  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 618 
+ GUESSED vdw of  O4' in   G R 618  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 618 
+ GUESSED vdw of  C3' in   G R 618  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 618 
+ GUESSED vdw of  O3' in   G R 618  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 618 
+ GUESSED vdw of  C2' in   G R 618  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 618 
+ GUESSED vdw of  O2' in   G R 618  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 618 
+ GUESSED vdw of  C1' in   G R 618  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 618 
+ ASSUMED vdw of  N9  in   G R 618  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 618 
+ ASSUMED vdw of  O6  in   G R 618  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   U R 619 
+ GUESSED vdw of  OP1 in   U R 619  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 619 
+ GUESSED vdw of  OP2 in   U R 619  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 619 
+ GUESSED vdw of  O5' in   U R 619  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 619 
+ GUESSED vdw of  C5' in   U R 619  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 619 
+ GUESSED vdw of  C4' in   U R 619  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 619 
+ GUESSED vdw of  O4' in   U R 619  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 619 
+ GUESSED vdw of  C3' in   U R 619  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 619 
+ GUESSED vdw of  O3' in   U R 619  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 619 
+ GUESSED vdw of  C1' in   U R 619  =  1.80
+ NON-STANDARD atom.| C2'| in residue>   U R 619 
+ GUESSED vdw of  C2' in   U R 619  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 619 
+ GUESSED vdw of  O2' in   U R 619  =  1.40
+ NON-STANDARD atom.| N1 | in residue>   U R 619 
+ ASSUMED vdw of  N1  in   U R 619  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 619 
+ ASSUMED vdw of  O2  in   U R 619  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 619 
+ ASSUMED vdw of  O4  in   U R 619  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   C R 620 
+ GUESSED vdw of  OP1 in   C R 620  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 620 
+ GUESSED vdw of  OP2 in   C R 620  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 620 
+ GUESSED vdw of  O5' in   C R 620  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 620 
+ GUESSED vdw of  C5' in   C R 620  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 620 
+ GUESSED vdw of  C4' in   C R 620  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 620 
+ GUESSED vdw of  O4' in   C R 620  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 620 
+ GUESSED vdw of  C3' in   C R 620  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 620 
+ GUESSED vdw of  O3' in   C R 620  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 620 
+ GUESSED vdw of  C2' in   C R 620  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 620 
+ GUESSED vdw of  O2' in   C R 620  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 620 
+ GUESSED vdw of  C1' in   C R 620  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 620 
+ ASSUMED vdw of  N1  in   C R 620  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 620 
+ ASSUMED vdw of  O2  in   C R 620  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   A R 621 
+ GUESSED vdw of  OP1 in   A R 621  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 621 
+ GUESSED vdw of  OP2 in   A R 621  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 621 
+ GUESSED vdw of  O5' in   A R 621  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 621 
+ GUESSED vdw of  C5' in   A R 621  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 621 
+ GUESSED vdw of  C4' in   A R 621  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 621 
+ GUESSED vdw of  O4' in   A R 621  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 621 
+ GUESSED vdw of  C3' in   A R 621  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 621 
+ GUESSED vdw of  O3' in   A R 621  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 621 
+ GUESSED vdw of  C2' in   A R 621  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 621 
+ GUESSED vdw of  O2' in   A R 621  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 621 
+ GUESSED vdw of  C1' in   A R 621  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 621 
+ ASSUMED vdw of  N9  in   A R 621  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   G R 622 
+ GUESSED vdw of  OP1 in   G R 622  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 622 
+ GUESSED vdw of  OP2 in   G R 622  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 622 
+ GUESSED vdw of  O5' in   G R 622  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 622 
+ GUESSED vdw of  C5' in   G R 622  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 622 
+ GUESSED vdw of  C4' in   G R 622  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 622 
+ GUESSED vdw of  O4' in   G R 622  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 622 
+ GUESSED vdw of  C3' in   G R 622  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 622 
+ GUESSED vdw of  O3' in   G R 622  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 622 
+ GUESSED vdw of  C2' in   G R 622  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 622 
+ GUESSED vdw of  O2' in   G R 622  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 622 
+ GUESSED vdw of  C1' in   G R 622  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 622 
+ ASSUMED vdw of  N9  in   G R 622  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 622 
+ ASSUMED vdw of  O6  in   G R 622  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   A R 623 
+ GUESSED vdw of  OP1 in   A R 623  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 623 
+ GUESSED vdw of  OP2 in   A R 623  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 623 
+ GUESSED vdw of  O5' in   A R 623  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 623 
+ GUESSED vdw of  C5' in   A R 623  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 623 
+ GUESSED vdw of  C4' in   A R 623  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 623 
+ GUESSED vdw of  O4' in   A R 623  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 623 
+ GUESSED vdw of  C3' in   A R 623  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 623 
+ GUESSED vdw of  O3' in   A R 623  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 623 
+ GUESSED vdw of  C2' in   A R 623  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 623 
+ GUESSED vdw of  O2' in   A R 623  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 623 
+ GUESSED vdw of  C1' in   A R 623  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 623 
+ ASSUMED vdw of  N9  in   A R 623  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   A R 624 
+ GUESSED vdw of  OP1 in   A R 624  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 624 
+ GUESSED vdw of  OP2 in   A R 624  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 624 
+ GUESSED vdw of  O5' in   A R 624  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 624 
+ GUESSED vdw of  C5' in   A R 624  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 624 
+ GUESSED vdw of  C4' in   A R 624  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 624 
+ GUESSED vdw of  O4' in   A R 624  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 624 
+ GUESSED vdw of  C3' in   A R 624  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 624 
+ GUESSED vdw of  O3' in   A R 624  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 624 
+ GUESSED vdw of  C2' in   A R 624  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 624 
+ GUESSED vdw of  O2' in   A R 624  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 624 
+ GUESSED vdw of  C1' in   A R 624  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 624 
+ ASSUMED vdw of  N9  in   A R 624  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   U R 625 
+ GUESSED vdw of  OP1 in   U R 625  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 625 
+ GUESSED vdw of  OP2 in   U R 625  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 625 
+ GUESSED vdw of  O5' in   U R 625  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 625 
+ GUESSED vdw of  C5' in   U R 625  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 625 
+ GUESSED vdw of  C4' in   U R 625  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 625 
+ GUESSED vdw of  O4' in   U R 625  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 625 
+ GUESSED vdw of  C3' in   U R 625  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 625 
+ GUESSED vdw of  O3' in   U R 625  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 625 
+ GUESSED vdw of  C2' in   U R 625  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 625 
+ GUESSED vdw of  O2' in   U R 625  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 625 
+ GUESSED vdw of  C1' in   U R 625  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 625 
+ ASSUMED vdw of  N1  in   U R 625  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 625 
+ ASSUMED vdw of  O2  in   U R 625  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 625 
+ ASSUMED vdw of  O4  in   U R 625  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   G R 626 
+ GUESSED vdw of  OP1 in   G R 626  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 626 
+ GUESSED vdw of  OP2 in   G R 626  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 626 
+ GUESSED vdw of  O5' in   G R 626  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 626 
+ GUESSED vdw of  C5' in   G R 626  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 626 
+ GUESSED vdw of  C4' in   G R 626  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 626 
+ GUESSED vdw of  O4' in   G R 626  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 626 
+ GUESSED vdw of  C3' in   G R 626  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 626 
+ GUESSED vdw of  O3' in   G R 626  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 626 
+ GUESSED vdw of  C2' in   G R 626  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 626 
+ GUESSED vdw of  O2' in   G R 626  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 626 
+ GUESSED vdw of  C1' in   G R 626  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 626 
+ ASSUMED vdw of  N9  in   G R 626  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 626 
+ ASSUMED vdw of  O6  in   G R 626  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   G R 627 
+ GUESSED vdw of  OP1 in   G R 627  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 627 
+ GUESSED vdw of  OP2 in   G R 627  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 627 
+ GUESSED vdw of  O5' in   G R 627  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 627 
+ GUESSED vdw of  C5' in   G R 627  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 627 
+ GUESSED vdw of  C4' in   G R 627  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 627 
+ GUESSED vdw of  O4' in   G R 627  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 627 
+ GUESSED vdw of  C3' in   G R 627  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 627 
+ GUESSED vdw of  O3' in   G R 627  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 627 
+ GUESSED vdw of  C2' in   G R 627  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 627 
+ GUESSED vdw of  O2' in   G R 627  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 627 
+ GUESSED vdw of  C1' in   G R 627  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 627 
+ ASSUMED vdw of  N9  in   G R 627  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 627 
+ ASSUMED vdw of  O6  in   G R 627  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   G R 628 
+ GUESSED vdw of  OP1 in   G R 628  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 628 
+ GUESSED vdw of  OP2 in   G R 628  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 628 
+ GUESSED vdw of  O5' in   G R 628  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 628 
+ GUESSED vdw of  C5' in   G R 628  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 628 
+ GUESSED vdw of  C4' in   G R 628  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 628 
+ GUESSED vdw of  O4' in   G R 628  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 628 
+ GUESSED vdw of  C3' in   G R 628  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 628 
+ GUESSED vdw of  O3' in   G R 628  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 628 
+ GUESSED vdw of  C2' in   G R 628  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 628 
+ GUESSED vdw of  O2' in   G R 628  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 628 
+ GUESSED vdw of  C1' in   G R 628  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 628 
+ ASSUMED vdw of  N9  in   G R 628  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 628 
+ ASSUMED vdw of  O6  in   G R 628  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   C R 629 
+ GUESSED vdw of  OP1 in   C R 629  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 629 
+ GUESSED vdw of  OP2 in   C R 629  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 629 
+ GUESSED vdw of  O5' in   C R 629  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 629 
+ GUESSED vdw of  C5' in   C R 629  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 629 
+ GUESSED vdw of  C4' in   C R 629  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 629 
+ GUESSED vdw of  O4' in   C R 629  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 629 
+ GUESSED vdw of  C3' in   C R 629  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 629 
+ GUESSED vdw of  O3' in   C R 629  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 629 
+ GUESSED vdw of  C2' in   C R 629  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 629 
+ GUESSED vdw of  O2' in   C R 629  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 629 
+ GUESSED vdw of  C1' in   C R 629  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 629 
+ ASSUMED vdw of  N1  in   C R 629  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 629 
+ ASSUMED vdw of  O2  in   C R 629  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   G R 630 
+ GUESSED vdw of  OP1 in   G R 630  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 630 
+ GUESSED vdw of  OP2 in   G R 630  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 630 
+ GUESSED vdw of  O5' in   G R 630  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 630 
+ GUESSED vdw of  C5' in   G R 630  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 630 
+ GUESSED vdw of  C4' in   G R 630  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 630 
+ GUESSED vdw of  O4' in   G R 630  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 630 
+ GUESSED vdw of  C3' in   G R 630  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 630 
+ GUESSED vdw of  O3' in   G R 630  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 630 
+ GUESSED vdw of  C2' in   G R 630  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 630 
+ GUESSED vdw of  O2' in   G R 630  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 630 
+ GUESSED vdw of  C1' in   G R 630  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 630 
+ ASSUMED vdw of  N9  in   G R 630  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 630 
+ ASSUMED vdw of  O6  in   G R 630  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   C R 631 
+ GUESSED vdw of  OP1 in   C R 631  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 631 
+ GUESSED vdw of  OP2 in   C R 631  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 631 
+ GUESSED vdw of  O5' in   C R 631  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 631 
+ GUESSED vdw of  C5' in   C R 631  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 631 
+ GUESSED vdw of  C4' in   C R 631  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 631 
+ GUESSED vdw of  O4' in   C R 631  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 631 
+ GUESSED vdw of  C3' in   C R 631  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 631 
+ GUESSED vdw of  O3' in   C R 631  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 631 
+ GUESSED vdw of  C2' in   C R 631  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 631 
+ GUESSED vdw of  O2' in   C R 631  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 631 
+ GUESSED vdw of  C1' in   C R 631  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 631 
+ ASSUMED vdw of  N1  in   C R 631  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 631 
+ ASSUMED vdw of  O2  in   C R 631  =  1.40 (same as   C)
+ NON-STANDARD atom.| C1'| in residue>   U R 632 
+ GUESSED vdw of  C1' in   U R 632  =  1.80
+ NON-STANDARD atom.| C2'| in residue>   U R 632 
+ GUESSED vdw of  C2' in   U R 632  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 632 
+ GUESSED vdw of  O2' in   U R 632  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 632 
+ GUESSED vdw of  C3' in   U R 632  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 632 
+ GUESSED vdw of  C4' in   U R 632  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 632 
+ GUESSED vdw of  O3' in   U R 632  =  1.40
+ NON-STANDARD atom.| O4'| in residue>   U R 632 
+ GUESSED vdw of  O4' in   U R 632  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 632 
+ GUESSED vdw of  C5' in   U R 632  =  1.80
+ NON-STANDARD atom.| O5'| in residue>   U R 632 
+ GUESSED vdw of  O5' in   U R 632  =  1.40
+ NON-STANDARD atom.| P  | in residue>   U R 632 
+ ASSUMED vdw of  P   in   U R 632  =  1.90 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   U R 632 
+ GUESSED vdw of  OP1 in   U R 632  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 632 
+ GUESSED vdw of  OP2 in   U R 632  =  1.40
+ NON-STANDARD atom.| OP1| in residue>   U R 633 
+ GUESSED vdw of  OP1 in   U R 633  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 633 
+ GUESSED vdw of  OP2 in   U R 633  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 633 
+ GUESSED vdw of  O5' in   U R 633  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 633 
+ GUESSED vdw of  C5' in   U R 633  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 633 
+ GUESSED vdw of  C4' in   U R 633  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 633 
+ GUESSED vdw of  O4' in   U R 633  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 633 
+ GUESSED vdw of  C3' in   U R 633  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 633 
+ GUESSED vdw of  O3' in   U R 633  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 633 
+ GUESSED vdw of  C2' in   U R 633  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 633 
+ GUESSED vdw of  O2' in   U R 633  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 633 
+ GUESSED vdw of  C1' in   U R 633  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 633 
+ ASSUMED vdw of  N1  in   U R 633  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 633 
+ ASSUMED vdw of  O2  in   U R 633  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 633 
+ ASSUMED vdw of  O4  in   U R 633  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   G R 634 
+ GUESSED vdw of  OP1 in   G R 634  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 634 
+ GUESSED vdw of  OP2 in   G R 634  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 634 
+ GUESSED vdw of  O5' in   G R 634  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 634 
+ GUESSED vdw of  C5' in   G R 634  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 634 
+ GUESSED vdw of  C4' in   G R 634  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 634 
+ GUESSED vdw of  O4' in   G R 634  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 634 
+ GUESSED vdw of  C3' in   G R 634  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 634 
+ GUESSED vdw of  O3' in   G R 634  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 634 
+ GUESSED vdw of  C2' in   G R 634  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 634 
+ GUESSED vdw of  O2' in   G R 634  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 634 
+ GUESSED vdw of  C1' in   G R 634  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 634 
+ ASSUMED vdw of  N9  in   G R 634  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 634 
+ ASSUMED vdw of  O6  in   G R 634  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   U R 635 
+ GUESSED vdw of  OP1 in   U R 635  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 635 
+ GUESSED vdw of  OP2 in   U R 635  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 635 
+ GUESSED vdw of  O5' in   U R 635  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 635 
+ GUESSED vdw of  C5' in   U R 635  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 635 
+ GUESSED vdw of  C4' in   U R 635  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 635 
+ GUESSED vdw of  O4' in   U R 635  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 635 
+ GUESSED vdw of  C3' in   U R 635  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 635 
+ GUESSED vdw of  O3' in   U R 635  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 635 
+ GUESSED vdw of  C2' in   U R 635  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 635 
+ GUESSED vdw of  O2' in   U R 635  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 635 
+ GUESSED vdw of  C1' in   U R 635  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 635 
+ ASSUMED vdw of  N1  in   U R 635  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 635 
+ ASSUMED vdw of  O2  in   U R 635  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 635 
+ ASSUMED vdw of  O4  in   U R 635  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   C R 636 
+ GUESSED vdw of  OP1 in   C R 636  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 636 
+ GUESSED vdw of  OP2 in   C R 636  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 636 
+ GUESSED vdw of  O5' in   C R 636  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 636 
+ GUESSED vdw of  C5' in   C R 636  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 636 
+ GUESSED vdw of  C4' in   C R 636  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 636 
+ GUESSED vdw of  O4' in   C R 636  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 636 
+ GUESSED vdw of  C3' in   C R 636  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 636 
+ GUESSED vdw of  O3' in   C R 636  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 636 
+ GUESSED vdw of  C2' in   C R 636  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 636 
+ GUESSED vdw of  O2' in   C R 636  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 636 
+ GUESSED vdw of  C1' in   C R 636  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 636 
+ ASSUMED vdw of  N1  in   C R 636  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 636 
+ ASSUMED vdw of  O2  in   C R 636  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   G R 637 
+ GUESSED vdw of  OP1 in   G R 637  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 637 
+ GUESSED vdw of  OP2 in   G R 637  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 637 
+ GUESSED vdw of  O5' in   G R 637  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 637 
+ GUESSED vdw of  C5' in   G R 637  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 637 
+ GUESSED vdw of  C4' in   G R 637  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 637 
+ GUESSED vdw of  O4' in   G R 637  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 637 
+ GUESSED vdw of  C3' in   G R 637  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 637 
+ GUESSED vdw of  O3' in   G R 637  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 637 
+ GUESSED vdw of  C2' in   G R 637  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 637 
+ GUESSED vdw of  O2' in   G R 637  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 637 
+ GUESSED vdw of  C1' in   G R 637  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 637 
+ ASSUMED vdw of  N9  in   G R 637  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 637 
+ ASSUMED vdw of  O6  in   G R 637  =  1.40 (same as   G)
+ NON-STANDARD atom.| CM1| in residue>   G R 637 
+ GUESSED vdw of  CM1 in   G R 637  =  1.80
+ NON-STANDARD atom.| C2 | in residue>   G R 637 
+ ASSUMED vdw of  C2  in   G R 637  =  1.80 (same as   A)
+ NON-STANDARD atom.| N2 | in residue>   G R 637 
+ ASSUMED vdw of  N2  in   G R 637  =  1.60 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   C R 638 
+ GUESSED vdw of  OP1 in   C R 638  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 638 
+ GUESSED vdw of  OP2 in   C R 638  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 638 
+ GUESSED vdw of  O5' in   C R 638  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 638 
+ GUESSED vdw of  C5' in   C R 638  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 638 
+ GUESSED vdw of  C4' in   C R 638  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 638 
+ GUESSED vdw of  O4' in   C R 638  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 638 
+ GUESSED vdw of  C3' in   C R 638  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 638 
+ GUESSED vdw of  O3' in   C R 638  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 638 
+ GUESSED vdw of  C2' in   C R 638  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 638 
+ GUESSED vdw of  O2' in   C R 638  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 638 
+ GUESSED vdw of  C1' in   C R 638  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 638 
+ ASSUMED vdw of  N1  in   C R 638  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 638 
+ ASSUMED vdw of  O2  in   C R 638  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   G R 639 
+ GUESSED vdw of  OP1 in   G R 639  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 639 
+ GUESSED vdw of  OP2 in   G R 639  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 639 
+ GUESSED vdw of  O5' in   G R 639  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 639 
+ GUESSED vdw of  C5' in   G R 639  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 639 
+ GUESSED vdw of  C4' in   G R 639  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 639 
+ GUESSED vdw of  O4' in   G R 639  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 639 
+ GUESSED vdw of  C3' in   G R 639  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 639 
+ GUESSED vdw of  O3' in   G R 639  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 639 
+ GUESSED vdw of  C2' in   G R 639  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 639 
+ GUESSED vdw of  O2' in   G R 639  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 639 
+ GUESSED vdw of  C1' in   G R 639  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 639 
+ ASSUMED vdw of  N9  in   G R 639  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 639 
+ ASSUMED vdw of  O6  in   G R 639  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   U R 640 
+ GUESSED vdw of  OP1 in   U R 640  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 640 
+ GUESSED vdw of  OP2 in   U R 640  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 640 
+ GUESSED vdw of  O5' in   U R 640  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 640 
+ GUESSED vdw of  C5' in   U R 640  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 640 
+ GUESSED vdw of  C4' in   U R 640  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 640 
+ GUESSED vdw of  O4' in   U R 640  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 640 
+ GUESSED vdw of  C3' in   U R 640  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 640 
+ GUESSED vdw of  O3' in   U R 640  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 640 
+ GUESSED vdw of  C2' in   U R 640  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 640 
+ GUESSED vdw of  O2' in   U R 640  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 640 
+ GUESSED vdw of  C1' in   U R 640  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 640 
+ ASSUMED vdw of  N1  in   U R 640  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 640 
+ ASSUMED vdw of  O2  in   U R 640  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 640 
+ ASSUMED vdw of  O4  in   U R 640  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   G R 641 
+ GUESSED vdw of  OP1 in   G R 641  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 641 
+ GUESSED vdw of  OP2 in   G R 641  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 641 
+ GUESSED vdw of  O5' in   G R 641  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 641 
+ GUESSED vdw of  C5' in   G R 641  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 641 
+ GUESSED vdw of  C4' in   G R 641  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 641 
+ GUESSED vdw of  O4' in   G R 641  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 641 
+ GUESSED vdw of  C3' in   G R 641  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 641 
+ GUESSED vdw of  O3' in   G R 641  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 641 
+ GUESSED vdw of  C2' in   G R 641  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 641 
+ GUESSED vdw of  O2' in   G R 641  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 641 
+ GUESSED vdw of  C1' in   G R 641  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 641 
+ ASSUMED vdw of  N9  in   G R 641  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 641 
+ ASSUMED vdw of  O6  in   G R 641  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   C R 642 
+ GUESSED vdw of  OP1 in   C R 642  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 642 
+ GUESSED vdw of  OP2 in   C R 642  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 642 
+ GUESSED vdw of  O5' in   C R 642  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 642 
+ GUESSED vdw of  C5' in   C R 642  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 642 
+ GUESSED vdw of  C4' in   C R 642  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 642 
+ GUESSED vdw of  O4' in   C R 642  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 642 
+ GUESSED vdw of  C3' in   C R 642  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 642 
+ GUESSED vdw of  O3' in   C R 642  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 642 
+ GUESSED vdw of  C2' in   C R 642  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 642 
+ GUESSED vdw of  O2' in   C R 642  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 642 
+ GUESSED vdw of  C1' in   C R 642  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 642 
+ ASSUMED vdw of  N1  in   C R 642  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 642 
+ ASSUMED vdw of  O2  in   C R 642  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   C R 643 
+ GUESSED vdw of  OP1 in   C R 643  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 643 
+ GUESSED vdw of  OP2 in   C R 643  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 643 
+ GUESSED vdw of  O5' in   C R 643  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 643 
+ GUESSED vdw of  C5' in   C R 643  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 643 
+ GUESSED vdw of  C4' in   C R 643  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 643 
+ GUESSED vdw of  O4' in   C R 643  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 643 
+ GUESSED vdw of  C3' in   C R 643  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 643 
+ GUESSED vdw of  O3' in   C R 643  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 643 
+ GUESSED vdw of  C2' in   C R 643  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 643 
+ GUESSED vdw of  O2' in   C R 643  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 643 
+ GUESSED vdw of  C1' in   C R 643  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 643 
+ ASSUMED vdw of  N1  in   C R 643  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 643 
+ ASSUMED vdw of  O2  in   C R 643  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   A R 644 
+ GUESSED vdw of  OP1 in   A R 644  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 644 
+ GUESSED vdw of  OP2 in   A R 644  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 644 
+ GUESSED vdw of  O5' in   A R 644  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 644 
+ GUESSED vdw of  C5' in   A R 644  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 644 
+ GUESSED vdw of  C4' in   A R 644  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 644 
+ GUESSED vdw of  O4' in   A R 644  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 644 
+ GUESSED vdw of  C3' in   A R 644  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 644 
+ GUESSED vdw of  O3' in   A R 644  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 644 
+ GUESSED vdw of  C2' in   A R 644  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 644 
+ GUESSED vdw of  O2' in   A R 644  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 644 
+ GUESSED vdw of  C1' in   A R 644  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 644 
+ ASSUMED vdw of  N9  in   A R 644  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   G R 645 
+ GUESSED vdw of  OP1 in   G R 645  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 645 
+ GUESSED vdw of  OP2 in   G R 645  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 645 
+ GUESSED vdw of  O5' in   G R 645  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 645 
+ GUESSED vdw of  C5' in   G R 645  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 645 
+ GUESSED vdw of  C4' in   G R 645  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 645 
+ GUESSED vdw of  O4' in   G R 645  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 645 
+ GUESSED vdw of  C3' in   G R 645  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 645 
+ GUESSED vdw of  O3' in   G R 645  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 645 
+ GUESSED vdw of  C2' in   G R 645  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 645 
+ GUESSED vdw of  O2' in   G R 645  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 645 
+ GUESSED vdw of  C1' in   G R 645  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 645 
+ ASSUMED vdw of  N9  in   G R 645  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 645 
+ ASSUMED vdw of  O6  in   G R 645  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   A R 646 
+ GUESSED vdw of  OP1 in   A R 646  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 646 
+ GUESSED vdw of  OP2 in   A R 646  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 646 
+ GUESSED vdw of  O5' in   A R 646  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 646 
+ GUESSED vdw of  C5' in   A R 646  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 646 
+ GUESSED vdw of  C4' in   A R 646  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 646 
+ GUESSED vdw of  O4' in   A R 646  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 646 
+ GUESSED vdw of  C3' in   A R 646  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 646 
+ GUESSED vdw of  O3' in   A R 646  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 646 
+ GUESSED vdw of  C2' in   A R 646  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 646 
+ GUESSED vdw of  O2' in   A R 646  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 646 
+ GUESSED vdw of  C1' in   A R 646  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 646 
+ ASSUMED vdw of  N9  in   A R 646  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   U R 648 
+ GUESSED vdw of  OP1 in   U R 648  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 648 
+ GUESSED vdw of  OP2 in   U R 648  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 648 
+ GUESSED vdw of  O5' in   U R 648  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 648 
+ GUESSED vdw of  C5' in   U R 648  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 648 
+ GUESSED vdw of  C4' in   U R 648  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 648 
+ GUESSED vdw of  O4' in   U R 648  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 648 
+ GUESSED vdw of  C3' in   U R 648  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 648 
+ GUESSED vdw of  O3' in   U R 648  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 648 
+ GUESSED vdw of  C2' in   U R 648  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 648 
+ GUESSED vdw of  O2' in   U R 648  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 648 
+ GUESSED vdw of  C1' in   U R 648  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 648 
+ ASSUMED vdw of  N1  in   U R 648  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 648 
+ ASSUMED vdw of  O2  in   U R 648  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 648 
+ ASSUMED vdw of  O4  in   U R 648  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   C R 649 
+ GUESSED vdw of  OP1 in   C R 649  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 649 
+ GUESSED vdw of  OP2 in   C R 649  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 649 
+ GUESSED vdw of  O5' in   C R 649  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 649 
+ GUESSED vdw of  C5' in   C R 649  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 649 
+ GUESSED vdw of  C4' in   C R 649  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 649 
+ GUESSED vdw of  O4' in   C R 649  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 649 
+ GUESSED vdw of  C3' in   C R 649  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 649 
+ GUESSED vdw of  O3' in   C R 649  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 649 
+ GUESSED vdw of  C2' in   C R 649  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 649 
+ GUESSED vdw of  O2' in   C R 649  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 649 
+ GUESSED vdw of  C1' in   C R 649  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 649 
+ ASSUMED vdw of  N1  in   C R 649  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 649 
+ ASSUMED vdw of  O2  in   C R 649  =  1.40 (same as   C)
+ NON-STANDARD atom.| CM5| in residue>   C R 649 
+ GUESSED vdw of  CM5 in   C R 649  =  1.80
+ NON-STANDARD atom.| OP1| in residue>   G R 650 
+ GUESSED vdw of  OP1 in   G R 650  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 650 
+ GUESSED vdw of  OP2 in   G R 650  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 650 
+ GUESSED vdw of  O5' in   G R 650  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 650 
+ GUESSED vdw of  C5' in   G R 650  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 650 
+ GUESSED vdw of  C4' in   G R 650  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 650 
+ GUESSED vdw of  O4' in   G R 650  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 650 
+ GUESSED vdw of  C3' in   G R 650  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 650 
+ GUESSED vdw of  O3' in   G R 650  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 650 
+ GUESSED vdw of  C2' in   G R 650  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 650 
+ GUESSED vdw of  O2' in   G R 650  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 650 
+ GUESSED vdw of  C1' in   G R 650  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 650 
+ ASSUMED vdw of  N9  in   G R 650  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 650 
+ ASSUMED vdw of  O6  in   G R 650  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   G R 651 
+ GUESSED vdw of  OP1 in   G R 651  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 651 
+ GUESSED vdw of  OP2 in   G R 651  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 651 
+ GUESSED vdw of  O5' in   G R 651  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 651 
+ GUESSED vdw of  C5' in   G R 651  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 651 
+ GUESSED vdw of  C4' in   G R 651  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 651 
+ GUESSED vdw of  O4' in   G R 651  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 651 
+ GUESSED vdw of  C3' in   G R 651  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 651 
+ GUESSED vdw of  O3' in   G R 651  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 651 
+ GUESSED vdw of  C2' in   G R 651  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 651 
+ GUESSED vdw of  O2' in   G R 651  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 651 
+ GUESSED vdw of  C1' in   G R 651  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 651 
+ ASSUMED vdw of  N9  in   G R 651  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 651 
+ ASSUMED vdw of  O6  in   G R 651  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   G R 652 
+ GUESSED vdw of  OP1 in   G R 652  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 652 
+ GUESSED vdw of  OP2 in   G R 652  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 652 
+ GUESSED vdw of  O5' in   G R 652  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 652 
+ GUESSED vdw of  C5' in   G R 652  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 652 
+ GUESSED vdw of  C4' in   G R 652  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 652 
+ GUESSED vdw of  O4' in   G R 652  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 652 
+ GUESSED vdw of  C3' in   G R 652  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 652 
+ GUESSED vdw of  O3' in   G R 652  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 652 
+ GUESSED vdw of  C2' in   G R 652  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 652 
+ GUESSED vdw of  O2' in   G R 652  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 652 
+ GUESSED vdw of  C1' in   G R 652  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 652 
+ ASSUMED vdw of  N9  in   G R 652  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 652 
+ ASSUMED vdw of  O6  in   G R 652  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   G R 653 
+ GUESSED vdw of  OP1 in   G R 653  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 653 
+ GUESSED vdw of  OP2 in   G R 653  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 653 
+ GUESSED vdw of  O5' in   G R 653  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 653 
+ GUESSED vdw of  C5' in   G R 653  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 653 
+ GUESSED vdw of  C4' in   G R 653  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 653 
+ GUESSED vdw of  O4' in   G R 653  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 653 
+ GUESSED vdw of  C3' in   G R 653  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 653 
+ GUESSED vdw of  O3' in   G R 653  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 653 
+ GUESSED vdw of  C2' in   G R 653  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 653 
+ GUESSED vdw of  O2' in   G R 653  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 653 
+ GUESSED vdw of  C1' in   G R 653  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 653 
+ ASSUMED vdw of  N9  in   G R 653  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 653 
+ ASSUMED vdw of  O6  in   G R 653  =  1.40 (same as   G)
+ NON-STANDARD atom.| C5M| in residue>   U R 654 
+ ASSUMED vdw of  C5M in   U R 654  =  1.80 (same as   T)
+ NON-STANDARD atom.| C1'| in residue>   U R 654 
+ GUESSED vdw of  C1' in   U R 654  =  1.80
+ NON-STANDARD atom.| C2'| in residue>   U R 654 
+ GUESSED vdw of  C2' in   U R 654  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 654 
+ GUESSED vdw of  O2' in   U R 654  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 654 
+ GUESSED vdw of  C3' in   U R 654  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 654 
+ GUESSED vdw of  C4' in   U R 654  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 654 
+ GUESSED vdw of  O3' in   U R 654  =  1.40
+ NON-STANDARD atom.| O4'| in residue>   U R 654 
+ GUESSED vdw of  O4' in   U R 654  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 654 
+ GUESSED vdw of  C5' in   U R 654  =  1.80
+ NON-STANDARD atom.| O5'| in residue>   U R 654 
+ GUESSED vdw of  O5' in   U R 654  =  1.40
+ NON-STANDARD atom.| P  | in residue>   U R 654 
+ ASSUMED vdw of  P   in   U R 654  =  1.90 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   U R 654 
+ GUESSED vdw of  OP1 in   U R 654  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 654 
+ GUESSED vdw of  OP2 in   U R 654  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 655 
+ GUESSED vdw of  C1' in   U R 655  =  1.80
+ NON-STANDARD atom.| C2'| in residue>   U R 655 
+ GUESSED vdw of  C2' in   U R 655  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 655 
+ GUESSED vdw of  O2' in   U R 655  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 655 
+ GUESSED vdw of  C3' in   U R 655  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 655 
+ GUESSED vdw of  C4' in   U R 655  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 655 
+ GUESSED vdw of  O3' in   U R 655  =  1.40
+ NON-STANDARD atom.| O4'| in residue>   U R 655 
+ GUESSED vdw of  O4' in   U R 655  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 655 
+ GUESSED vdw of  C5' in   U R 655  =  1.80
+ NON-STANDARD atom.| O5'| in residue>   U R 655 
+ GUESSED vdw of  O5' in   U R 655  =  1.40
+ NON-STANDARD atom.| P  | in residue>   U R 655 
+ ASSUMED vdw of  P   in   U R 655  =  1.90 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   U R 655 
+ GUESSED vdw of  OP1 in   U R 655  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 655 
+ GUESSED vdw of  OP2 in   U R 655  =  1.40
+ NON-STANDARD atom.| OP1| in residue>   C R 656 
+ GUESSED vdw of  OP1 in   C R 656  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 656 
+ GUESSED vdw of  OP2 in   C R 656  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 656 
+ GUESSED vdw of  O5' in   C R 656  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 656 
+ GUESSED vdw of  C5' in   C R 656  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 656 
+ GUESSED vdw of  C4' in   C R 656  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 656 
+ GUESSED vdw of  O4' in   C R 656  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 656 
+ GUESSED vdw of  C3' in   C R 656  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 656 
+ GUESSED vdw of  O3' in   C R 656  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 656 
+ GUESSED vdw of  C2' in   C R 656  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 656 
+ GUESSED vdw of  O2' in   C R 656  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 656 
+ GUESSED vdw of  C1' in   C R 656  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 656 
+ ASSUMED vdw of  N1  in   C R 656  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 656 
+ ASSUMED vdw of  O2  in   C R 656  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   A R 657 
+ GUESSED vdw of  OP1 in   A R 657  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 657 
+ GUESSED vdw of  OP2 in   A R 657  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 657 
+ GUESSED vdw of  O5' in   A R 657  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 657 
+ GUESSED vdw of  C5' in   A R 657  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 657 
+ GUESSED vdw of  C4' in   A R 657  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 657 
+ GUESSED vdw of  O4' in   A R 657  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 657 
+ GUESSED vdw of  C3' in   A R 657  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 657 
+ GUESSED vdw of  O3' in   A R 657  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 657 
+ GUESSED vdw of  C2' in   A R 657  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 657 
+ GUESSED vdw of  O2' in   A R 657  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 657 
+ GUESSED vdw of  C1' in   A R 657  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 657 
+ ASSUMED vdw of  N9  in   A R 657  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   A R 658 
+ GUESSED vdw of  OP1 in   A R 658  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 658 
+ GUESSED vdw of  OP2 in   A R 658  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 658 
+ GUESSED vdw of  O5' in   A R 658  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 658 
+ GUESSED vdw of  C5' in   A R 658  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 658 
+ GUESSED vdw of  C4' in   A R 658  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 658 
+ GUESSED vdw of  O4' in   A R 658  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 658 
+ GUESSED vdw of  C3' in   A R 658  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 658 
+ GUESSED vdw of  O3' in   A R 658  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 658 
+ GUESSED vdw of  C2' in   A R 658  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 658 
+ GUESSED vdw of  O2' in   A R 658  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 658 
+ GUESSED vdw of  C1' in   A R 658  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 658 
+ ASSUMED vdw of  N9  in   A R 658  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   U R 659 
+ GUESSED vdw of  OP1 in   U R 659  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 659 
+ GUESSED vdw of  OP2 in   U R 659  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 659 
+ GUESSED vdw of  O5' in   U R 659  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 659 
+ GUESSED vdw of  C5' in   U R 659  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 659 
+ GUESSED vdw of  C4' in   U R 659  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 659 
+ GUESSED vdw of  O4' in   U R 659  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 659 
+ GUESSED vdw of  C3' in   U R 659  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 659 
+ GUESSED vdw of  O3' in   U R 659  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 659 
+ GUESSED vdw of  C2' in   U R 659  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 659 
+ GUESSED vdw of  O2' in   U R 659  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 659 
+ GUESSED vdw of  C1' in   U R 659  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 659 
+ ASSUMED vdw of  N1  in   U R 659  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 659 
+ ASSUMED vdw of  O2  in   U R 659  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 659 
+ ASSUMED vdw of  O4  in   U R 659  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   U R 660 
+ GUESSED vdw of  OP1 in   U R 660  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 660 
+ GUESSED vdw of  OP2 in   U R 660  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 660 
+ GUESSED vdw of  O5' in   U R 660  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 660 
+ GUESSED vdw of  C5' in   U R 660  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 660 
+ GUESSED vdw of  C4' in   U R 660  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 660 
+ GUESSED vdw of  O4' in   U R 660  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 660 
+ GUESSED vdw of  C3' in   U R 660  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 660 
+ GUESSED vdw of  O3' in   U R 660  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 660 
+ GUESSED vdw of  C2' in   U R 660  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 660 
+ GUESSED vdw of  O2' in   U R 660  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 660 
+ GUESSED vdw of  C1' in   U R 660  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 660 
+ ASSUMED vdw of  N1  in   U R 660  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 660 
+ ASSUMED vdw of  O2  in   U R 660  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 660 
+ ASSUMED vdw of  O4  in   U R 660  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   C R 661 
+ GUESSED vdw of  OP1 in   C R 661  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 661 
+ GUESSED vdw of  OP2 in   C R 661  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 661 
+ GUESSED vdw of  O5' in   C R 661  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 661 
+ GUESSED vdw of  C5' in   C R 661  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 661 
+ GUESSED vdw of  C4' in   C R 661  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 661 
+ GUESSED vdw of  O4' in   C R 661  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 661 
+ GUESSED vdw of  C3' in   C R 661  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 661 
+ GUESSED vdw of  O3' in   C R 661  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 661 
+ GUESSED vdw of  C2' in   C R 661  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 661 
+ GUESSED vdw of  O2' in   C R 661  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 661 
+ GUESSED vdw of  C1' in   C R 661  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 661 
+ ASSUMED vdw of  N1  in   C R 661  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 661 
+ ASSUMED vdw of  O2  in   C R 661  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   C R 662 
+ GUESSED vdw of  OP1 in   C R 662  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 662 
+ GUESSED vdw of  OP2 in   C R 662  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 662 
+ GUESSED vdw of  O5' in   C R 662  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 662 
+ GUESSED vdw of  C5' in   C R 662  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 662 
+ GUESSED vdw of  C4' in   C R 662  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 662 
+ GUESSED vdw of  O4' in   C R 662  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 662 
+ GUESSED vdw of  C3' in   C R 662  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 662 
+ GUESSED vdw of  O3' in   C R 662  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 662 
+ GUESSED vdw of  C2' in   C R 662  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 662 
+ GUESSED vdw of  O2' in   C R 662  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 662 
+ GUESSED vdw of  C1' in   C R 662  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 662 
+ ASSUMED vdw of  N1  in   C R 662  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 662 
+ ASSUMED vdw of  O2  in   C R 662  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   C R 663 
+ GUESSED vdw of  OP1 in   C R 663  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 663 
+ GUESSED vdw of  OP2 in   C R 663  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 663 
+ GUESSED vdw of  O5' in   C R 663  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 663 
+ GUESSED vdw of  C5' in   C R 663  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 663 
+ GUESSED vdw of  C4' in   C R 663  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 663 
+ GUESSED vdw of  O4' in   C R 663  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 663 
+ GUESSED vdw of  C3' in   C R 663  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 663 
+ GUESSED vdw of  O3' in   C R 663  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 663 
+ GUESSED vdw of  C2' in   C R 663  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 663 
+ GUESSED vdw of  O2' in   C R 663  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 663 
+ GUESSED vdw of  C1' in   C R 663  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 663 
+ ASSUMED vdw of  N1  in   C R 663  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 663 
+ ASSUMED vdw of  O2  in   C R 663  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   C R 664 
+ GUESSED vdw of  OP1 in   C R 664  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 664 
+ GUESSED vdw of  OP2 in   C R 664  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 664 
+ GUESSED vdw of  O5' in   C R 664  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 664 
+ GUESSED vdw of  C5' in   C R 664  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 664 
+ GUESSED vdw of  C4' in   C R 664  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 664 
+ GUESSED vdw of  O4' in   C R 664  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 664 
+ GUESSED vdw of  C3' in   C R 664  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 664 
+ GUESSED vdw of  O3' in   C R 664  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 664 
+ GUESSED vdw of  C2' in   C R 664  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 664 
+ GUESSED vdw of  O2' in   C R 664  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 664 
+ GUESSED vdw of  C1' in   C R 664  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 664 
+ ASSUMED vdw of  N1  in   C R 664  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 664 
+ ASSUMED vdw of  O2  in   C R 664  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   G R 665 
+ GUESSED vdw of  OP1 in   G R 665  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 665 
+ GUESSED vdw of  OP2 in   G R 665  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 665 
+ GUESSED vdw of  O5' in   G R 665  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 665 
+ GUESSED vdw of  C5' in   G R 665  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 665 
+ GUESSED vdw of  C4' in   G R 665  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 665 
+ GUESSED vdw of  O4' in   G R 665  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 665 
+ GUESSED vdw of  C3' in   G R 665  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 665 
+ GUESSED vdw of  O3' in   G R 665  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 665 
+ GUESSED vdw of  C2' in   G R 665  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 665 
+ GUESSED vdw of  O2' in   G R 665  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 665 
+ GUESSED vdw of  C1' in   G R 665  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 665 
+ ASSUMED vdw of  N9  in   G R 665  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 665 
+ ASSUMED vdw of  O6  in   G R 665  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   U R 666 
+ GUESSED vdw of  OP1 in   U R 666  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   U R 666 
+ GUESSED vdw of  OP2 in   U R 666  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   U R 666 
+ GUESSED vdw of  O5' in   U R 666  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   U R 666 
+ GUESSED vdw of  C5' in   U R 666  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   U R 666 
+ GUESSED vdw of  C4' in   U R 666  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   U R 666 
+ GUESSED vdw of  O4' in   U R 666  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   U R 666 
+ GUESSED vdw of  C3' in   U R 666  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   U R 666 
+ GUESSED vdw of  O3' in   U R 666  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   U R 666 
+ GUESSED vdw of  C2' in   U R 666  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   U R 666 
+ GUESSED vdw of  O2' in   U R 666  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   U R 666 
+ GUESSED vdw of  C1' in   U R 666  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   U R 666 
+ ASSUMED vdw of  N1  in   U R 666  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   U R 666 
+ ASSUMED vdw of  O2  in   U R 666  =  1.40 (same as   C)
+ NON-STANDARD atom.| O4 | in residue>   U R 666 
+ ASSUMED vdw of  O4  in   U R 666  =  1.40 (same as   T)
+ NON-STANDARD atom.| OP1| in residue>   C R 667 
+ GUESSED vdw of  OP1 in   C R 667  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 667 
+ GUESSED vdw of  OP2 in   C R 667  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 667 
+ GUESSED vdw of  O5' in   C R 667  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 667 
+ GUESSED vdw of  C5' in   C R 667  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 667 
+ GUESSED vdw of  C4' in   C R 667  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 667 
+ GUESSED vdw of  O4' in   C R 667  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 667 
+ GUESSED vdw of  C3' in   C R 667  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 667 
+ GUESSED vdw of  O3' in   C R 667  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 667 
+ GUESSED vdw of  C2' in   C R 667  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 667 
+ GUESSED vdw of  O2' in   C R 667  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 667 
+ GUESSED vdw of  C1' in   C R 667  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 667 
+ ASSUMED vdw of  N1  in   C R 667  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 667 
+ ASSUMED vdw of  O2  in   C R 667  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   G R 668 
+ GUESSED vdw of  OP1 in   G R 668  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 668 
+ GUESSED vdw of  OP2 in   G R 668  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 668 
+ GUESSED vdw of  O5' in   G R 668  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 668 
+ GUESSED vdw of  C5' in   G R 668  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 668 
+ GUESSED vdw of  C4' in   G R 668  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 668 
+ GUESSED vdw of  O4' in   G R 668  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 668 
+ GUESSED vdw of  C3' in   G R 668  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 668 
+ GUESSED vdw of  O3' in   G R 668  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 668 
+ GUESSED vdw of  C2' in   G R 668  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 668 
+ GUESSED vdw of  O2' in   G R 668  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 668 
+ GUESSED vdw of  C1' in   G R 668  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 668 
+ ASSUMED vdw of  N9  in   G R 668  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 668 
+ ASSUMED vdw of  O6  in   G R 668  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   C R 669 
+ GUESSED vdw of  OP1 in   C R 669  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 669 
+ GUESSED vdw of  OP2 in   C R 669  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 669 
+ GUESSED vdw of  O5' in   C R 669  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 669 
+ GUESSED vdw of  C5' in   C R 669  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 669 
+ GUESSED vdw of  C4' in   C R 669  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 669 
+ GUESSED vdw of  O4' in   C R 669  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 669 
+ GUESSED vdw of  C3' in   C R 669  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 669 
+ GUESSED vdw of  O3' in   C R 669  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 669 
+ GUESSED vdw of  C2' in   C R 669  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 669 
+ GUESSED vdw of  O2' in   C R 669  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 669 
+ GUESSED vdw of  C1' in   C R 669  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 669 
+ ASSUMED vdw of  N1  in   C R 669  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 669 
+ ASSUMED vdw of  O2  in   C R 669  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   G R 670 
+ GUESSED vdw of  OP1 in   G R 670  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 670 
+ GUESSED vdw of  OP2 in   G R 670  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 670 
+ GUESSED vdw of  O5' in   G R 670  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 670 
+ GUESSED vdw of  C5' in   G R 670  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 670 
+ GUESSED vdw of  C4' in   G R 670  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 670 
+ GUESSED vdw of  O4' in   G R 670  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 670 
+ GUESSED vdw of  C3' in   G R 670  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 670 
+ GUESSED vdw of  O3' in   G R 670  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 670 
+ GUESSED vdw of  C2' in   G R 670  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 670 
+ GUESSED vdw of  O2' in   G R 670  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 670 
+ GUESSED vdw of  C1' in   G R 670  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 670 
+ ASSUMED vdw of  N9  in   G R 670  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 670 
+ ASSUMED vdw of  O6  in   G R 670  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   G R 671 
+ GUESSED vdw of  OP1 in   G R 671  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 671 
+ GUESSED vdw of  OP2 in   G R 671  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 671 
+ GUESSED vdw of  O5' in   G R 671  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 671 
+ GUESSED vdw of  C5' in   G R 671  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 671 
+ GUESSED vdw of  C4' in   G R 671  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 671 
+ GUESSED vdw of  O4' in   G R 671  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 671 
+ GUESSED vdw of  C3' in   G R 671  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 671 
+ GUESSED vdw of  O3' in   G R 671  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 671 
+ GUESSED vdw of  C2' in   G R 671  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 671 
+ GUESSED vdw of  O2' in   G R 671  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 671 
+ GUESSED vdw of  C1' in   G R 671  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 671 
+ ASSUMED vdw of  N9  in   G R 671  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 671 
+ ASSUMED vdw of  O6  in   G R 671  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   A R 672 
+ GUESSED vdw of  OP1 in   A R 672  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 672 
+ GUESSED vdw of  OP2 in   A R 672  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 672 
+ GUESSED vdw of  O5' in   A R 672  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 672 
+ GUESSED vdw of  C5' in   A R 672  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 672 
+ GUESSED vdw of  C4' in   A R 672  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 672 
+ GUESSED vdw of  O4' in   A R 672  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 672 
+ GUESSED vdw of  C3' in   A R 672  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 672 
+ GUESSED vdw of  O3' in   A R 672  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 672 
+ GUESSED vdw of  C2' in   A R 672  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 672 
+ GUESSED vdw of  O2' in   A R 672  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 672 
+ GUESSED vdw of  C1' in   A R 672  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 672 
+ ASSUMED vdw of  N9  in   A R 672  =  1.60 (same as   A)
+ NON-STANDARD atom.| OP1| in residue>   G R 673 
+ GUESSED vdw of  OP1 in   G R 673  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   G R 673 
+ GUESSED vdw of  OP2 in   G R 673  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   G R 673 
+ GUESSED vdw of  O5' in   G R 673  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   G R 673 
+ GUESSED vdw of  C5' in   G R 673  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   G R 673 
+ GUESSED vdw of  C4' in   G R 673  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   G R 673 
+ GUESSED vdw of  O4' in   G R 673  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   G R 673 
+ GUESSED vdw of  C3' in   G R 673  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   G R 673 
+ GUESSED vdw of  O3' in   G R 673  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   G R 673 
+ GUESSED vdw of  C2' in   G R 673  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   G R 673 
+ GUESSED vdw of  O2' in   G R 673  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   G R 673 
+ GUESSED vdw of  C1' in   G R 673  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   G R 673 
+ ASSUMED vdw of  N9  in   G R 673  =  1.60 (same as   A)
+ NON-STANDARD atom.| O6 | in residue>   G R 673 
+ ASSUMED vdw of  O6  in   G R 673  =  1.40 (same as   G)
+ NON-STANDARD atom.| OP1| in residue>   C R 674 
+ GUESSED vdw of  OP1 in   C R 674  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 674 
+ GUESSED vdw of  OP2 in   C R 674  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 674 
+ GUESSED vdw of  O5' in   C R 674  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 674 
+ GUESSED vdw of  C5' in   C R 674  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 674 
+ GUESSED vdw of  C4' in   C R 674  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 674 
+ GUESSED vdw of  O4' in   C R 674  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 674 
+ GUESSED vdw of  C3' in   C R 674  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 674 
+ GUESSED vdw of  O3' in   C R 674  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 674 
+ GUESSED vdw of  C2' in   C R 674  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 674 
+ GUESSED vdw of  O2' in   C R 674  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 674 
+ GUESSED vdw of  C1' in   C R 674  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 674 
+ ASSUMED vdw of  N1  in   C R 674  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 674 
+ ASSUMED vdw of  O2  in   C R 674  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   C R 675 
+ GUESSED vdw of  OP1 in   C R 675  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   C R 675 
+ GUESSED vdw of  OP2 in   C R 675  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   C R 675 
+ GUESSED vdw of  O5' in   C R 675  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   C R 675 
+ GUESSED vdw of  C5' in   C R 675  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   C R 675 
+ GUESSED vdw of  C4' in   C R 675  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   C R 675 
+ GUESSED vdw of  O4' in   C R 675  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   C R 675 
+ GUESSED vdw of  C3' in   C R 675  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   C R 675 
+ GUESSED vdw of  O3' in   C R 675  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   C R 675 
+ GUESSED vdw of  C2' in   C R 675  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   C R 675 
+ GUESSED vdw of  O2' in   C R 675  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   C R 675 
+ GUESSED vdw of  C1' in   C R 675  =  1.80
+ NON-STANDARD atom.| N1 | in residue>   C R 675 
+ ASSUMED vdw of  N1  in   C R 675  =  1.60 (same as   A)
+ NON-STANDARD atom.| O2 | in residue>   C R 675 
+ ASSUMED vdw of  O2  in   C R 675  =  1.40 (same as   C)
+ NON-STANDARD atom.| OP1| in residue>   A R 676 
+ GUESSED vdw of  OP1 in   A R 676  =  1.40
+ NON-STANDARD atom.| OP2| in residue>   A R 676 
+ GUESSED vdw of  OP2 in   A R 676  =  1.40
+ NON-STANDARD atom.| O5'| in residue>   A R 676 
+ GUESSED vdw of  O5' in   A R 676  =  1.40
+ NON-STANDARD atom.| C5'| in residue>   A R 676 
+ GUESSED vdw of  C5' in   A R 676  =  1.80
+ NON-STANDARD atom.| C4'| in residue>   A R 676 
+ GUESSED vdw of  C4' in   A R 676  =  1.80
+ NON-STANDARD atom.| O4'| in residue>   A R 676 
+ GUESSED vdw of  O4' in   A R 676  =  1.40
+ NON-STANDARD atom.| C3'| in residue>   A R 676 
+ GUESSED vdw of  C3' in   A R 676  =  1.80
+ NON-STANDARD atom.| O3'| in residue>   A R 676 
+ GUESSED vdw of  O3' in   A R 676  =  1.40
+ NON-STANDARD atom.| C2'| in residue>   A R 676 
+ GUESSED vdw of  C2' in   A R 676  =  1.80
+ NON-STANDARD atom.| O2'| in residue>   A R 676 
+ GUESSED vdw of  O2' in   A R 676  =  1.40
+ NON-STANDARD atom.| C1'| in residue>   A R 676 
+ GUESSED vdw of  C1' in   A R 676  =  1.80
+ NON-STANDARD atom.| N9 | in residue>   A R 676 
+ ASSUMED vdw of  N9  in   A R 676  =  1.60 (same as   A)
+ ADDED VDW RADII
+ CHAINS       2
+ RESIDUES   565
+ ATOMS     5548
+ SOLVA: PROGRAM ENDS CORRECTLY
+ CALCULATED ATOMIC ACCESSIBILITES
+ RELATIVE (STANDARD) ACCESSIBILITIES READFOR  20 AMINO ACIDS
+ SUMMED ACCESSIBILITIES OVER RESIDUES

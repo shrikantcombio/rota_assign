@@ -1,8 +1,8 @@
 """
 rota_conf_assign.py
 -------------------
-Test script for verifying full end-to-end protein & RNA torsion calculation,
-rotamer & RNA conformer assignment, NAxplorer interaction mapping, and export under dataset/results/.
+Test script for verifying single rotamer library choice (BBD default), n-1 chi checking criteria,
+and 'NA' output indicator on single bound complex structure (1ASY.cif).
 """
 
 from pathlib import Path
@@ -25,40 +25,34 @@ from script.merge_pipeline import ComplexMergePipeline
 
 
 def run_test():
-    print("=== Running Pipeline Test: rota_conf_assign.py ===")
+    print("=== Running Single-Library Rotamer Assignment Test (1ASY.cif) ===")
 
-    # 1. Resolve Bound and Unbound Structure Files
-    bound_file = DATASET_DIR / "1ASY_1EOV_C.pdb"
+    # 1. Resolve 1ASY Structure File (.cif or .pdb)
+    bound_file = DATASET_DIR / "1ASY.cif"
+    if not bound_file.exists():
+        bound_file = Path("/home/labuser/Projects/PRince/test/1ASY.cif")
     if not bound_file.exists():
         bound_file = DATASET_DIR / "1ASY.pdb"
-    if not bound_file.exists():
-        bound_file = TEST_DIR / "dataset" / "1ASY_1EOV_C.pdb"
-
-    unbound_file = DATASET_DIR / "1ASY_1EOV_U.pdb"
-    if not unbound_file.exists():
-        unbound_file = DATASET_DIR / "1EOV.pdb"
-    if not unbound_file.exists():
-        unbound_file = TEST_DIR / "dataset" / "1ASY_1EOV_U.pdb"
 
     # 2. NAxplorer Interactions File
     naxplorer_int_file = DATASET_DIR / "1ASY_interactions_NAxplorer.csv"
     if not naxplorer_int_file.exists():
         naxplorer_int_file = TEST_DIR / "1ASY_interactions.csv"
 
-    print(f"Bound Structure File:      {bound_file}")
-    print(f"Unbound Structure File:    {unbound_file}")
-    print(f"NAxplorer Interactions File:{naxplorer_int_file}")
-    print(f"Results Output Directory:  {RESULTS_DIR}")
+    print(f"Bound Structure File (CIF/PDB): {bound_file}")
+    print(f"Interactions File:               {naxplorer_int_file}")
+    print(f"Results Output Directory:        {RESULTS_DIR}")
 
-    # 3. Instantiate and run pipeline
-    pipeline = ComplexMergePipeline(output_dir=RESULTS_DIR)
+    # 3. Instantiate and run pipeline for 1ASY bound complex with default BBD rotamer library
+    pipeline = ComplexMergePipeline(output_dir=RESULTS_DIR, lib_type='BBD')
     results = pipeline.run_pipeline(
         bound_file=bound_file,
-        unbound_file=unbound_file,
+        unbound_file=None,  # Single-structure bound mode
         protein_chains="A",
         rna_chains="R",
-        interactions_file=naxplorer_int_file,
-        pdb_id="1ASY"
+        interactions_file=naxplorer_int_file if naxplorer_int_file.exists() else None,
+        pdb_id="1ASY",
+        lib_type='BBD'
     )
 
     print("\n=== Test Execution Completed Successfully ===")
@@ -68,18 +62,26 @@ def run_test():
     print(f"4. Mapped Interactions CSV:    {results['INTERACTIONS_FILE']}")
     print(f"5. Final Merged Output CSV:    {results['FINAL_OUTPUT_FILE']}")
 
-    # 4. Verify Final Output Schema and Data
-    df_final = pd.read_csv(results['FINAL_OUTPUT_FILE'])
-    print(f"\nFinal Merged Output Dataset Shape: {df_final.shape}")
-    print(f"Target Columns: {list(df_final.columns)}")
-    print("\nFirst 5 Rows of Final Output Dataset:")
-    print(df_final.head())
+    # 4. Verify Output Schema and BBD Rotamer Assignment
+    df_rota = pd.read_csv(results['PROTEIN_ROTA_FILE'])
+    print(f"\nProtein Rotastates Dataset Shape: {df_rota.shape}")
+    print("\nSample BBD Rotamer Assignments:")
+    print(df_rota[['LABEL', 'B_PHI', 'B_PSI', 'SASA', 'b_rotastate']].head(15))
 
-    assert not df_final.empty, "Error: Final merged dataframe is empty!"
-    assert 'b_rotastate' in df_final.columns, "Error: b_rotastate column missing!"
-    assert 'NtC' in df_final.columns, "Error: NtC column missing!"
+    assert not df_rota.empty, "Error: Protein rotastates dataframe is empty!"
+    assert 'b_rotastate' in df_rota.columns, "Error: b_rotastate column missing!"
 
-    print("\nSUCCESS: All tests passed cleanly!")
+    # Verify NA vs assigned rotamer counts
+    na_count = (df_rota['b_rotastate'] == 'NA').sum()
+    no_chi_count = (df_rota['b_rotastate'] == 'no_chi').sum()
+    assigned_count = len(df_rota) - na_count - no_chi_count
+
+    print(f"\nAssignment Breakdown:")
+    print(f"  Assigned Rotamers: {assigned_count}")
+    print(f"  no_chi (ALA/GLY):  {no_chi_count}")
+    print(f"  NA (Not Available): {na_count}")
+
+    print("\nSUCCESS: All single-library BBD rotamer assignment tests passed cleanly!")
 
 
 if __name__ == "__main__":

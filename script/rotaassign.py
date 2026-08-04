@@ -2,8 +2,7 @@
 rotaassign.py
 -------------
 Module for batch assigning rotameric states to protein residues in complex, bound, unbound, or both states.
-Provides class ProteinRotamerAssigner with flexible DataFrame/CSV file input handling and options for state assignment.
-Supports Backbone Dependent (BBD) rotamer assignment when phi and psi dihedrals are present.
+Provides class ProteinRotamerAssigner with options for rotamer library type ('BBD' default, 'SSD', or 'BBI').
 """
 
 from pathlib import Path
@@ -26,17 +25,21 @@ from script.get_rotastate import get_aa_rotamer, RotamerStateAssigner
 class ProteinRotamerAssigner:
     """
     Class for assigning rotamer states to protein dataset DataFrames or CSV files.
+    Allows user to select rotamer library type ('BBD' default, 'SSD', or 'BBI').
     """
 
-    def __init__(self):
-        self.state_assigner = RotamerStateAssigner()
+    def __init__(self, lib_type='BBD'):
+        self.lib_type = lib_type
+        self.state_assigner = RotamerStateAssigner(lib_type=lib_type)
 
-    def assign_df(self, df, mode='both'):
+    def assign_df(self, df, mode='both', lib_type=None):
         """
-        Assigns rotamer states to pandas DataFrame based on mode ('bound', 'unbound', or 'both').
+        Assigns rotamer states to pandas DataFrame based on mode ('bound', 'unbound', or 'both')
+        and user-selected rotamer library type ('BBD', 'SSD', or 'BBI').
         """
         df = df.copy()
         mode_clean = str(mode).lower().strip()
+        l_type = lib_type or self.lib_type
 
         cols = {c.upper(): c for c in df.columns}
 
@@ -78,7 +81,7 @@ class ProteinRotamerAssigner:
                 chis = [c1, c2, c3, c4, c5]
                 chis_clean = [None if (x is None or (isinstance(x, (int, float)) and (float(x) == 0.0 or np.isnan(float(x))))) else float(x) for x in chis]
 
-                r_state = get_aa_rotamer(aa, ss, 'bound', inter, chis_clean[0], chis_clean[1], chis_clean[2], chis_clean[3], chis_clean[4], phi=phi, psi=psi)
+                r_state = get_aa_rotamer(aa, ss, 'bound', inter, chis_clean[0], chis_clean[1], chis_clean[2], chis_clean[3], chis_clean[4], phi=phi, psi=psi, lib_type=l_type)
                 b_states.append(r_state)
 
             df['b_rotastate'] = b_states
@@ -118,14 +121,14 @@ class ProteinRotamerAssigner:
                 chis = [c1, c2, c3, c4, c5]
                 chis_clean = [None if (x is None or (isinstance(x, (int, float)) and (float(x) == 0.0 or np.isnan(float(x))))) else float(x) for x in chis]
 
-                r_state = get_aa_rotamer(aa, ss, 'unbound', inter, chis_clean[0], chis_clean[1], chis_clean[2], chis_clean[3], chis_clean[4], phi=phi, psi=psi)
+                r_state = get_aa_rotamer(aa, ss, 'unbound', inter, chis_clean[0], chis_clean[1], chis_clean[2], chis_clean[3], chis_clean[4], phi=phi, psi=psi, lib_type=l_type)
                 u_states.append(r_state)
 
             df['ub_rotastate'] = u_states
 
         return df
 
-    def assign_file(self, input_file, output_file=None, mode='both'):
+    def assign_file(self, input_file, output_file=None, mode='both', lib_type=None):
         in_p = Path(input_file)
         if not in_p.exists():
             raise FileNotFoundError(f"Input file not found: {in_p}")
@@ -133,7 +136,7 @@ class ProteinRotamerAssigner:
         sep = ',' if in_p.suffix.lower() == '.csv' else '\t'
         df = pd.read_csv(in_p, sep=sep, engine='python')
 
-        df_out = self.assign_df(df, mode=mode)
+        df_out = self.assign_df(df, mode=mode, lib_type=lib_type)
 
         if output_file:
             out_p = Path(output_file)
@@ -144,12 +147,12 @@ class ProteinRotamerAssigner:
         return df_out
 
 
-def assign_rotamer_states(input_target, mode='both', output_file=None):
-    assigner = ProteinRotamerAssigner()
+def assign_rotamer_states(input_target, mode='both', output_file=None, lib_type='BBD'):
+    assigner = ProteinRotamerAssigner(lib_type=lib_type)
     if isinstance(input_target, (str, Path)):
-        return assigner.assign_file(input_target, output_file=output_file, mode=mode)
+        return assigner.assign_file(input_target, output_file=output_file, mode=mode, lib_type=lib_type)
     elif isinstance(input_target, pd.DataFrame):
-        df_out = assigner.assign_df(input_target, mode=mode)
+        df_out = assigner.assign_df(input_target, mode=mode, lib_type=lib_type)
         if output_file:
             out_p = Path(output_file)
             out_p.parent.mkdir(parents=True, exist_ok=True)
@@ -165,7 +168,8 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input CSV/TSV file containing protein dihedrals")
     parser.add_argument("-o", "--output", default=None, help="Output file path")
     parser.add_argument("-m", "--mode", choices=['bound', 'unbound', 'both'], default='both', help="Assignment mode")
+    parser.add_argument("-l", "--lib-type", choices=['BBD', 'SSD', 'BBI'], default='BBD', help="Rotamer library type (default: BBD)")
 
     args = parser.parse_args()
-    df_res = assign_rotamer_states(args.input, mode=args.mode, output_file=args.output)
+    df_res = assign_rotamer_states(args.input, mode=args.mode, output_file=args.output, lib_type=args.lib_type)
     print(f"Assigned rotamer states shape: {df_res.shape}")

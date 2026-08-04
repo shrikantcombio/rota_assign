@@ -295,14 +295,13 @@ def run_all_files():
 
 def run_bbd_files():
     """
-    Loads BBD rotamer library dictionaries from json files in rota_lib_dict/bbd directory.
+    Loads BBD rotamer library dictionaries from json files in rota_lib_dict/bbd directory,
+    or builds them directly from library/RBPs_BBD_rotamer_lib/*.csv if json files do not exist.
     """
     current_dir = Path(__file__).resolve().parent
     root_dir = current_dir.parent
 
     dump_dir = root_dir / 'rota_lib_dict' / 'bbd'
-    if not dump_dir.exists():
-        dump_dir = current_dir / 'rota_lib_dict' / 'bbd'
 
     bbd_files = [
         'full_rota_lib_bbd_b_I.txt',
@@ -317,6 +316,16 @@ def run_bbd_files():
             with open(dump_dir / fname, 'r') as f:
                 dicts.append(json.load(f))
         return tuple(dicts)
+
+    # Fallback to building directly from library/RBPs_BBD_rotamer_lib CSVs
+    csv_dir = root_dir / 'library' / 'RBPs_BBD_rotamer_lib'
+    if csv_dir.exists():
+        builder = BBDRotamerLibBuilder()
+        b_I, _, _, _ = builder.build_library(csv_dir / 'RBPs_I_bbd_B_rotamer_lib.csv')
+        b_N, _, _, _ = builder.build_library(csv_dir / 'RBPs_N_bbd_B_rotamer_lib.csv')
+        ub_I, _, _, _ = builder.build_library(csv_dir / 'RBPs_I_bbd_U_rotamer_lib.csv')
+        ub_N, _, _, _ = builder.build_library(csv_dir / 'RBPs_N_bbd_U_rotamer_lib.csv')
+        return (b_I, b_N, ub_I, ub_N)
 
     return ({}, {}, {}, {})
 

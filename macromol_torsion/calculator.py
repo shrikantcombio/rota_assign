@@ -40,13 +40,13 @@ class ComplexTorsionCalculator:
         self.rna_sugar_calc = RNASugarPuckerCalculator()
         self.rna_sc_calc = RNASidechainCalculator()
 
-    def analyze_protein_bound_unbound(self, bound_file, unbound_file, chains=None, orig_bound_file=None, orig_unbound_file=None, run_dssp=True, run_naccess=True, output_file=None):
+    def analyze_protein_bound_unbound(self, bound_file, unbound_file=None, chains=None, orig_bound_file=None, orig_unbound_file=None, run_dssp=True, run_naccess=True, output_file=None):
         """
-        Calculates protein backbone and sidechain dihedrals for bound and unbound structure pairs.
-        Uses original cleaned structure files (orig_bound_file / orig_unbound_file) for DSSP and NACCESS SASA.
+        Calculates protein backbone and sidechain dihedrals for bound structure (and optional unbound structure).
+        Uses original cleaned structure files for DSSP and NACCESS SASA.
         """
         bound_p = Path(bound_file)
-        unbound_p = Path(unbound_file)
+        unbound_p = Path(unbound_file) if unbound_file else bound_p
 
         target_bound_dssp_naccess = Path(orig_bound_file) if orig_bound_file else bound_p
         target_unbound_dssp_naccess = Path(orig_unbound_file) if orig_unbound_file else unbound_p
@@ -57,9 +57,13 @@ class ComplexTorsionCalculator:
         b_phi, b_psi, b_omega, b_tau, b_xi, b_labels = self.protein_bb_calc.calculate_dihedrals(bound_p)
         b_chis = self.protein_sc_calc.calculate_all_chis(bound_p)
 
-        # 2. Unbound Protein Torsions
-        u_phi, u_psi, u_omega, u_tau, u_xi, u_labels = self.protein_bb_calc.calculate_dihedrals(unbound_p)
-        u_chis = self.protein_sc_calc.calculate_all_chis(unbound_p)
+        # 2. Unbound Protein Torsions (use bound if unbound_file not provided)
+        if unbound_file and unbound_p.exists():
+            u_phi, u_psi, u_omega, u_tau, u_xi, u_labels = self.protein_bb_calc.calculate_dihedrals(unbound_p)
+            u_chis = self.protein_sc_calc.calculate_all_chis(unbound_p)
+        else:
+            u_phi, u_psi, u_omega, u_tau, u_xi, u_labels = b_phi, b_psi, b_omega, b_tau, b_xi, b_labels
+            u_chis = b_chis
 
         # Map unbound dihedrals by label & (chain, resSeq)
         u_map = {}
@@ -91,20 +95,11 @@ class ComplexTorsionCalculator:
             except Exception:
                 pass
 
-        # 4. NACCESS SASA Interface Classification on Protein-RNA Complex vs Protein Alone
+        # 4. SASA Interface Classification via .int files or NACCESS
         interface_set = set()
         if run_naccess and chains:
             try:
-                b_atoms = StructureReader.parse_structure(target_bound_dssp_naccess)
-                chains_set = set(chains) if isinstance(chains, (list, tuple, set)) else set(str(chains))
-                prot_atoms = [a for a in b_atoms if a.get('chain') in chains_set and a.get('record') in ['ATOM', 'HETATM']]
-
-                from clean_structure import StructureCleaner
-                sc = StructureCleaner()
-                temp_prot_file = Path(tempfile.gettempdir()) / f"{target_bound_dssp_naccess.stem}_prot_alone.pdb"
-                sc.write_pdb(prot_atoms, temp_prot_file)
-
-                interface, non_int, surf, core = self.sasa_analyzer.classify_residues(target_bound_dssp_naccess, temp_prot_file, chains)
+                interface, non_int, surf, core = self.sasa_analyzer.classify_residues(target_bound_dssp_naccess, target_unbound_dssp_naccess, chains)
                 interface_set = set(interface)
             except Exception:
                 pass
@@ -310,15 +305,15 @@ class ComplexTorsionCalculator:
 
         return df
 
-    def analyze_complex(self, bound_file, unbound_file, protein_chains, rna_chains, orig_bound_file=None, orig_unbound_file=None, run_dssp=True, run_naccess=True, output_file=None):
+    def analyze_complex(self, bound_file, unbound_file=None, protein_chains="A", rna_chains="R", orig_bound_file=None, orig_unbound_file=None, run_dssp=True, run_naccess=True, output_file=None):
         """
-        Calculates both Protein and RNA torsion angles for a bound (protein-RNA complex) and unbound structure pair.
-        Uses orig_bound_file (e.g. 1ASY_clean.pdb) and orig_unbound_file (e.g. 1EOV_clean.pdb) for DSSP and NACCESS SASA.
+        Calculates both Protein and RNA torsion angles for a bound (protein-RNA complex) and optional unbound structure pair.
+        Uses orig_bound_file (e.g. 1ASY.cif) and orig_unbound_file for DSSP and NACCESS SASA.
         Saves output as CSV or TSV based on file extension.
         :returns: Dictionary with 'PROTEIN' DataFrame and 'RNA' DataFrame.
         """
         bound_p = Path(bound_file)
-        unbound_p = Path(unbound_file)
+        unbound_p = Path(unbound_file) if unbound_file else bound_p
 
         orig_b = orig_bound_file if orig_bound_file else bound_p
         orig_u = orig_unbound_file if orig_unbound_file else unbound_p

@@ -127,16 +127,64 @@ class SasaAnalyzer:
         interface_set = set(interface)
         return [res for res in surface if res not in interface_set]
 
-    def classify_residues(self, bound_structure, unbound_structure, bound_chains, output_dir=None):
-        b_rsa, _ = self.run_naccess(bound_structure, output_dir=output_dir)
-        u_rsa, _ = self.run_naccess(unbound_structure, output_dir=output_dir)
+    def parse_int_file(self, int_file_path):
+        """
+        Parses an .int interface file (PRince/NACCESS interface format) and returns
+        a list of res_label strings and (chain, res_seq) tuples for interface residues.
+        """
+        int_p = Path(int_file_path)
+        if not int_p.exists():
+            return []
 
-        b_lines = self.parse_rsa(b_rsa)
-        u_lines = self.parse_rsa(u_rsa)
+        interface = []
+        with open(int_p, 'r') as f:
+            for line in f:
+                if line.startswith(('ATOM', 'HETATM')) and len(line) >= 26:
+                    resname = line[17:20].strip()
+                    chain = line[21].strip()
+                    res_seq = line[22:26].strip()
+                    if chain and res_seq:
+                        res_label = f"{resname:<3s} {chain:1s} {res_seq:>4s}".strip()
+                        interface.append(res_label)
+                        interface.append((chain, res_seq))
+        return interface
 
-        interface = self.get_interface(b_lines, bound_chains, u_lines)
-        non_int_surf = self.get_non_interface_surface(b_lines, bound_chains, u_lines)
-        surface = self.get_surface(u_lines)
-        core = self.get_core(u_lines)
+    def classify_residues(self, bound_structure, unbound_structure, bound_chains, output_dir=None, int_file=None):
+        # 1. Check if an .int file is provided or exists for this structure
+        b_p = Path(bound_structure)
+        pdb_tag = b_p.stem.split('_')[0]
 
-        return interface, non_int_surf, surface, core
+        int_candidates = []
+        if int_file:
+            int_candidates.append(Path(int_file))
+
+        int_candidates.extend([
+            b_p.parent / f"{pdb_tag}.int",
+            b_p.parent / f"{pdb_tag}P.int",
+            Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}.int",
+            Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}P.int",
+        ])
+
+        for cand in int_candidates:
+            if cand.exists():
+                interface = self.parse_int_file(cand)
+                if interface:
+                    return interface, [], [], []
+
+        # 2. Fallback to running NACCESS SASA calculation
+        try:
+            b_rsa, _ = self.run_naccess(bound_structure, output_dir=output_dir)
+            u_rsa, _ = self.run_naccess(unbound_structure, output_dir=output_dir)
+
+            b_lines = self.parse_rsa(b_rsa)
+            u_lines = self.parse_rsa(u_rsa)
+
+            interface = self.get_interface(b_lines, bound_chains, u_lines)
+            non_int_surf = self.get_non_interface_surface(b_lines, bound_chains, u_lines)
+            surface = self.get_surface(u_lines)
+            core = self.get_core(u_lines)
+
+            return interface, non_int_surf, surface, core
+        except Exception:
+            return [], [], [], []
+

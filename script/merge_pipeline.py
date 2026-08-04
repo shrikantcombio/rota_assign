@@ -40,10 +40,11 @@ class ComplexMergePipeline:
     and merging interaction data into final output datasets under dataset/results/.
     """
 
-    def __init__(self, output_dir=None):
+    def __init__(self, output_dir=None, lib_type='BBD'):
         self.output_dir = Path(output_dir) if output_dir else RESULTS_DIR
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.rotamer_assigner = ProteinRotamerAssigner()
+        self.lib_type = lib_type
+        self.rotamer_assigner = ProteinRotamerAssigner(lib_type=lib_type)
         self.rna_assigner = RNAConformerAssigner()
         self.calculator = ComplexTorsionCalculator()
 
@@ -108,7 +109,7 @@ class ComplexMergePipeline:
         df_int.to_csv(out_int_file, index=False)
         return out_int_file, df_int
 
-    def run_pipeline(self, bound_file, unbound_file, protein_chains="A", rna_chains="R", interactions_file=None, pdb_id="1ASY"):
+    def run_pipeline(self, bound_file, unbound_file=None, protein_chains="A", rna_chains="R", interactions_file=None, pdb_id="1ASY", lib_type=None):
         """
         Executes end-to-end pipeline:
         1. Analyzes complex dihedrals, DSSP, and SASA -> 1ASY_protein_torsions.csv
@@ -119,10 +120,12 @@ class ComplexMergePipeline:
         6. Runs Arginine forks & rotamer transition analysis reports
         """
         bound_p = Path(bound_file)
-        unbound_p = Path(unbound_file)
+        unbound_p = Path(unbound_file) if unbound_file else bound_p
+        l_type = lib_type or self.lib_type
 
         # Step 1: Analyze complex dihedrals & SASA
-        pair_tag = f"{bound_p.stem.split('_')[0]}_{unbound_p.stem.split('_')[0]}"
+        pair_stem_u = unbound_p.stem.split('_')[0] if unbound_file else "bound"
+        pair_tag = f"{bound_p.stem.split('_')[0]}_{pair_stem_u}"
         output_pair_dir = self.output_dir / "pairs" / pair_tag
         output_pair_dir.mkdir(parents=True, exist_ok=True)
 
@@ -144,7 +147,7 @@ class ComplexMergePipeline:
         df_protein.to_csv(prot_torsion_file, index=False)
 
         # Step 2: Assign Protein rotamer states (intermediate file: 1ASY_protein_rotastates.csv)
-        df_protein_assigned = self.rotamer_assigner.assign_df(df_protein, mode='both')
+        df_protein_assigned = self.rotamer_assigner.assign_df(df_protein, mode='both', lib_type=l_type)
         prot_rota_file = self.output_dir / f"{pdb_id}_protein_rotastates.csv"
         df_protein_assigned.to_csv(prot_rota_file, index=False)
 

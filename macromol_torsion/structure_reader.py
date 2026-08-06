@@ -123,12 +123,22 @@ class StructureReader:
         atoms = cls.parse_structure(file_p)
         pdb_lines = []
         for i, a in enumerate(atoms, start=1):
-            line = (
-                f"{a['record']:<6s}{i:>5d} {a['atom_name']:<4s} {a['resname']:<3s} "
-                f"{a['chain']:1s}{int(a['resSeq']):>4d}{a['icode']:1s}   "
-                f"{a['xyz'][0]:8.3f}{a['xyz'][1]:8.3f}{a['xyz'][2]:8.3f}"
-                f"{a['occupancy']:6.2f} 0.00          {a['elem']:>2s}\n"
-            )
+            rec = f"{a['record']:<6s}"[:6]
+            aname = a['atom_name']
+            if len(aname) < 4:
+                aname = f" {aname:<3s}"
+            else:
+                aname = f"{aname:<4s}"
+            resname = f"{a['resname']:>3s}"[:3]
+            chain = a['chain'][0] if a['chain'] else 'A'
+            resseq = int(a['resSeq'])
+            icode = a['icode'] if a['icode'] and a['icode'] != '.' else ' '
+            x, y, z = a['xyz']
+            occ = a['occupancy']
+            b = 0.0
+            elem = f"{a['elem']:>2s}"[:2]
+
+            line = f"{rec}{i:5d} {aname} {resname} {chain}{resseq:4d}{icode:1s}   {x:8.3f}{y:8.3f}{z:8.3f}{occ:6.2f}{b:6.2f}          {elem:2s}\n"
             pdb_lines.append(line)
         return pdb_lines
 

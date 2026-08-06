@@ -57,16 +57,23 @@ class SasaAnalyzer:
         return lines
 
     def get_surface(self, unbound_rsa_lines):
-        rel_sasa = lambda a, r: 100.0 * float(a - r) / a if float(a) > 0 else 0.0
+        """
+        Following Guharoy et al. (2010) and Miller et al. (1987), surface residues
+        are defined if the relative accessibility of residue 'X' in NACCESS is > 8.0%
+        from its accessibility in the extended Ala-X-Ala tripeptide conformation.
+        """
         surface = []
         for residue in unbound_rsa_lines:
             if residue.startswith("RES"):
                 try:
-                    abs_sasa = float(residue[15:22].strip())
-                    total_sasa = float(residue[23:28].strip())
-                    if rel_sasa(abs_sasa, total_sasa) > 8.0:
-                        surface.append(residue[4:14].strip())
-                except (ValueError, ZeroDivisionError):
+                    res_label = residue[4:14].strip()
+                    chain = residue[8]
+                    res_seq = residue[9:14].strip()
+                    rel_sasa = float(residue[22:28].strip())
+                    if rel_sasa > 8.0:
+                        surface.append(res_label)
+                        surface.append((chain, res_seq))
+                except (ValueError, IndexError):
                     pass
         return surface
 
@@ -75,15 +82,22 @@ class SasaAnalyzer:
         for residue in unbound_rsa_lines:
             if residue.startswith("RES"):
                 try:
-                    if float(residue[15:22].strip()) == 0.0:
-                        core.append(residue[4:14].strip())
-                except ValueError:
+                    rel_sasa = float(residue[22:28].strip())
+                    if rel_sasa <= 8.0:
+                        res_label = residue[4:14].strip()
+                        chain = residue[8]
+                        res_seq = residue[9:14].strip()
+                        core.append(res_label)
+                        core.append((chain, res_seq))
+                except (ValueError, IndexError):
                     pass
         return core
 
     def get_interface(self, bound_rsa_lines, bound_chains, unbound_rsa_lines):
         """
-        Calculates interface residues by matching (chain, resSeq) between bound complex and unbound structure.
+        Following Barik et al. (2012 PRince) and Belapure et al. (2023 IRAA),
+        residues are classified as interface residues if their SASA decreases
+        by at least 1.0 Angstrom^2 (delta SASA >= 1.0 A^2) upon complex formation.
         """
         chains_set = set(bound_chains) if isinstance(bound_chains, (list, tuple, set)) else set(str(bound_chains))
 
@@ -94,7 +108,7 @@ class SasaAnalyzer:
                 chain = line[8]
                 res_seq = line[9:14].strip()
                 try:
-                    abs_sasa = float(line[15:22].strip())
+                    abs_sasa = float(line[14:22].strip())
                     bound_dict[(chain, res_seq)] = (res_label, abs_sasa)
                 except ValueError:
                     pass
@@ -105,7 +119,7 @@ class SasaAnalyzer:
                 chain = line[8]
                 res_seq = line[9:14].strip()
                 try:
-                    abs_sasa = float(line[15:22].strip())
+                    abs_sasa = float(line[14:22].strip())
                     unbound_dict[(chain, res_seq)] = abs_sasa
                 except ValueError:
                     pass
@@ -114,18 +128,21 @@ class SasaAnalyzer:
         for (chain, res_seq), (res_label, b_sasa) in bound_dict.items():
             if (not chains_set or chain in chains_set) and (chain, res_seq) in unbound_dict:
                 u_sasa = unbound_dict[(chain, res_seq)]
-                if abs(b_sasa - u_sasa) > 0.1:
+                delta_sasa = u_sasa - b_sasa
+                if delta_sasa >= 1.0:
                     interface.append(res_label)
                     interface.append((chain, res_seq))
 
         return interface
 
     def get_non_interface_surface(self, bound_rsa_lines, bound_chains, unbound_rsa_lines):
+        """
+        Surface residues, other than the interface residues, are considered as non-interface residues.
+        """
         surface = self.get_surface(unbound_rsa_lines)
-        interface = self.get_interface(bound_rsa_lines, bound_chains, unbound_rsa_lines)
+        interface = set(self.get_interface(bound_rsa_lines, bound_chains, unbound_rsa_lines))
 
-        interface_set = set(interface)
-        return [res for res in surface if res not in interface_set]
+        return [res for res in surface if res not in interface]
 
     def parse_int_file(self, int_file_path):
         """

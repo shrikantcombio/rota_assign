@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary analysis outputs in dataset/
+dataset/*.asa
+dataset/*.rsa
+dataset/*.log
+dataset/*.int
+dataset/*.sur
+dataset/*.hb2
+dataset/*.intnew
+dataset/*.wat*
+dataset/*.res
+dataset/*.txt
+dataset/*.html
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes

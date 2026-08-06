@@ -57,33 +57,31 @@ class ComplexTorsionCalculator:
         b_phi, b_psi, b_omega, b_tau, b_xi, b_labels = self.protein_bb_calc.calculate_dihedrals(bound_p)
         b_chis = self.protein_sc_calc.calculate_all_chis(bound_p)
 
-        # 2. Unbound Protein Torsions (use bound if unbound_file not provided)
-        if unbound_file and unbound_p.exists():
+        # 2. Unbound Protein Torsions (only if unbound_file explicitly provided)
+        has_unbound = (unbound_file is not None and Path(unbound_file).resolve() != bound_p.resolve())
+
+        u_map = {}
+        if has_unbound and unbound_p.exists():
             u_phi, u_psi, u_omega, u_tau, u_xi, u_labels = self.protein_bb_calc.calculate_dihedrals(unbound_p)
             u_chis = self.protein_sc_calc.calculate_all_chis(unbound_p)
-        else:
-            u_phi, u_psi, u_omega, u_tau, u_xi, u_labels = b_phi, b_psi, b_omega, b_tau, b_xi, b_labels
-            u_chis = b_chis
 
-        # Map unbound dihedrals by label & (chain, resSeq)
-        u_map = {}
-        for i, lbl in enumerate(u_labels):
-            parts = lbl.split()
-            chain = parts[1] if len(parts) > 1 else 'A'
-            seq = parts[2] if len(parts) > 2 else '0'
-            res_key = (chain, seq)
+            for i, lbl in enumerate(u_labels):
+                parts = lbl.split()
+                chain = parts[1] if len(parts) > 1 else 'A'
+                seq = parts[2] if len(parts) > 2 else '0'
+                res_key = (chain, seq)
 
-            data_item = {
-                'PHI': u_phi[i], 'PSI': u_psi[i], 'OMEGA': u_omega[i],
-                'TAU': u_tau[i], 'XI': u_xi[i] if i < len(u_xi) else 0.0,
-                'CHI1': u_chis['CHI1'].get(lbl, 0.0),
-                'CHI2': u_chis['CHI2'].get(lbl, 0.0),
-                'CHI3': u_chis['CHI3'].get(lbl, 0.0),
-                'CHI4': u_chis['CHI4'].get(lbl, 0.0),
-                'CHI5': u_chis['CHI5'].get(lbl, 0.0),
-            }
-            u_map[lbl] = data_item
-            u_map[res_key] = data_item
+                data_item = {
+                    'PHI': u_phi[i], 'PSI': u_psi[i], 'OMEGA': u_omega[i],
+                    'TAU': u_tau[i], 'XI': u_xi[i] if i < len(u_xi) else 0.0,
+                    'CHI1': u_chis['CHI1'].get(lbl, 0.0),
+                    'CHI2': u_chis['CHI2'].get(lbl, 0.0),
+                    'CHI3': u_chis['CHI3'].get(lbl, 0.0),
+                    'CHI4': u_chis['CHI4'].get(lbl, 0.0),
+                    'CHI5': u_chis['CHI5'].get(lbl, 0.0),
+                }
+                u_map[lbl] = data_item
+                u_map[res_key] = data_item
 
         # 3. DSSP Secondary Structure on original cleaned structure files
         b_ss_map = {}
@@ -91,7 +89,8 @@ class ComplexTorsionCalculator:
         if run_dssp:
             try:
                 b_ss_map = self.dssp_analyzer.get_secondary_structure(target_bound_dssp_naccess)
-                u_ss_map = self.dssp_analyzer.get_secondary_structure(target_unbound_dssp_naccess)
+                if has_unbound:
+                    u_ss_map = self.dssp_analyzer.get_secondary_structure(target_unbound_dssp_naccess)
             except Exception:
                 pass
 
@@ -128,7 +127,7 @@ class ComplexTorsionCalculator:
 
             sasa_type = 'I' if (lbl in interface_set or res_key in interface_set) else 'N'
 
-            records.append({
+            rec = {
                 'PDB': pdb_tag,
                 'LABEL': lbl,
                 'B_PHI': b_phi[i],
@@ -140,17 +139,21 @@ class ComplexTorsionCalculator:
                 'B_CHI4': b_c4,
                 'B_CHI5': b_c5,
                 'B_SS': b_ss,
-                'U_PHI': u_item['PHI'],
-                'U_PSI': u_item['PSI'],
-                'U_OMEGA': u_item['OMEGA'],
-                'U_CHI1': u_item['CHI1'],
-                'U_CHI2': u_item['CHI2'],
-                'U_CHI3': u_item['CHI3'],
-                'U_CHI4': u_item['CHI4'],
-                'U_CHI5': u_item['CHI5'],
-                'U_SS': u_ss,
-                'SASA': sasa_type
-            })
+            }
+            if has_unbound:
+                rec.update({
+                    'U_PHI': u_item['PHI'],
+                    'U_PSI': u_item['PSI'],
+                    'U_OMEGA': u_item['OMEGA'],
+                    'U_CHI1': u_item['CHI1'],
+                    'U_CHI2': u_item['CHI2'],
+                    'U_CHI3': u_item['CHI3'],
+                    'U_CHI4': u_item['CHI4'],
+                    'U_CHI5': u_item['CHI5'],
+                    'U_SS': u_ss,
+                })
+            rec['SASA'] = sasa_type
+            records.append(rec)
 
         df = pd.DataFrame(records)
 
@@ -205,11 +208,25 @@ class ComplexTorsionCalculator:
                 else:
                     b_atoms = StructureReader.parse_structure(bound_p)
                     rna_atoms = [a for a in b_atoms if a.get('chain') in rna_set and a.get('record') in ['ATOM', 'HETATM']]
-
-                    from clean_structure import StructureCleaner
-                    sc = StructureCleaner()
+                    pdb_lines = []
+                    for i_at, a_at in enumerate(rna_atoms, start=1):
+                        rec = f"{a_at['record']:<6s}"[:6]
+                        aname = a_at['atom_name']
+                        if len(aname) < 4:
+                            aname = f" {aname:<3s}"
+                        else:
+                            aname = f"{aname:<4s}"
+                        resname = f"{a_at['resname']:>3s}"[:3]
+                        chain = a_at['chain'][0] if a_at['chain'] else 'R'
+                        resseq = int(a_at['resSeq'])
+                        icode = a_at['icode'] if a_at['icode'] and a_at['icode'] != '.' else ' '
+                        x, y, z = a_at['xyz']
+                        occ = a_at['occupancy']
+                        line = f"{rec}{i_at:5d} {aname} {resname} {chain}{resseq:4d}{icode:1s}   {x:8.3f}{y:8.3f}{z:8.3f}{occ:6.2f}  0.00          {a_at['elem']:>2s}\n"
+                        pdb_lines.append(line)
                     unbound_p = Path(tempfile.gettempdir()) / f"{bound_p.stem}_rna_alone.pdb"
-                    sc.write_pdb(rna_atoms, unbound_p)
+                    with open(unbound_p, 'w') as f_rna_out:
+                        f_rna_out.writelines(pdb_lines)
 
                 interface, non_int, surf, core = self.sasa_analyzer.classify_residues(bound_p, unbound_p, rna_chains)
                 interface_set = set(interface)
@@ -305,15 +322,14 @@ class ComplexTorsionCalculator:
 
         return df
 
-    def analyze_complex(self, bound_file, unbound_file=None, protein_chains="A", rna_chains="R", orig_bound_file=None, orig_unbound_file=None, run_dssp=True, run_naccess=True, output_file=None):
+    def analyze_complex(self, bound_file, unbound_file=None, unbound_rna_file=None, protein_chains="A", rna_chains="R", orig_bound_file=None, orig_unbound_file=None, run_dssp=True, run_naccess=True, output_file=None):
         """
-        Calculates both Protein and RNA torsion angles for a bound (protein-RNA complex) and optional unbound structure pair.
-        Uses orig_bound_file (e.g. 1ASY.cif) and orig_unbound_file for DSSP and NACCESS SASA.
-        Saves output as CSV or TSV based on file extension.
-        :returns: Dictionary with 'PROTEIN' DataFrame and 'RNA' DataFrame.
+        Calculates both Protein and RNA torsion angles for a bound (protein-RNA complex) and optional unbound protein / RNA structures.
+        Supports Case I (Unbound-Unbound), Case II (Unbound-Bound), Case III (Bound-Unbound), and Case IV (Bound-Bound).
         """
         bound_p = Path(bound_file)
         unbound_p = Path(unbound_file) if unbound_file else bound_p
+        unbound_rna_p = Path(unbound_rna_file) if unbound_rna_file else (Path(unbound_file) if unbound_file else bound_p)
 
         orig_b = orig_bound_file if orig_bound_file else bound_p
         orig_u = orig_unbound_file if orig_unbound_file else unbound_p
@@ -332,7 +348,7 @@ class ComplexTorsionCalculator:
         # 2. RNA Analysis
         df_rna = self.analyze_rna_7d_suite(
             bound_file=bound_p,
-            unbound_file=unbound_p,
+            unbound_file=unbound_rna_p,
             rna_chains=rna_chains,
             complex_file=orig_b,
             run_naccess=run_naccess

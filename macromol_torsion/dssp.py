@@ -37,6 +37,10 @@ class DsspAnalyzer:
         if file_p.suffix.lower() == '.dssp':
             return file_p
 
+        dssp_same = file_p.with_suffix('.dssp')
+        if dssp_same.exists() and dssp_same.stat().st_size > 0:
+            return dssp_same
+
         pdb_file = StructureReader.write_temp_pdb(file_p)
         out_p = Path(output_dssp) if output_dssp else file_p.with_suffix('.dssp')
 
@@ -69,44 +73,60 @@ class DsspAnalyzer:
         return res_details
 
     def corrected_assignment(self, dssp_file_path):
-        helix_tag = ["H", "G"]
-        strand_tag = ["E"]
-        coils_tag = ["I", "-", "S", "T", " "]
+        """
+        Secondary structure 3-state classification and Rost & Sander (1993) correction rules:
+        - Helices (H): 'H' (alpha-helix), 'G' (3_10-helix), 'I' (pi-helix)
+        - Strands (S): 'E' (extended strand)
+        - Loops (L): 'B' (isolated beta-bridge), 'T' (turn), 'S' (bend), ' ', '-', 'C' (coils)
 
+        Rost & Sander (1993) correction rules for isolated beta-bridges ('B'):
+        1. An isolated beta-bridge ('B') preceded or followed by a coil ('_') is considered as two strands: 'B_' -> 'SS' or '_B' -> 'SS'.
+        2. Two isolated beta-bridges interrupted by a coil ('B_B') is considered as three loops: 'B_B' -> 'LLL'.
+        """
         dssp_lines = self.parse_dssp(dssp_file_path)
-        result = []
-
-        i = 0
         n = len(dssp_lines)
-        while i < n:
-            ss_char = dssp_lines[i][16]
-            line_raw = dssp_lines[i]
+        if n == 0:
+            return []
 
-            if ss_char not in helix_tag + strand_tag + coils_tag:
-                if ss_char == 'B' and (i < n - 1 and dssp_lines[i + 1][16] == '-'):
-                    if i < n - 2 and dssp_lines[i + 2][16] == 'B':
-                        result.append((line_raw, "L"))
-                        result.append((dssp_lines[i + 1], "L"))
-                        result.append((dssp_lines[i + 2], "L"))
-                        i += 3
-                    else:
-                        result.append((line_raw, "S"))
-                        result.append((dssp_lines[i + 1], "S"))
-                        i += 2
-                else:
-                    result.append((line_raw, "L"))
-                    i += 1
-            elif ss_char in helix_tag:
-                result.append((line_raw, "H"))
-                i += 1
-            elif ss_char in strand_tag:
-                result.append((line_raw, "S"))
-                i += 1
+        raw_codes = [line[16] for line in dssp_lines]
+
+        # Step 1: Initial 3-state mapping
+        mapped = []
+        for c in raw_codes:
+            if c in ['H', 'G', 'I']:
+                mapped.append('H')
+            elif c == 'E':
+                mapped.append('S')
             else:
-                result.append((line_raw, "L"))
-                i += 1
+                mapped.append('L')
 
-        return result
+        final_ss = list(mapped)
+
+        # Step 2: Apply Rost & Sander (1993) rules
+        i = 0
+        while i < n:
+            c = raw_codes[i]
+            if c == 'B':
+                # Rule 2: Two isolated beta-bridges interrupted by coil (B _ B) -> 3 loops (LLL)
+                if i + 2 < n and raw_codes[i + 2] == 'B' and raw_codes[i + 1] in ['-', ' ', 'S', 'T']:
+                    final_ss[i] = 'L'
+                    final_ss[i + 1] = 'L'
+                    final_ss[i + 2] = 'L'
+                    i += 3
+                    continue
+
+                # Rule 1: Isolated beta-bridge preceded or followed by coil (B _ = SS or _ B = SS)
+                next_is_coil = (i + 1 < n and raw_codes[i + 1] in ['-', ' ', 'S', 'T'])
+                prev_is_coil = (i - 1 >= 0 and raw_codes[i - 1] in ['-', ' ', 'S', 'T'])
+                if next_is_coil or prev_is_coil:
+                    final_ss[i] = 'S'
+                    if next_is_coil and i + 1 < n:
+                        final_ss[i + 1] = 'S'
+                    if prev_is_coil and i - 1 >= 0:
+                        final_ss[i - 1] = 'S'
+            i += 1
+
+        return [(dssp_lines[k], final_ss[k]) for k in range(n)]
 
     def get_secondary_structure(self, structure_file, output_dssp=None):
         dssp_file = self.run_dssp(structure_file, output_dssp=output_dssp)

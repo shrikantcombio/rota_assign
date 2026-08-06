@@ -140,8 +140,8 @@ class RotamerTransitionAnalyzer:
         df_copy['AA_clean'] = df_copy.apply(_extract_aa, axis=1)
 
         df_valid = df_copy[
-            (~df_copy['b_rotastate'].astype(str).str.contains('!|MA|no_chi', na=False)) &
-            (~df_copy['ub_rotastate'].astype(str).str.contains('!|MA|no_chi', na=False))
+            (~df_copy['b_rotastate'].astype(str).str.contains('!|MA|NA|no_chi', na=False)) &
+            (~df_copy['ub_rotastate'].astype(str).str.contains('!|MA|NA|no_chi', na=False))
         ].copy()
 
         if df_valid.empty:
@@ -188,7 +188,7 @@ class RotamerConformerPreferenceAnalyzer:
         df_copy['AA_clean'] = df_copy.apply(_extract_aa, axis=1)
 
         df_valid = df_copy[
-            (~df_copy['b_rotastate'].astype(str).str.contains('!|MA|no_chi', na=False)) &
+            (~df_copy['b_rotastate'].astype(str).str.contains('!|MA|NA|no_chi', na=False)) &
             (df_copy['NtC'] != 'NANT')
         ].copy()
 

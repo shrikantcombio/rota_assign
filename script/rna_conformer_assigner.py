@@ -26,37 +26,57 @@ try:
 except ImportError:
     raise ImportError(f"Cannot import StructAnnotate.rna_annotator.confal. Ensure StructAnnotate is located at {SA_DIR}")
 
-# Mapping for NtC cluster IDs to standard NtC codes and CANA strings
+# Mapping for NtC cluster IDs to standard NtC codes and CANA strings (from RNP_NtC_mean.csv)
 NTC_MAP = {
     0: ("AA00", "AAA"),
-    1: ("AA01", "AAw"),
-    2: ("AA02", "AAA"),
-    3: ("AA03", "AAA"),
-    4: ("AA04", "AAA"),
-    5: ("AA05", "AAA"),
-    6: ("AA06", "AAw"),
-    7: ("AA07", "AAA"),
-    8: ("AA08", "AAA"),
-    9: ("AA09", "AAA"),
-    10: ("AA10", "AAw"),
-    11: ("AA11", "AAw"),
-    12: ("AA12", "AAu"),
-    13: ("AB01", "A-B"),
-    14: ("AB02", "A-B"),
-    15: ("AB03", "A-B"),
-    16: ("AB04", "A-B"),
-    17: ("AB05", "A-B"),
-    18: ("BA01", "B-A"),
-    19: ("BA02", "B-A"),
-    20: ("BB01", "BBB"),
-    21: ("OP01", "OPN"),
-    22: ("OP02", "OPN"),
-    23: ("OP03", "OPN"),
-    24: ("OP04", "OPN"),
-    25: ("OP05", "OPN"),
-    26: ("OP06", "OPN"),
-    27: ("OP07", "OPN")
+    1: ("AB05", "A-B"),
+    2: ("AA01", "AAw"),
+    3: ("OP11", "OPN"),
+    4: ("OP22", "OPN"),
+    5: ("BB16", "BBw"),
+    6: ("OP33", "OPN"),
+    7: ("BB04", "B12"),
+    8: ("OP15", "OPN"),
+    9: ("AA10", "AAw"),
+    10: ("AA07", "AAu"),
+    11: ("OP21", "OPN"),
+    12: ("ZZ1S", "ZZZ"),
+    13: ("AB06", "A-B"),
+    14: ("OP25", "OPN"),
+    15: ("BB21", "miB"),
+    16: ("IC02", "ICL"),
+    17: ("OP32", "OPN"),
+    18: ("OP17", "OPN"),
+    19: ("IC08", "ICL"),
+    20: ("OP29", "OPN"),
+    21: ("AA11", "AAw"),
+    22: ("OP26", "OPN"),
+    23: ("BB22", "miB"),
+    24: ("BA16", "B-A"),
+    25: ("IC09", "ICL"),
+    26: ("AB07", "A-B"),
+    27: ("ZZ01", "ZZZ")
 }
+
+
+def normalize_torsion_angle(val, angle_name=""):
+    """
+    Normalizes observed torsion angles from various conventions into [0, 360) format.
+    Handles signed/negative angles in [-180, 180] for delta, beta, and gamma.
+    """
+    if pd.isna(val) or val is None:
+        return None
+    v = float(val)
+    # Delta (sugar pucker) is always positive (typically 80-150 deg)
+    if "delta" in angle_name.lower() or angle_name.lower() in ["delm", "delta"]:
+        return abs(v)
+    # Beta and Gamma signed angles (-180..0)
+    if "beta" in angle_name.lower() or "gamma" in angle_name.lower():
+        if v < 0:
+            return abs(v)
+    if v < 0:
+        return (v % 360.0)
+    return v
 
 
 class RNAConformerAssigner:
@@ -87,10 +107,12 @@ class RNAConformerAssigner:
         if best_cluster is not None and isinstance(best_cluster, (int, str)):
             try:
                 cluster_int = int(best_cluster)
-                ntc_code, cana_str = NTC_MAP.get(cluster_int, (f"AA{cluster_int:02d}", "AAA"))
+                default_ntc, default_cana = NTC_MAP.get(cluster_int, (f"AA{cluster_int:02d}", "AAA"))
+                ntc_code = str(best_meta.get("ntc", default_ntc))
+                cana_str = str(best_meta.get("cana", default_cana))
             except ValueError:
-                ntc_code = str(best_cluster)
-                cana_str = best_meta.get("cana", "AAA")
+                ntc_code = str(best_meta.get("ntc", best_cluster))
+                cana_str = str(best_meta.get("cana", "AAA"))
         else:
             ntc_code = "NANT"
             cana_str = "NAN"
@@ -119,13 +141,13 @@ class RNAConformerAssigner:
 
         for idx, row in df.iterrows():
             obs = {
-                'delta1': float(row[delm_c]) % 360.0 if delm_c in row and not pd.isna(row[delm_c]) else None,
-                'epsilon1': float(row[epsm_c]) % 360.0 if epsm_c in row and not pd.isna(row[epsm_c]) else None,
-                'zeta1': float(row[zetm_c]) % 360.0 if zetm_c in row and not pd.isna(row[zetm_c]) else None,
-                'alpha2': float(row[alpha_c]) % 360.0 if alpha_c in row and not pd.isna(row[alpha_c]) else None,
-                'beta2': float(row[beta_c]) % 360.0 if beta_c in row and not pd.isna(row[beta_c]) else None,
-                'gamma2': float(row[gamma_c]) % 360.0 if gamma_c in row and not pd.isna(row[gamma_c]) else None,
-                'delta2': float(row[delta_c]) % 360.0 if delta_c in row and not pd.isna(row[delta_c]) else None,
+                'delta1': normalize_torsion_angle(row[delm_c], 'delta1') if delm_c in row else None,
+                'epsilon1': normalize_torsion_angle(row[epsm_c], 'epsilon1') if epsm_c in row else None,
+                'zeta1': normalize_torsion_angle(row[zetm_c], 'zeta1') if zetm_c in row else None,
+                'alpha2': normalize_torsion_angle(row[alpha_c], 'alpha2') if alpha_c in row else None,
+                'beta2': normalize_torsion_angle(row[beta_c], 'beta2') if beta_c in row else None,
+                'gamma2': normalize_torsion_angle(row[gamma_c], 'gamma2') if gamma_c in row else None,
+                'delta2': normalize_torsion_angle(row[delta_c], 'delta2') if delta_c in row else None,
             }
 
             ntc, cana, confal = self.assign_suite(obs)

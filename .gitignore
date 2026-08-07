@@ -16,6 +16,16 @@ dataset/*.res
 dataset/*.txt
 dataset/*.html
 
+# Script
+script/__pycache__/
+
+# Test directory
+test/__pycache__/
+test/test_results/
+
+# utils
+utils/__pycache__/
+
 # OS generated files
 .DS_Store
 .DS_Store?

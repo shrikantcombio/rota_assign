@@ -2,7 +2,8 @@
 rota_conf_assign.py
 -------------------
 Test script for verifying single rotamer library choice (BBD default), n-1 chi checking criteria,
-and 'NA' output indicator on single bound complex structure (1ASY.cif).
+and rotamer/RNA conformer state assignments on 1ASY.cif complex structure.
+All output files are written under test/test_results/.
 """
 
 from pathlib import Path
@@ -14,7 +15,8 @@ TEST_DIR = Path(__file__).resolve().parent
 ROOT_DIR = TEST_DIR.parent
 SCRIPT_DIR = ROOT_DIR / "script"
 DATASET_DIR = ROOT_DIR / "dataset"
-RESULTS_DIR = DATASET_DIR / "results"
+RESULTS_DIR = TEST_DIR / "test_results"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
@@ -30,12 +32,12 @@ def run_test():
     # 1. Resolve 1ASY Structure File (.cif or .pdb)
     bound_file = DATASET_DIR / "1ASY.cif"
     if not bound_file.exists():
-        bound_file = Path("/home/labuser/Projects/PRince/test/1ASY.cif")
-    if not bound_file.exists():
         bound_file = DATASET_DIR / "1ASY.pdb"
 
-    # 2. NAxplorer Interactions File
-    naxplorer_int_file = DATASET_DIR / "1ASY_interactions_NAxplorer.csv"
+    # 2. NAxplorer / Energy Interactions File
+    naxplorer_int_file = DATASET_DIR / "1ASY_rnp_interactions_model1_energy.csv"
+    if not naxplorer_int_file.exists():
+        naxplorer_int_file = DATASET_DIR / "1ASY_interactions_NAxplorer.csv"
     if not naxplorer_int_file.exists():
         naxplorer_int_file = TEST_DIR / "1ASY_interactions.csv"
 
@@ -63,7 +65,7 @@ def run_test():
     print(f"5. Final Merged Output CSV:    {results['FINAL_OUTPUT_FILE']}")
 
     # 4. Verify Output Schema and BBD Rotamer Assignment
-    df_rota = pd.read_csv(results['PROTEIN_ROTA_FILE'])
+    df_rota = pd.read_csv(results['PROTEIN_ROTA_FILE'], keep_default_na=False)
     print(f"\nProtein Rotastates Dataset Shape: {df_rota.shape}")
     print("\nSample BBD Rotamer Assignments:")
     print(df_rota[['LABEL', 'B_PHI', 'B_PSI', 'SASA', 'b_rotastate']].head(15))

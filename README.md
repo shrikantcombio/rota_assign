@@ -4,6 +4,75 @@ A comprehensive, modular Python framework for structural analysis of Protein-RNA
 
 ---
 
+## 🛠️ System Requirements & External Dependencies
+
+Running `rota_assign` requires Python 3.9+, core scientific Python libraries, and three external bioinformatic system binaries for SASA calculation, secondary structure assignment, and sequence alignment.
+
+### 1. External System Binaries (Must be installed & accessible in `$PATH` or configured path)
+
+| Tool / Binary | Version | Purpose in Pipeline | Detection / Default Paths |
+| :--- | :--- | :--- | :--- |
+| **NACCESS** (`naccess`) | `2.1.1` | Calculates Solvent Accessible Surface Area (SASA) and classifies residues into Interface (`I`) vs. Non-Interface (`N`) states based on $\Delta\text{SASA} \ge 1.0\ \text{Å}^2$. | Searches system `$PATH` or `/home/labuser/naccess2.1.1/naccess`. |
+| **DSSP** (`mkdssp` / `dssp`) | `3.x` / `4.x` | Assigns protein 3-state secondary structure (`H`: Helix, `S`: Sheet, `L`: Loop). | Searches system `$PATH` (`mkdssp` or `dssp`). |
+| **ClustalW2** (`clustalw2` / `clustalw`) | `2.1` | Performs pairwise sequence alignment between bound complex and unbound free protein structures to extract equal residue length datasets. | Searches system `$PATH` or `/home/labuser/clustalw-2.1/clustalw2`. |
+
+---
+
+### 2. Core Python Dependencies
+
+| Package | Minimum Version | Purpose |
+| :--- | :--- | :--- |
+| `python` | `>= 3.9` | Execution environment (tested on Python 3.11). |
+| `biopython` | `>= 1.79` | Parsing PDB and mmCIF structure files (`Bio.PDB`). |
+| `pandas` | `>= 1.3.0` | Data manipulation, CSV processing, dataframe merging. |
+| `numpy` | `>= 1.21.0` | Vectorized angular math, dihedral angle calculations, distance metrics. |
+| `scipy` | `>= 1.7.0` | Statistical testing (Mann-Whitney U, $\chi^2$ contingency, matrix ops). |
+| `matplotlib` | `>= 3.4.0` | Visualization and figure generation. |
+| `seaborn` | `>= 0.11.0` | Statistical plot formatting and distribution plots. |
+
+---
+
+### 3. Bundled Package Modules & Reference Libraries
+
+The repository includes pre-packaged reference libraries and third-party tools:
+- **StructAnnotate** ([`StructAnnotate/`](file:///home/labuser/Projects/PhD_projects/rota_assign/StructAnnotate/)): Cloned package for RNA 7D suite dinucleotide conformer assignment (`NtC`, `CANA`, `confalA`).
+- **BBD Rotamer Library** ([`library/RBPs_BBD_rotamer_lib/`](file:///home/labuser/Projects/PhD_projects/rota_assign/library/RBPs_BBD_rotamer_lib/)): Dunbrack Backbone Dependent (BBD) rotamer libraries.
+- **Structure Cleaner** ([`utils/clean_structure.py`](file:///home/labuser/Projects/PhD_projects/rota_assign/utils/clean_structure.py)): Standardized PDB structure cleaner module.
+
+---
+
+## 💻 Installation & Environment Setup
+
+### Option A: Using Conda (Recommended)
+
+1. **Clone the Repository**:
+   ```bash
+   git clone git@github.com:shrikantcombio/rota_assign.git
+   cd rota_assign
+   ```
+
+2. **Create and Activate Conda Environment**:
+   ```bash
+   conda env create -f environment.yml
+   conda activate rota_assign
+   ```
+
+3. **Verify External Binaries**:
+   Ensure `naccess`, `dssp` (or `mkdssp`), and `clustalw2` are executable:
+   ```bash
+   naccess -help
+   dssp --version
+   clustalw2 -help
+   ```
+
+### Option B: Using Pip
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
 ## 📁 Repository Architecture
 
 ```text
@@ -13,15 +82,8 @@ rota_assign/
 │   ├── 1EOV.pdb                    # Cleaned free/unbound protein structure
 │   ├── 1ASY_1EOV_C.pdb             # Sequence-aligned bound complex equal structure
 │   ├── 1ASY_1EOV_U.pdb             # Sequence-aligned unbound equal structure
-│   ├── 1ASY_interactions_NAxplorer.csv # NAxplorer interaction dataset
+│   ├── 1ASY_rnp_interactions_model1_energy.csv # NAxplorer interaction dataset
 │   └── results/                    # Generated intermediate & final output files
-│       ├── 1ASY_protein_torsions.csv
-│       ├── 1ASY_protein_rotastates.csv
-│       ├── 1ASY_rna_conformers.csv
-│       ├── 1ASY_interactions.csv
-│       ├── 1ASY_final_output.csv
-│       ├── 1ASY_arg_forks_analysis.csv
-│       └── 1ASY_rotamer_transitions.csv
 ├── macromol_torsion/               # Core torsion calculation engine (Protein & RNA)
 │   ├── calculator.py               # ComplexTorsionCalculator master class
 │   ├── protein_backbone.py         # Mainchain (Phi, Psi, Omega) dihedrals
@@ -42,11 +104,14 @@ rota_assign/
 │   └── equal_residue_aligner.py    # EqualResidueAligner sequence alignment module
 ├── library/                        # Rotamer & conformer reference libraries
 │   └── RBPs_BBD_rotamer_lib/       # Backbone Dependent (BBD) rotamer libraries
-├── rota_lib_dict/                  # Pre-compiled JSON rotamer dictionaries
 ├── StructAnnotate/                 # Cloned StructAnnotate package for RNA conformers
 ├── test/                           # Test suite & verification scripts
-│   └── rota_conf_assign.py         # End-to-end integration test script
-├── environment.yml                 # Conda environment definition
+│   ├── run_all_tests.py            # Master test runner script
+│   ├── test_torsion_calculation.py # Torsion & interface calculation test
+│   ├── rota_conf_assign.py         # Rotamer & RNA conformer assignment test
+│   └── test_results/               # Directory where test outputs are saved
+├── environment.yml                 # Conda environment definition file
+├── requirements.txt                # Pip requirements file
 └── README.md                       # Main repository documentation
 ```
 
@@ -55,7 +120,7 @@ rota_assign/
 ## 🚀 Quick Start & Full Pipeline Workflow
 
 ### Step 1: Structure Cleaning (`utils/clean_structure.py`)
-Clean raw PDB/mmCIF structures by removing unwanted heteroatoms, handling alternate locations (altlocs), optionally keeping waters/ions, setting occupancies, and exporting standardized structures into `dataset/`:
+Clean raw PDB/mmCIF structures by removing unwanted heteroatoms, handling alternate locations (altlocs), optionally keeping waters/ions, setting occupancies, and exporting standardized structures:
 
 ```python
 from pathlib import Path
@@ -69,14 +134,14 @@ cleaner = StructureCleaner(
 )
 
 # Clean bound and unbound structures
-out_bound, logs_b = cleaner.clean_structure("path/to/raw_1ASY.pdb", "dataset/1ASY.pdb")
-out_unbound, logs_u = cleaner.clean_structure("path/to/raw_1EOV.pdb", "dataset/1EOV.pdb")
+out_bound, logs_b = cleaner.clean_structure("dataset/1ASY.cif", "dataset/1ASY.pdb")
+out_unbound, logs_u = cleaner.clean_structure("dataset/1EOV.cif", "dataset/1EOV.pdb")
 ```
 
 ---
 
 ### Step 2: Equal Residue Sequence Alignment (`utils/equal_residue_aligner.py`)
-Align protein chains between bound complex and unbound free protein structures to produce pair-aligned, equal-length PDB files (`1ASY_1EOV_C.pdb` and `1ASY_1EOV_U.pdb`):
+Align protein chains between bound complex and unbound free protein structures using ClustalW2 to produce pair-aligned, equal-length PDB files (`1ASY_1EOV_C.pdb` and `1ASY_1EOV_U.pdb`):
 
 ```python
 from utils.equal_residue_aligner import EqualResidueAligner
@@ -88,16 +153,16 @@ results = aligner.align_and_extract_equal_residues(
     unbound_file="dataset/1EOV.pdb",
     unbound_chains="A",
     rna_chains="R",
-    output_dir="dataset/"
+    output_dir="dataset/1ASY_1EOV"
 )
 
-# Generated files: dataset/1ASY_1EOV_C.pdb, dataset/1ASY_1EOV_U.pdb
+# Generated files: dataset/1ASY_1EOV/1ASY_1EOV_C.pdb, dataset/1ASY_1EOV/1ASY_1EOV_U.pdb
 ```
 
 ---
 
 ### Step 3: Torsion Angle, DSSP, & NACCESS SASA Calculation (`macromol_torsion/`)
-Calculate mainchain ($\phi, \psi, \omega$), sidechain ($\chi_1 \dots \chi_5$), secondary structure (`H`, `S`, `L`), NACCESS Solvent Accessible Surface Area (SASA) interface status (`I` vs `N`), and RNA 7D suite angles:
+Calculate mainchain ($\phi, \psi, \omega$), sidechain ($\chi_1 \dots \chi_5$), secondary structure (`H`, `S`, `L`), NACCESS SASA interface status (`I` vs `N`), and RNA 7D suite angles:
 
 ```python
 from pathlib import Path
@@ -107,20 +172,18 @@ calc = ComplexTorsionCalculator()
 
 # Comprehensive complex analysis
 results = calc.analyze_complex(
-    bound_file=Path("dataset/1ASY_1EOV_C.pdb"),
-    unbound_file=Path("dataset/1ASY_1EOV_U.pdb"),
+    bound_file=Path("dataset/1ASY_1EOV/1ASY_1EOV_C.pdb"),
+    unbound_file=Path("dataset/1ASY_1EOV/1ASY_1EOV_U.pdb"),
     protein_chains="A",
     rna_chains="R",
     orig_bound_file=Path("dataset/1ASY.pdb"),
     orig_unbound_file=Path("dataset/1EOV.pdb"),
-    output_file="dataset/results/pairs/1ASY_1EOV.csv"
+    output_file="dataset/results/1ASY_1EOV.csv"
 )
 
 df_protein = results['PROTEIN']
 df_rna = results['RNA']
 ```
-
-For detailed documentation on the torsion calculation module, see **[`macromol_torsion/README.md`](file:///home/labuser/Projects/PhD_projects/rota_assign/macromol_torsion/README.md)** (if available) or module docstrings.
 
 ---
 
@@ -138,79 +201,35 @@ df_protein_assigned = assign_rotamer_states(df_protein, mode='both')
 df_rna_assigned = assign_rna_conformers(df_rna)
 ```
 
-For comprehensive module API documentation, see **[`script/README.md`](file:///home/labuser/Projects/PhD_projects/rota_assign/script/README.md)**.
-
 ---
 
-### Step 5: Interaction Mapping & Master Merging Pipeline (`script/merge_pipeline.py`)
-Run the master pipeline to integrate all intermediate outputs and map NAxplorer interaction entries (`dataset/1ASY_interactions_NAxplorer.csv`) into the final merged dataset (`dataset/results/1ASY_final_output.csv`):
+### Step 5: Master Integration Pipeline (`script/merge_pipeline.py`)
+
+Run the master pipeline via CLI for bound-unbound pair structures or single complex mode:
 
 ```bash
-# Execute master pipeline via CLI
-python script/merge_pipeline.py --pdb 1ASY
+# Complex + Unbound Protein Mode
+python script/merge_pipeline.py --pdb dataset/1ASY.cif --ub_protein dataset/1EOV.cif --interactions dataset/1ASY_rnp_interactions_model1_energy.csv -o dataset/results/
+
+# Complex + Unbound RNA Mode
+python script/merge_pipeline.py --pdb dataset/1ASY.cif --ub_RNA dataset/2TRA.cif --interactions dataset/1ASY_rnp_interactions_model1_energy.csv -o dataset/results/
 ```
-
-**Or execute full integration test script:**
-```bash
-python test/rota_conf_assign.py
-```
-
----
-
-### Step 6: Arginine Forks & Rotamer Transition Shift Analysis (`script/analyze_rotastates.py`)
-Analyze bidentate Arginine forks, RNA target moieties, and rotamer preference shifts upon RNA binding (unbound to bound) categorized by amino acid chemical groups:
-
-```bash
-python script/analyze_rotastates.py --input dataset/results/1ASY_final_output.csv -o dataset/results/
-```
-
----
-
-## 📊 Final Dataset Output Schema (`dataset/results/1ASY_final_output.csv`)
-
-The final output dataset contains 17 standardized columns:
-
-| Column Name | Type | Description |
-| :--- | :--- | :--- |
-| `PDB_ID` | `str` | PDB identifier (e.g. `1ASY`) |
-| `AA` | `str` | 3-letter amino acid code (e.g. `ASN`, `LYS`) |
-| `AA_atom` | `str` | Participating protein atom (e.g. `ND2`, `NZ`, `N`) |
-| `AA_chain` | `str` | Protein chain identifier (e.g. `A`) |
-| `AA_pos` | `int` | Protein residue position |
-| `Nuc` | `str` | 1-letter nucleotide code (e.g. `U`, `A`, `G`, `C`) |
-| `Nuc_atom` | `str` | Participating RNA atom (e.g. `OP1`, `O2'`, `N3`) |
-| `Nuc_chain` | `str` | RNA chain identifier (e.g. `R`) |
-| `Nuc_pos` | `int` | RNA nucleotide position |
-| `hb_dis` | `float` | Hydrogen bond / interaction distance (Å) |
-| `NtC` | `str` | StructAnnotate NtC conformer cluster code (e.g. `AA08`, `AA00`) |
-| `CANA` | `str` | StructAnnotate CANA category string (e.g. `AAA`, `A-B`) |
-| `confalA` | `float` | CONFAL score (0.0 to 100.0) |
-| `b_phi` | `float` | Bound protein backbone Phi angle ($\phi$) |
-| `b_psi` | `float` | Bound protein backbone Psi angle ($\psi$) |
-| `b_ss` | `str` | DSSP secondary structure code (`H`: Helix, `S`: Sheet, `L`: Loop) |
-| `b_rotastate` | `str` | Assigned BBD rotamer state (e.g. `t17`, `t-152`, `M145`, `MA`) |
 
 ---
 
 ## 🧪 Testing & Verification
 
-To run unit and integration test scripts:
+To verify that all dependencies and external binaries are functioning properly, run the test suite:
 
 ```bash
-# Run master integration test script
-python test/rota_conf_assign.py
+# Run master test suite
+python3 test/run_all_tests.py
 ```
 
----
-
-## 📄 References & Further Documentation
-
-- **Script Package Documentation**: [`script/README.md`](file:///home/labuser/Projects/PhD_projects/rota_assign/script/README.md)
-- **StructAnnotate Package**: [`StructAnnotate/`](file:///home/labuser/Projects/PhD_projects/rota_assign/StructAnnotate/)
-- **Backbone Dependent Rotamer Libraries**: [`library/RBPs_BBD_rotamer_lib/`](file:///home/labuser/Projects/PhD_projects/rota_assign/library/RBPs_BBD_rotamer_lib/)
+Outputs will be saved in `test/test_results/`.
 
 ---
 
 ## 📜 License & Citation
 
-Developed for PhD Research on Protein-RNA Interactions and Rotameric/Conformational State Assignments.
+Developed for PhD Research on Protein-RNA Interactions, Rotameric Transitions, and Conformational State Assignments.

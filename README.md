@@ -82,7 +82,6 @@ rota_assign/
 │   ├── 1EOV.pdb                    # Cleaned free/unbound protein structure
 │   ├── 1ASY_1EOV_C.pdb             # Sequence-aligned bound complex equal structure
 │   ├── 1ASY_1EOV_U.pdb             # Sequence-aligned unbound equal structure
-│   ├── 1ASY_rnp_interactions_model1_energy.csv # NAxplorer interaction dataset
 │   └── results/                    # Generated intermediate & final output files
 ├── macromol_torsion/               # Core torsion calculation engine (Protein & RNA)
 │   ├── calculator.py               # ComplexTorsionCalculator master class
@@ -91,9 +90,12 @@ rota_assign/
 │   ├── rna_backbone.py             # RNA 7D suite dihedrals (Alpha..Zeta, Delta, Chi)
 │   ├── dssp_runner.py              # Secondary Structure assignment (H, S, L)
 │   └── naccess_runner.py           # SASA & Interface status assignment (I vs N)
+├── rota_lib_dict/                  # Cached JSON Rotamer Library Dictionaries
+│   ├── bbd/                        # Pre-built Backbone Dependent JSON dictionaries
+│   └── bbi/                        # Pre-built Backbone Independent JSON dictionaries
 ├── script/                         # High-level pipeline & analysis modules
-│   ├── build_rotalib.py            # Rotamer library dict builder (SSD, BBD, BBI)
-│   ├── get_rotastate.py            # Rotamer state calculator & BBD nearest grid lookup
+│   ├── build_rotalib.py            # Rotamer library dict builder (SSD, BBD, BBI) & JSON cache
+│   ├── get_rotastate.py            # Rotamer state calculator & SCWRL4 style matching
 │   ├── rotaassign.py               # ProteinRotamerAssigner (bound/unbound/both modes)
 │   ├── rna_conformer_assigner.py   # StructAnnotate integration (NtC, CANA, confalA)
 │   ├── analyze_rotastates.py       # Arginine forks & rotamer shift analyzer
@@ -103,7 +105,8 @@ rota_assign/
 │   ├── clean_structure.py          # PDB/CIF StructureCleaner module
 │   └── equal_residue_aligner.py    # EqualResidueAligner sequence alignment module
 ├── library/                        # Rotamer & conformer reference libraries
-│   └── RBPs_BBD_rotamer_lib/       # Backbone Dependent (BBD) rotamer libraries
+│   ├── RBPs_BBD_rotamer_lib/       # Backbone Dependent (BBD) rotamer libraries (JSON/CSV)
+│   └── RBPs_BBI_rotamer_lib/       # Backbone Independent (BBI) rotamer libraries (JSON/CSV)
 ├── StructAnnotate/                 # Cloned StructAnnotate package for RNA conformers
 ├── test/                           # Test suite & verification scripts
 │   ├── run_all_tests.py            # Master test runner script

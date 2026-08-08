@@ -180,12 +180,14 @@ class ComplexTorsionCalculator:
             target_bound = complex_file
             labels, alpha, beta, gamma, delta, epsilon, zeta, delm, epsm, zetm = self.rna_bb_calc.calculate_7d_suite(target_bound)
 
-        lab_chi, chi1, chi2, nn_dist, cc_dist, mu = self.rna_sc_calc.calculate_sidechain_and_distances(target_bound)
+        res_sidechain_data = self.rna_sc_calc.calculate_sidechain_and_distances(target_bound)
+        lab_chi, chi1, chi2, nn_dist, cc_dist, mu = res_sidechain_data[:6]
+        res_chi_map = res_sidechain_data[6] if len(res_sidechain_data) > 6 else {}
 
         sc_map = {}
         for i, lbl in enumerate(lab_chi):
             sc_map[lbl] = {
-                'CHI1': chi1[i] if i < len(chi1) else 0.0,
+                'CHI1': chi1[i] if i < len(chi1) else res_chi_map.get(lbl, 0.0),
                 'CHI2': chi2[i] if i < len(chi2) else 0.0,
                 'NN': nn_dist[i] if i < len(nn_dist) else 0.0,
                 'CC': cc_dist[i] if i < len(cc_dist) else 0.0,
@@ -235,13 +237,14 @@ class ComplexTorsionCalculator:
 
         records = []
         for i, lbl in enumerate(labels):
-            sc = sc_map.get(lbl, {'CHI1': 0.0, 'CHI2': 0.0, 'NN': 0.0, 'CC': 0.0, 'MU': 0.0})
+            sc = sc_map.get(lbl, {'CHI1': res_chi_map.get(lbl, 0.0), 'CHI2': 0.0, 'NN': 0.0, 'CC': 0.0, 'MU': 0.0})
             parts = lbl.split()
             chain = parts[1] if len(parts) > 1 else 'R'
             seq = parts[2] if len(parts) > 2 else '0'
             res_key = (chain, seq)
 
             sasa_type = 'I' if (lbl in interface_set or res_key in interface_set) else 'N'
+            chi1_val = res_chi_map.get(lbl, sc.get('CHI1', 0.0))
 
             records.append({
                 'LABEL': lbl,
@@ -252,7 +255,7 @@ class ComplexTorsionCalculator:
                 'BETA': beta[i],
                 'GAMMA': gamma[i],
                 'DELTA': delta[i],
-                'CHI1': sc['CHI1'],
+                'CHI1': chi1_val,
                 'CHI2': sc['CHI2'],
                 'NN_DIST': sc['NN'],
                 'CC_DIST': sc['CC'],
@@ -289,11 +292,15 @@ class ComplexTorsionCalculator:
         sugar_results = self.rna_sugar_calc.calculate_pseudorotation(structure_input)
         sugar_map = {r['label']: r for r in sugar_results}
 
-        lab_chi, chi1, chi2, nn_dist, cc_dist, mu = self.rna_sc_calc.calculate_sidechain_and_distances(structure_input)
+        res_sidechain_data = self.rna_sc_calc.calculate_sidechain_and_distances(structure_input)
+        lab_chi, chi1, chi2, nn_dist, cc_dist, mu = res_sidechain_data[:6]
+        res_chi_map = res_sidechain_data[6] if len(res_sidechain_data) > 6 else {}
+
         sc_map = {}
         for i, lbl in enumerate(lab_chi):
             sc_map[lbl] = {
-                'CHI1': chi1[i], 'CHI2': chi2[i],
+                'CHI_SELF': chi1[i],
+                'CHI_NEXT': chi2[i],
                 'NN': nn_dist[i], 'CC': cc_dist[i], 'MU': mu[i]
             }
 
@@ -301,7 +308,10 @@ class ComplexTorsionCalculator:
         for i, lbl in enumerate(labels):
             ps = pseudo_map.get(lbl, {'ETA': 0.0, 'THETA': 0.0, 'ETA_PRIME': 0.0, 'THETA_PRIME': 0.0})
             sg = sugar_map.get(lbl, {'phase': 0.0, 'amplitude': 0.0, 'pucker': 'N/A', 'v0': 0.0, 'v1': 0.0, 'v2': 0.0, 'v3': 0.0, 'v4': 0.0})
-            sc = sc_map.get(lbl, {'CHI1': 0.0, 'CHI2': 0.0, 'NN': 0.0, 'CC': 0.0, 'MU': 0.0})
+            sc = sc_map.get(lbl, {'CHI_SELF': res_chi_map.get(lbl, 0.0), 'CHI_NEXT': 0.0, 'NN': 0.0, 'CC': 0.0, 'MU': 0.0})
+
+            # Ensure current residue's own Glycosidic Chi is used
+            chi_self_val = res_chi_map.get(lbl, sc.get('CHI_SELF', 0.0))
 
             records.append({
                 'LABEL': lbl,
@@ -309,7 +319,7 @@ class ComplexTorsionCalculator:
                 'DELM': delm[i], 'EPSM': epsm[i], 'ZETM': zetm[i],
                 'ETA': ps['ETA'], 'THETA': ps['THETA'], 'ETA_PRIME': ps['ETA_PRIME'], 'THETA_PRIME': ps['THETA_PRIME'],
                 'SUGAR_PHASE': sg['phase'], 'SUGAR_AMP': sg['amplitude'], 'SUGAR_PUCKER': sg['pucker'],
-                'GLYCOSIDIC_CHI': sc['CHI2'], 'MU': sc['MU'], 'CC_DIST': sc['CC'], 'NN_DIST': sc['NN']
+                'GLYCOSIDIC_CHI': chi_self_val, 'MU': sc['MU'], 'CC_DIST': sc['CC'], 'NN_DIST': sc['NN']
             })
 
         df = pd.DataFrame(records)

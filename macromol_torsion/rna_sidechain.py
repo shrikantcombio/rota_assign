@@ -83,23 +83,32 @@ class RNASidechainCalculator:
                 formatted_label = f"{resname:<3s} {chain:1s} {seq:>4s}".strip()
                 valid_labels.append(formatted_label)
 
+        n_res = len(valid_labels)
+
+        # Calculate individual residue Glycosidic Chi (CHI_SELF)
+        res_chi_map = {}
+        for idx in range(n_res):
+            try:
+                chi_val = PDBGeometry.get_dihedral(O4_coords[idx], C1_coords[idx], N_coords[idx], C_base_coords[idx])
+                res_chi_map[valid_labels[idx]] = chi_val
+            except Exception:
+                res_chi_map[valid_labels[idx]] = 0.0
+
         labels, chi1, chi2 = [], [], []
         nn_dist, cc_dist, mu = [], [], []
 
-        n_res = len(valid_labels)
-
-        # 1. Glycosidic Chi angles & mu pseudo-torsion for adjacent pairs
+        # 1. Glycosidic Chi angles (CHI1=CHI_SELF, CHI2=CHI_NEXT) & mu pseudo-torsion for adjacent pairs
         for i in range(1, n_res):
             try:
-                c1_prev = PDBGeometry.get_dihedral(O4_coords[i - 1], C1_coords[i - 1], N_coords[i - 1], C_base_coords[i - 1])
-                c2_curr = PDBGeometry.get_dihedral(O4_coords[i], C1_coords[i], N_coords[i], C_base_coords[i])
+                c1_self = res_chi_map.get(valid_labels[i - 1], 0.0)
+                c2_next = res_chi_map.get(valid_labels[i], 0.0)
                 mu_val = PDBGeometry.get_dihedral(N_coords[i - 1], C1_coords[i - 1], C1_coords[i], N_coords[i])
 
                 nn = PDBGeometry.distance(N_coords[i - 1], N_coords[i])
                 cc = PDBGeometry.distance(C1_coords[i - 1], C1_coords[i])
 
-                chi1.append(c1_prev)
-                chi2.append(c2_curr)
+                chi1.append(c1_self)  # CHI1 = CHI_SELF (Current residue's own Glycosidic Chi)
+                chi2.append(c2_next)  # CHI2 = CHI_NEXT (Next residue's Glycosidic Chi)
                 mu.append(mu_val)
                 nn_dist.append(round(float(nn), 2))
                 cc_dist.append(round(float(cc), 2))
@@ -107,4 +116,4 @@ class RNASidechainCalculator:
             except Exception:
                 continue
 
-        return labels, chi1, chi2, nn_dist, cc_dist, mu
+        return labels, chi1, chi2, nn_dist, cc_dist, mu, res_chi_map

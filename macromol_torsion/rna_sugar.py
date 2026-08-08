@@ -99,7 +99,7 @@ class RNASugarPuckerCalculator:
             phase_rad = math.atan2((v4_f + v1_f) - (v3_f + v0_f), v2_f * constant)
             amplitude = v2_f / math.cos(phase_rad) if math.cos(phase_rad) != 0 else v2_f
 
-            phase_deg = (math.degrees(phase_rad) + 72.0) % 360.0
+            phase_deg = math.degrees(phase_rad) % 360.0
             if phase_deg < 0:
                 phase_deg += 360.0
 

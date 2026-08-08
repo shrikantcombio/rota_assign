@@ -67,7 +67,7 @@ class RNAPseudoTorsionCalculator:
                 t_val = PDBGeometry.get_dihedral(P_coords[i], C4_coords[i], P_coords[i + 1], C4_coords[i + 1])
 
                 ed_val = PDBGeometry.get_dihedral(C1_coords[i - 1], P_coords[i], C1_coords[i], P_coords[i + 1])
-                td_val = PDBGeometry.get_dihedral(P_coords[i], C4_coords[i], P_coords[i + 1], C4_coords[i + 1])
+                td_val = PDBGeometry.get_dihedral(P_coords[i], C1_coords[i], P_coords[i + 1], C1_coords[i + 1])
 
                 eta.append(e_val)
                 theta.append(t_val)

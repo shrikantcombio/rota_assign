@@ -55,21 +55,22 @@ class PDBGeometry:
     def get_dihedral(cls, atm1, atm2, atm3, atm4):
         """
         Calculates signed dihedral angle between four atom coordinates (atm1, atm2, atm3, atm4).
-        Returns angle in degrees as float (-180.0 to 180.0).
+        Follows standard IUPAC sign convention (-180.0 to 180.0 degrees).
+        Matches Bio.PDB.calc_dihedral exactly.
         """
-        v1 = [atm1[i] - atm2[i] for i in range(3)]
-        v2 = [atm4[i] - atm3[i] for i in range(3)]
-        v3 = [atm2[i] - atm3[i] for i in range(3)]
+        b1 = [atm2[i] - atm1[i] for i in range(3)]
+        b2 = [atm3[i] - atm2[i] for i in range(3)]
+        b3 = [atm4[i] - atm3[i] for i in range(3)]
 
-        cp1 = cls.cross_product(v3, v1)
-        cp2 = cls.cross_product(v3, v2)
+        n1 = cls.cross_product(b1, b2)
+        n2 = cls.cross_product(b2, b3)
 
-        dihedral = cls.get_angle(cp1, cp2)
+        angle = cls.get_angle(n1, n2)
 
-        if cls.dot_product(cls.cross_product(cp1, cp2), v3) < 0:
-            dihedral = -dihedral
+        if cls.dot_product(cls.cross_product(n1, n2), b2) < 0:
+            angle = -angle
 
-        return round(float(dihedral), 2)
+        return round(float(angle), 2)
 
     @classmethod
     def tau_angle(cls, n_coord, ca_coord, c_coord):

@@ -6,6 +6,7 @@ Loads existing json dictionaries from rota_lib_dict if available.
 """
 
 from pathlib import Path
+import sys
 import json
 import copy
 import pandas as pd
@@ -47,22 +48,37 @@ def assign_ptm_state(val):
         return str(int(val))
 
 
+SYMMETRIC_CHI_IDX = {'ASP': 2, 'GLU': 3, 'PHE': 2, 'TYR': 2}  # 1-indexed
+
+def fold_symmetric_chi(angle):
+    angle = float(angle)
+    if angle >= 90.0:
+        return angle - 180.0
+    if angle < -90.0:
+        return angle + 180.0
+    return angle
+
 def chi_state(row):
     aa = row['AA']
     n_chis = AA_CHIS_DICT.get(aa, 0)
+    sym_idx = SYMMETRIC_CHI_IDX.get(aa, None)
+
+    def get_chi(i):  # i is 1-indexed
+        val = float(row[f'Chi{i}'])
+        if sym_idx and i == sym_idx:
+            val = fold_symmetric_chi(val)
+        return assign_ptm_state(val)
+
     if n_chis == 0:
         return ""
     elif n_chis == 1:
-        return assign_ptm_state(row['Chi1'])
+        return get_chi(1)
     elif n_chis == 2:
-        return assign_ptm_state(row['Chi1']) + assign_ptm_state(row['Chi2'])
+        return get_chi(1) + get_chi(2)
     elif n_chis == 3:
-        return assign_ptm_state(row['Chi1']) + assign_ptm_state(row['Chi2']) + assign_ptm_state(row['Chi3'])
+        return get_chi(1) + get_chi(2) + get_chi(3)
     else:
-        return (assign_ptm_state(row['Chi1']) +
-                assign_ptm_state(row['Chi2']) +
-                assign_ptm_state(row['Chi3']) +
-                assign_ptm_state(row['Chi4']))
+        return get_chi(1) + get_chi(2) + get_chi(3) + get_chi(4)
 
 
 def is_on_rotamer(aa, rota_state):
@@ -175,8 +191,8 @@ class BaseRotamerLibBuilder:
         if output_dir:
             out_d = Path(output_dir)
             prefix = name_prefix or file_p.stem
-            self.export_json(full_dict, out_d / f"full_{prefix}.txt")
-            self.export_json(on_dict, out_d / f"{prefix}.txt")
+            self.export_json(full_dict, out_d / f"full_{prefix}.json")
+            self.export_json(on_dict, out_d / f"{prefix}.json")
 
         return full_dict, on_dict, off_dict, prob_arr
 
@@ -184,54 +200,89 @@ class BaseRotamerLibBuilder:
 class SSDRotamerLibBuilder(BaseRotamerLibBuilder):
     def load_data(self, file_path):
         file_p = Path(file_path)
-        df_raw = _read_clean_lines(file_p)
-
-        df = pd.DataFrame()
-        df['AA'] = df_raw.iloc[:, 0].astype(str).str.strip()
-        df['Conformation'] = df_raw.iloc[:, 1].astype(str).str.strip()
-        df['Chi1'] = df_raw.iloc[:, 2]
-        df['Chi2'] = df_raw.iloc[:, 3]
-        df['Chi3'] = df_raw.iloc[:, 4]
-        df['Chi4'] = df_raw.iloc[:, 5]
-        df['prob'] = df_raw.iloc[:, -1]
-
-        return df
+        if file_p.suffix.lower() == '.json':
+            df_raw = pd.read_json(file_p)
+            df = pd.DataFrame()
+            df['AA'] = df_raw['AA'].astype(str).str.strip()
+            df['Conformation'] = df_raw['Conformation'] if 'Conformation' in df_raw.columns else (df_raw['SS'] if 'SS' in df_raw.columns else 'L')
+            df['prob'] = df_raw['PROB'] if 'PROB' in df_raw.columns else df_raw['prob']
+            for i in range(1, 5):
+                chi_col = next((c for c in [f'B_CHI{i}', f'U_CHI{i}', f'CHI{i}', f'Chi{i}'] if c in df_raw.columns), None)
+                df[f'Chi{i}'] = df_raw[chi_col] if chi_col else 0.0
+            return df
+        else:
+            df_raw = _read_clean_lines(file_p)
+            df = pd.DataFrame()
+            df['AA'] = df_raw.iloc[:, 0].astype(str).str.strip()
+            df['Conformation'] = df_raw.iloc[:, 1].astype(str).str.strip()
+            df['Chi1'] = df_raw.iloc[:, 2]
+            df['Chi2'] = df_raw.iloc[:, 3]
+            df['Chi3'] = df_raw.iloc[:, 4]
+            df['Chi4'] = df_raw.iloc[:, 5]
+            df['prob'] = df_raw.iloc[:, -1]
+            return df
 
 
 class BBDRotamerLibBuilder(BaseRotamerLibBuilder):
     def load_data(self, file_path):
         file_p = Path(file_path)
-        df_raw = _read_clean_lines(file_p)
+        if file_p.suffix.lower() == '.json':
+            df_raw = pd.read_json(file_p)
+            df = pd.DataFrame()
+            df['AA'] = df_raw['AA'].astype(str).str.strip()
+            if 'PHI' in df_raw.columns and 'PSI' in df_raw.columns:
+                phi = df_raw['PHI'].apply(lambda x: str(int(round(float(x)))))
+                psi = df_raw['PSI'].apply(lambda x: str(int(round(float(x)))))
+                df['Conformation'] = phi + ',' + psi
+            elif 'Conformation' in df_raw.columns:
+                df['Conformation'] = df_raw['Conformation'].astype(str).str.strip()
+            else:
+                df['Conformation'] = '0,0'
 
-        df = pd.DataFrame()
-        df['AA'] = df_raw.iloc[:, 0].astype(str).str.strip()
-        phi = df_raw.iloc[:, 1].apply(lambda x: str(int(round(float(x)))))
-        psi = df_raw.iloc[:, 2].apply(lambda x: str(int(round(float(x)))))
-        df['Conformation'] = phi + ',' + psi
-        df['prob'] = df_raw.iloc[:, 5]
-        df['Chi1'] = df_raw.iloc[:, 6]
-        df['Chi2'] = df_raw.iloc[:, 7]
-        df['Chi3'] = df_raw.iloc[:, 8]
-        df['Chi4'] = df_raw.iloc[:, 9]
-
-        return df
+            df['prob'] = df_raw['PROB'] if 'PROB' in df_raw.columns else df_raw['prob']
+            for i in range(1, 5):
+                chi_col = next((c for c in [f'B_CHI{i}', f'U_CHI{i}', f'CHI{i}', f'Chi{i}'] if c in df_raw.columns), None)
+                df[f'Chi{i}'] = df_raw[chi_col] if chi_col else 0.0
+            return df
+        else:
+            df_raw = _read_clean_lines(file_p)
+            df = pd.DataFrame()
+            df['AA'] = df_raw.iloc[:, 0].astype(str).str.strip()
+            phi = df_raw.iloc[:, 1].apply(lambda x: str(int(round(float(x)))))
+            psi = df_raw.iloc[:, 2].apply(lambda x: str(int(round(float(x)))))
+            df['Conformation'] = phi + ',' + psi
+            df['prob'] = df_raw.iloc[:, 5]
+            df['Chi1'] = df_raw.iloc[:, 6]
+            df['Chi2'] = df_raw.iloc[:, 7]
+            df['Chi3'] = df_raw.iloc[:, 8]
+            df['Chi4'] = df_raw.iloc[:, 9]
+            return df
 
 
 class BBIRotamerLibBuilder(BaseRotamerLibBuilder):
     def load_data(self, file_path):
         file_p = Path(file_path)
-        df_raw = _read_clean_lines(file_p)
-
-        df = pd.DataFrame()
-        df['AA'] = df_raw.iloc[:, 0].astype(str).str.strip()
-        df['Conformation'] = 'ALL'
-        df['prob'] = df_raw.iloc[:, 2]
-        df['Chi1'] = df_raw.iloc[:, 3]
-        df['Chi2'] = df_raw.iloc[:, 4]
-        df['Chi3'] = df_raw.iloc[:, 5]
-        df['Chi4'] = df_raw.iloc[:, 6]
-
-        return df
+        if file_p.suffix.lower() == '.json':
+            df_raw = pd.read_json(file_p)
+            df = pd.DataFrame()
+            df['AA'] = df_raw['AA'].astype(str).str.strip()
+            df['Conformation'] = 'ALL'
+            df['prob'] = df_raw['PROB'] if 'PROB' in df_raw.columns else df_raw['prob']
+            for i in range(1, 5):
+                chi_col = next((c for c in [f'B_CHI{i}', f'U_CHI{i}', f'CHI{i}', f'Chi{i}'] if c in df_raw.columns), None)
+                df[f'Chi{i}'] = df_raw[chi_col] if chi_col else 0.0
+            return df
+        else:
+            df_raw = _read_clean_lines(file_p)
+            df = pd.DataFrame()
+            df['AA'] = df_raw.iloc[:, 0].astype(str).str.strip()
+            df['Conformation'] = 'ALL'
+            df['prob'] = df_raw.iloc[:, 2]
+            df['Chi1'] = df_raw.iloc[:, 3]
+            df['Chi2'] = df_raw.iloc[:, 4]
+            df['Chi3'] = df_raw.iloc[:, 5]
+            df['Chi4'] = df_raw.iloc[:, 6]
+            return df
 
 
 class RotamerLibraryPipeline:
@@ -268,7 +319,36 @@ class RotamerLibraryPipeline:
         return results
 
 
-def run_all_files():
+def should_rebuild_library(dump_dir, required_files, force_rebuild=False, prompt_user=False):
+    """
+    Checks if required rotamer library JSON files exist in dump_dir.
+    If all exist and force_rebuild is False:
+      - If prompt_user is True and sys.stdin.isatty(), asks the user if they want to override and rebuild.
+      - Otherwise returns False (use cached files).
+    If any file is missing or rebuild requested, returns True.
+    """
+    if not dump_dir.exists():
+        return True
+
+    all_exist = all((dump_dir / fname).exists() for fname in required_files)
+    if not all_exist:
+        return True
+
+    if force_rebuild:
+        return True
+
+    if prompt_user and hasattr(sys.stdin, 'isatty') and sys.stdin.isatty():
+        try:
+            answer = input(f"Rotamer library dictionary JSON files already exist in '{dump_dir}'. Override and rebuild? [y/N]: ").strip().lower()
+            if answer in ['y', 'yes']:
+                return True
+        except (KeyboardInterrupt, EOFError):
+            pass
+
+    return False
+
+
+def run_all_files(force_rebuild=False, prompt_user=False):
     current_dir = Path(__file__).resolve().parent
     root_dir = current_dir.parent
 
@@ -277,13 +357,15 @@ def run_all_files():
         dump_dir = current_dir / 'rota_lib_dict'
 
     required_json_files = [
-        'full_rota_lib_b_I.txt', 'full_rota_lib_b_N.txt',
-        'full_rota_lib_ub_I.txt', 'full_rota_lib_ub_N.txt',
-        'rota_lib_b_I.txt', 'rota_lib_b_N.txt',
-        'rota_lib_ub_I.txt', 'rota_lib_ub_N.txt'
+        'full_rota_lib_b_I.json', 'full_rota_lib_b_N.json',
+        'full_rota_lib_ub_I.json', 'full_rota_lib_ub_N.json',
+        'rota_lib_b_I.json', 'rota_lib_b_N.json',
+        'rota_lib_ub_I.json', 'rota_lib_ub_N.json'
     ]
 
-    if dump_dir.exists() and all((dump_dir / fname).exists() for fname in required_json_files):
+    rebuild = should_rebuild_library(dump_dir, required_json_files, force_rebuild=force_rebuild, prompt_user=prompt_user)
+
+    if not rebuild:
         dicts = []
         for fname in required_json_files:
             with open(dump_dir / fname, 'r') as f:
@@ -293,10 +375,10 @@ def run_all_files():
     return ({}, {}, {}, {}, {}, {}, {}, {})
 
 
-def run_bbd_files():
+def run_bbd_files(force_rebuild=False, prompt_user=False, save_to_cache=True):
     """
-    Loads BBD rotamer library dictionaries from json files in rota_lib_dict/bbd directory,
-    or builds them directly from library/RBPs_BBD_rotamer_lib/*.csv if json files do not exist.
+    Loads BBD rotamer library dictionaries from JSON files in rota_lib_dict/bbd directory,
+    or builds them directly from JSON/CSV files in RBPs_BBD_rotamer_lib and caches JSON files in rota_lib_dict/bbd.
     """
     current_dir = Path(__file__).resolve().parent
     root_dir = current_dir.parent
@@ -304,31 +386,109 @@ def run_bbd_files():
     dump_dir = root_dir / 'rota_lib_dict' / 'bbd'
 
     bbd_files = [
-        'full_rota_lib_bbd_b_I.txt',
-        'full_rota_lib_bbd_b_N.txt',
-        'full_rota_lib_bbd_ub_I.txt',
-        'full_rota_lib_bbd_ub_N.txt'
+        'full_rota_lib_bbd_b_I.json',
+        'full_rota_lib_bbd_b_N.json',
+        'full_rota_lib_bbd_ub_I.json',
+        'full_rota_lib_bbd_ub_N.json'
     ]
 
-    if dump_dir.exists() and all((dump_dir / fname).exists() for fname in bbd_files):
+    rebuild = should_rebuild_library(dump_dir, bbd_files, force_rebuild=force_rebuild, prompt_user=prompt_user)
+
+    if not rebuild:
         dicts = []
         for fname in bbd_files:
             with open(dump_dir / fname, 'r') as f:
                 dicts.append(json.load(f))
         return tuple(dicts)
 
-    # Fallback to building directly from library/RBPs_BBD_rotamer_lib CSVs
-    csv_dir = root_dir / 'library' / 'RBPs_BBD_rotamer_lib'
+    csv_dir = root_dir.parent / 'RBPs_rotamer_lib' / 'RBPs_BBD_rotamer_lib'
+    if not csv_dir.exists():
+        csv_dir = root_dir / 'library' / 'RBPs_BBD_rotamer_lib'
+
     if csv_dir.exists():
         builder = BBDRotamerLibBuilder()
-        b_I, _, _, _ = builder.build_library(csv_dir / 'RBPs_I_bbd_B_rotamer_lib.csv')
-        b_N, _, _, _ = builder.build_library(csv_dir / 'RBPs_N_bbd_B_rotamer_lib.csv')
-        ub_I, _, _, _ = builder.build_library(csv_dir / 'RBPs_I_bbd_U_rotamer_lib.csv')
-        ub_N, _, _, _ = builder.build_library(csv_dir / 'RBPs_N_bbd_U_rotamer_lib.csv')
+
+        def get_input_file(prefix):
+            for ext in ['.json', '.csv', '.tsv']:
+                p = csv_dir / f"{prefix}{ext}"
+                if p.exists():
+                    return p
+            raise FileNotFoundError(f"No input library file found for {prefix} in {csv_dir}")
+
+        b_I, _, _, _ = builder.build_library(get_input_file('RBPs_I_bbd_B_rotamer_lib'))
+        b_N, _, _, _ = builder.build_library(get_input_file('RBPs_N_bbd_B_rotamer_lib'))
+        ub_I, _, _, _ = builder.build_library(get_input_file('RBPs_I_bbd_U_rotamer_lib'))
+        ub_N, _, _, _ = builder.build_library(get_input_file('RBPs_N_bbd_U_rotamer_lib'))
+
+        if save_to_cache:
+            dump_dir.mkdir(parents=True, exist_ok=True)
+            builder.export_json(b_I, dump_dir / 'full_rota_lib_bbd_b_I.json')
+            builder.export_json(b_N, dump_dir / 'full_rota_lib_bbd_b_N.json')
+            builder.export_json(ub_I, dump_dir / 'full_rota_lib_bbd_ub_I.json')
+            builder.export_json(ub_N, dump_dir / 'full_rota_lib_bbd_ub_N.json')
+
+        return (b_I, b_N, ub_I, ub_N)
+
+    return ({}, {}, {}, {})
+
+
+def run_bbi_files(force_rebuild=False, prompt_user=False, save_to_cache=True):
+    """
+    Loads BBI rotamer library dictionaries from JSON files in rota_lib_dict/bbi directory,
+    or builds them directly from JSON/CSV files in RBPs_BBI_rotamer_lib and caches JSON files in rota_lib_dict/bbi.
+    """
+    current_dir = Path(__file__).resolve().parent
+    root_dir = current_dir.parent
+
+    dump_dir = root_dir / 'rota_lib_dict' / 'bbi'
+
+    bbi_files = [
+        'full_rota_lib_bbi_b_I.json',
+        'full_rota_lib_bbi_b_N.json',
+        'full_rota_lib_bbi_ub_I.json',
+        'full_rota_lib_bbi_ub_N.json'
+    ]
+
+    rebuild = should_rebuild_library(dump_dir, bbi_files, force_rebuild=force_rebuild, prompt_user=prompt_user)
+
+    if not rebuild:
+        dicts = []
+        for fname in bbi_files:
+            with open(dump_dir / fname, 'r') as f:
+                dicts.append(json.load(f))
+        return tuple(dicts)
+
+    csv_dir = root_dir.parent / 'RBPs_rotamer_lib' / 'RBPs_BBI_rotamer_lib'
+    if not csv_dir.exists():
+        csv_dir = root_dir / 'library' / 'RBPs_BBI_rotamer_lib'
+
+    if csv_dir.exists():
+        builder = BBIRotamerLibBuilder()
+
+        def get_input_file(prefix):
+            for ext in ['.json', '.csv', '.tsv']:
+                p = csv_dir / f"{prefix}{ext}"
+                if p.exists():
+                    return p
+            raise FileNotFoundError(f"No input library file found for {prefix} in {csv_dir}")
+
+        b_I, _, _, _ = builder.build_library(get_input_file('RBPs_I_bbi_B_rotamer_lib'))
+        b_N, _, _, _ = builder.build_library(get_input_file('RBPs_N_bbi_B_rotamer_lib'))
+        ub_I, _, _, _ = builder.build_library(get_input_file('RBPs_I_bbi_U_rotamer_lib'))
+        ub_N, _, _, _ = builder.build_library(get_input_file('RBPs_N_bbi_U_rotamer_lib'))
+
+        if save_to_cache:
+            dump_dir.mkdir(parents=True, exist_ok=True)
+            builder.export_json(b_I, dump_dir / 'full_rota_lib_bbi_b_I.json')
+            builder.export_json(b_N, dump_dir / 'full_rota_lib_bbi_b_N.json')
+            builder.export_json(ub_I, dump_dir / 'full_rota_lib_bbi_ub_I.json')
+            builder.export_json(ub_N, dump_dir / 'full_rota_lib_bbi_ub_N.json')
+
         return (b_I, b_N, ub_I, ub_N)
 
     return ({}, {}, {}, {})
 
 
 if __name__ == '__main__':
-    run_all_files()
+    run_bbd_files(force_rebuild=True)
+    run_bbi_files(force_rebuild=True)

@@ -23,39 +23,50 @@ script/
 ## Core Modules & API Usage
 
 ### 1. `build_rotalib.py`
-Builds rotamer library dictionaries from Secondary Structure Dependent (SSD), Backbone Dependent (BBD), and Backbone Independent (BBI) library files.
+Builds rotamer library dictionaries from Secondary Structure Dependent (`SSD`), Backbone Dependent (`BBD`), and Backbone Independent (`BBI`) library files (supporting `.json`, `.csv`, `.tsv`).
+- Caches pre-built JSON dictionary files under `rota_lib_dict/bbd/` and `rota_lib_dict/bbi/`.
+- Includes `should_rebuild_library()` check & user override prompt logic when existing JSON dictionary files are found.
 
 **Usage:**
 ```python
-from script.build_rotalib import SSDRotamerLibBuilder, RotamerLibraryPipeline
+from script.build_rotalib import BBDRotamerLibBuilder, run_bbd_files, run_bbi_files
 
-# Process a single SSD library file
-builder = SSDRotamerLibBuilder()
-full_df, on_df, off_df, prob_arr = builder.get_rota_stats("path/to/lib.txt")
-lib_dict = builder.build_lib_dict(on_df)
-builder.export_json(lib_dict, "path/to/output.json")
+# 1. Load cached JSON rotamer dictionaries (or build if missing)
+bbd_b_I, bbd_b_N, bbd_ub_I, bbd_ub_N = run_bbd_files(force_rebuild=False)
+bbi_b_I, bbi_b_N, bbi_ub_I, bbi_ub_N = run_bbi_files(force_rebuild=False)
+
+# 2. Build library directly from a JSON input file
+builder = BBDRotamerLibBuilder()
+full_dict, on_dict, off_dict, _ = builder.build_library("RBPs_rotamer_lib/RBPs_BBD_rotamer_lib/RBPs_I_bbd_B_rotamer_lib.json")
 ```
 
 ---
 
 ### 2. `get_rotastate.py`
-Determines the rotamer state for an amino acid residue based on its chi angles, backbone $(\phi, \psi)$ dihedrals (BBD library lookup), secondary structure (`b_ss`), bound/unbound state (`b_ub`), and interface status (`I` vs `N`).
+Determines the rotamer state for an amino acid residue using SCWRL4 / MODELLER style rotamer matching over $n - 1$ primary dihedrals.
+- Supports library types: `'BBD'` (default), `'BBI'`, or `'SSD'`.
+- Applies symmetric terminal $\chi$ folding (ASP $\chi_2$, GLU $\chi_3$, PHE $\chi_2$, TYR $\chi_2 \rightarrow [-90^\circ, 90^\circ)$).
+- Enforces a $60^\circ$ grid radius distance cap ($\text{dist}^2 \le 3600$) to prevent distant Ramachandran grid cell fallbacks.
 
 **Usage:**
 ```python
 from script.get_rotastate import get_aa_rotamer
 
-rotastate = get_aa_rotamer(
-    aa='ASN',
-    ss='L',
-    b_ub='bound',
-    interface='I',
-    chi_1=-74.42,
-    chi_2=101.18,
-    phi=74.42,
-    psi=-101.18
+# Backbone-Dependent (BBD) Assignment
+bbd_state = get_aa_rotamer(
+    aa='ARG', ss='L', b_ub='bound', interface='I',
+    chi_1=-60.0, chi_2=175.0, chi_3=180.0, chi_4=-80.0,
+    phi=-60.0, psi=-30.0, lib_type='BBD'
 )
-print("Assigned Rotastate:", rotastate)  # Output: 't17'
+print("BBD Rotamer State:", bbd_state)  # Output: 'mtt-79'
+
+# Backbone-Independent (BBI) Assignment
+bbi_state = get_aa_rotamer(
+    aa='ARG', ss='L', b_ub='bound', interface='I',
+    chi_1=-60.0, chi_2=175.0, chi_3=180.0, chi_4=-80.0,
+    lib_type='BBI'
+)
+print("BBI Rotamer State:", bbi_state)  # Output: 'mtt-83'
 ```
 
 ---

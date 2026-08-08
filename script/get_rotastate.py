@@ -48,6 +48,14 @@ aa_chis_dict = build_rotalib.aa_chis_dict
     bbd_ub_N
 ) = build_rotalib.run_bbd_files()
 
+# Load BBI rotamer libraries
+(
+    bbi_b_I,
+    bbi_b_N,
+    bbi_ub_I,
+    bbi_ub_N
+) = build_rotalib.run_bbi_files()
+
 
 def wrap_180(angle):
     """
@@ -97,11 +105,18 @@ def find_best_bbd_rotamer(aa, chis, phi, psi, bbd_lib, max_grid_radius=3600):
             continue
 
     if not best_conf:
-        # Fallback to any valid conformation for this aa in the library
-        valid_confs = [c for c, val in bbd_lib[aa_clean].items() if len(val) > 0]
+        # Distance cap: do not fallback to cells further than 2 grid steps (e.g. 60° radius, sq_dist <= 3600)
+        cap = (2 * 30)**2 * 2  # = 3600 (3600 sq_deg = 60 deg max distance)
+        valid_confs = [
+            c for c, val in bbd_lib[aa_clean].items()
+            if len(val) > 0 and (wrap_180(phi - float(c.split(',')[0]))**2 + wrap_180(psi - float(c.split(',')[1]))**2) <= cap
+        ]
         if not valid_confs:
             return 'NA'
-        best_conf = min(valid_confs, key=lambda c: (wrap_180(phi - float(c.split(',')[0]))**2 + wrap_180(psi - float(c.split(',')[1]))**2))
+        best_conf = min(
+            valid_confs,
+            key=lambda c: (wrap_180(phi - float(c.split(',')[0]))**2 + wrap_180(psi - float(c.split(',')[1]))**2)
+        )
 
     aa_rota_library = bbd_lib[aa_clean][best_conf]
 
@@ -248,6 +263,13 @@ def get_aa_rotamer(aa, ss, b_ub, interface, chi_1=None, chi_2=None, chi_3=None, 
 
     # 3. Backbone-Independent (BBI) Rotamer Library
     elif lib_type_clean == 'BBI':
+        if b_ub_clean in ['bound', 'b', 'complex']:
+            lib_dict = bbi_b_I if interface_clean == 'I' else bbi_b_N
+        else:
+            lib_dict = bbi_ub_I if interface_clean == 'I' else bbi_ub_N
+
+        if lib_dict and aa_clean in lib_dict:
+            return find_best_ssd_rotamer(aa_clean, chis, 'ALL', lib_dict)
         return 'NA'
 
     return 'NA'

@@ -151,18 +151,25 @@ class RotamerTransitionAnalyzer:
         df_valid['Rotamer_Shift'] = df_valid['b_rotastate'] != df_valid['ub_rotastate']
         df_valid['Transition'] = df_valid['ub_rotastate'] + " -> " + df_valid['b_rotastate']
 
+        # Deduplicate per residue so multi-contact interactions do not weight transition counts
+        dedup_cols = [c for c in ['PDB_ID', 'AA_chain', 'AA_pos', 'LABEL'] if c in df_valid.columns]
+        if dedup_cols:
+            df_valid_dedup = df_valid.drop_duplicates(subset=dedup_cols + ['AA_clean', 'b_rotastate', 'ub_rotastate']).copy()
+        else:
+            df_valid_dedup = df_valid.copy()
+
         group_summary = []
-        for grp, grp_df in df_valid.groupby('Chemical_Group'):
+        for grp, grp_df in df_valid_dedup.groupby('Chemical_Group'):
             n_tot = len(grp_df)
             n_shifted = grp_df['Rotamer_Shift'].sum()
             n_preserved = n_tot - n_shifted
-            shift_rate = (n_shifted / n_tot * 100) if n_tot > 0 else 0.0
+            shift_rate = (n_shifted / n_tot * 100.0) if n_tot > 0 else 0.0
 
             group_summary.append({
                 'Chemical_Group': grp,
                 'Total_Residues': n_tot,
-                'Preserved_Rotamer_Count': n_preserved,
-                'Shifted_Rotamer_Count': n_shifted,
+                'Preserved_Rotamer_Count': int(n_preserved),
+                'Shifted_Rotamer_Count': int(n_shifted),
                 'Induced_Fit_Rate_Pct': round(shift_rate, 2),
                 'Pre_Organized_Rate_Pct': round(100.0 - shift_rate, 2)
             })
@@ -174,11 +181,12 @@ class RotamerTransitionAnalyzer:
 class RotamerConformerPreferenceAnalyzer:
     """
     Analyzer for cross-preferences between protein rotamer states and RNA dinucleotide conformers (NtC / CANA).
+    Includes Chi-squared contingency test for statistical independence.
     """
 
     def analyze(self, df):
         """
-        Cross-tabulates protein rotastates with RNA NtC / CANA conformers.
+        Cross-tabulates protein rotastates with RNA NtC / CANA conformers and performs Chi-squared test.
         """
         df_copy = df.copy()
 
@@ -195,8 +203,21 @@ class RotamerConformerPreferenceAnalyzer:
         if df_valid.empty:
             return pd.DataFrame()
 
-        ct_ntc = pd.crosstab(df_valid['AA_clean'] + '_' + df_valid['b_rotastate'], df_valid['NtC'], margins=True)
-        return ct_ntc
+        ct_ntc = pd.crosstab(df_valid['AA_clean'] + '_' + df_valid['b_rotastate'], df_valid['NtC'])
+
+        # Chi-squared test of independence
+        if ct_ntc.shape[0] > 1 and ct_ntc.shape[1] > 1:
+            try:
+                from scipy.stats import chi2_contingency
+                chi2, p_val, dof, _ = chi2_contingency(ct_ntc.values)
+                ct_ntc.attrs['chi2_stat'] = float(chi2)
+                ct_ntc.attrs['p_value'] = float(p_val)
+                ct_ntc.attrs['dof'] = int(dof)
+            except Exception:
+                pass
+
+        ct_ntc_margins = pd.crosstab(df_valid['AA_clean'] + '_' + df_valid['b_rotastate'], df_valid['NtC'], margins=True)
+        return ct_ntc_margins
 
 
 def run_full_rotastate_analysis(input_csv, output_dir=None):

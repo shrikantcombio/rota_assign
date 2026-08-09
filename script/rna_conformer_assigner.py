@@ -62,7 +62,7 @@ NTC_MAP = {
 def normalize_torsion_angle(val, angle_name=""):
     """
     Normalizes observed torsion angles from various conventions into [0, 360) format.
-    Handles signed/negative angles in [-180, 180] for delta, beta, and gamma.
+    Delta (sugar pucker) is reported positive; all other angles are mapped to [0, 360).
     """
     if pd.isna(val) or val is None:
         return None
@@ -70,13 +70,7 @@ def normalize_torsion_angle(val, angle_name=""):
     # Delta (sugar pucker) is always positive (typically 80-150 deg)
     if "delta" in angle_name.lower() or angle_name.lower() in ["delm", "delta"]:
         return abs(v)
-    # Beta and Gamma signed angles (-180..0)
-    if "beta" in angle_name.lower() or "gamma" in angle_name.lower():
-        if v < 0:
-            return abs(v)
-    if v < 0:
-        return (v % 360.0)
-    return v
+    return v % 360.0
 
 
 class RNAConformerAssigner:

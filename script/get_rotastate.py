@@ -126,6 +126,8 @@ def find_best_bbd_rotamer(aa, chis, phi, psi, bbd_lib, max_grid_radius=3600):
 
     for r_prefix, r_vals in aa_rota_library.items():
         for val_row in r_vals:
+            if len(val_row) < 2:
+                continue
             prob = float(val_row[-1])
             chi_diff_sq = sum(
                 (wrap_180(clean_chis[idx] - float(val_row[idx])))**2
@@ -134,7 +136,8 @@ def find_best_bbd_rotamer(aa, chis, phi, psi, bbd_lib, max_grid_radius=3600):
             score = chi_diff_sq - 100.0 * np.log(max(prob, 1e-4))
             if score < best_score:
                 best_score = score
-                last_chi = round(val_row[min(n_chis - 1, len(val_row) - 2)])
+                last_chi_idx = min(n_chis - 1, len(val_row) - 2)
+                last_chi = round(val_row[last_chi_idx])
                 best_rotastate = f"{r_prefix}{last_chi}"
 
     return best_rotastate
@@ -174,6 +177,8 @@ def find_best_ssd_rotamer(aa, chis, ss, ssd_lib):
 
     for r_prefix, r_vals in aa_rota_library.items():
         for val_row in r_vals:
+            if len(val_row) < 2:
+                continue
             prob = float(val_row[-1])
             chi_diff_sq = sum(
                 (wrap_180(clean_chis[idx] - float(val_row[idx])))**2
@@ -182,7 +187,8 @@ def find_best_ssd_rotamer(aa, chis, ss, ssd_lib):
             score = chi_diff_sq - 100.0 * np.log(max(prob, 1e-4))
             if score < best_score:
                 best_score = score
-                last_chi = round(val_row[min(n_chis - 1, len(val_row) - 2)])
+                last_chi_idx = min(n_chis - 1, len(val_row) - 2)
+                last_chi = round(val_row[last_chi_idx])
                 best_rotastate = f"{r_prefix}{last_chi}"
 
     return best_rotastate

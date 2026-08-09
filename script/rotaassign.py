@@ -79,7 +79,11 @@ class ProteinRotamerAssigner:
                 psi = row.get(b_psi_col, None)
 
                 chis = [c1, c2, c3, c4, c5]
-                chis_clean = [None if (x is None or (isinstance(x, (int, float)) and (float(x) == 0.0 or np.isnan(float(x))))) else float(x) for x in chis]
+                chis_clean = [
+                    None if (x is None or (isinstance(x, float) and np.isnan(x)) or (isinstance(x, str) and x.strip() in ('', 'nan', 'None', 'NA')))
+                    else float(x)
+                    for x in chis
+                ]
 
                 r_state = get_aa_rotamer(aa, ss, 'bound', inter, chis_clean[0], chis_clean[1], chis_clean[2], chis_clean[3], chis_clean[4], phi=phi, psi=psi, lib_type=l_type)
                 b_states.append(r_state)
@@ -119,7 +123,11 @@ class ProteinRotamerAssigner:
                 psi = row.get(u_psi_col, None)
 
                 chis = [c1, c2, c3, c4, c5]
-                chis_clean = [None if (x is None or (isinstance(x, (int, float)) and (float(x) == 0.0 or np.isnan(float(x))))) else float(x) for x in chis]
+                chis_clean = [
+                    None if (x is None or (isinstance(x, float) and np.isnan(x)) or (isinstance(x, str) and x.strip() in ('', 'nan', 'None', 'NA')))
+                    else float(x)
+                    for x in chis
+                ]
 
                 r_state = get_aa_rotamer(aa, ss, 'unbound', inter, chis_clean[0], chis_clean[1], chis_clean[2], chis_clean[3], chis_clean[4], phi=phi, psi=psi, lib_type=l_type)
                 u_states.append(r_state)

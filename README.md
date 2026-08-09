@@ -2,6 +2,27 @@
 
 A comprehensive, modular Python framework for structural analysis of Protein-RNA complexes. The framework automates end-to-end processing—from raw PDB structure cleaning and sequence alignment to protein backbone/sidechain dihedral calculation, Backbone Dependent (BBD) rotamer assignment, StructAnnotate RNA dinucleotide conformer annotation, NAxplorer interaction mapping, and Arginine fork / rotamer shift analysis.
 
+Structure file (CIF/PDB)
+        ↓
+ComplexTorsionCalculator (macromol_torsion)
+        ├── protein_torsions.csv  (φ,ψ,ω, χ1–χ5, SS, SASA)
+        └── rna_7d_suite           (α,β,γ,δ,ε,ζ,χ, η,θ,η',θ', pseudorotation)
+        ↓                               ↓
+ProteinRotamerAssigner          RNAConformerAssigner
+(get_rotastate → find_best_bbd)  (StructAnnotate confal → NtC/CANA/confalA)
+        ↓                               ↓
+        └──────────── merge_pipeline ───┘
+                              ↓
+              interactions file (NAxplorer CSV)
+                              ↓
+         map_complex_interactions_and_conformers()
+                              ↓
+              29-column final output CSV
+                              ↓
+              run_full_rotastate_analysis()
+               ├── ArginineForkAnalyzer
+               ├── RotamerTransitionAnalyzer
+               └── RotamerConformerPreferenceAnalyzer
 ---
 
 ## 🛠️ System Requirements & External Dependencies
@@ -99,6 +120,7 @@ rota_assign/
 │   ├── rotaassign.py               # ProteinRotamerAssigner (bound/unbound/both modes)
 │   ├── rna_conformer_assigner.py   # StructAnnotate integration (NtC, CANA, confalA)
 │   ├── analyze_rotastates.py       # Arginine forks & rotamer shift analyzer
+│   ├── prince_subzone.py          # Core / Rim Interface Sub-zoning Assigner (PRince dASA)
 │   ├── merge_pipeline.py           # Master end-to-end processing pipeline
 │   └── README.md                   # Script package documentation
 ├── utils/                          # Preprocessing & alignment utilities

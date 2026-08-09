@@ -14,6 +14,7 @@ script/
 ├── rotaassign.py              # Batch Protein Rotamer State Assigner (bound/unbound/both)
 ├── rna_conformer_assigner.py  # RNA Dinucleotide Conformer Assigner (StructAnnotate integration)
 ├── analyze_rotastates.py      # Arginine Forks & Rotamer Transition Preference Analyzer
+├── prince_subzone.py          # Core / Rim Interface Sub-zoning Assigner (PRince dASA)
 ├── merge_pipeline.py          # End-to-end master merging pipeline
 └── README.md                  # Package documentation
 ```
@@ -118,7 +119,28 @@ results = run_full_rotastate_analysis(
 
 ---
 
-### 6. `merge_pipeline.py` & Test Script (`test/rota_conf_assign.py`)
+### 6. `prince_subzone.py`
+Assigns **Core Interface** ($\Delta\text{ASA} \ge 15.0\ \text{\AA}^2$) vs **Rim Interface** ($0 < \Delta\text{ASA} < 15.0\ \text{\AA}^2$) vs **Non-Interface** status using per-atom buried surface area ($\Delta\text{ASA}$) extracted from PRince `*.int` / `*.intnew` files.
+- Literature basis: Chakrabarti & Janin (2002), Levy (2010), Jones & Thornton (1996).
+- Supports threshold sensitivity analysis across 10.0, 15.0, 20.0, 25.0, and 30.0 $\text{\AA}^2$ cutoffs.
+
+**Usage:**
+```python
+from script.prince_subzone import load_prince_subzones, get_subzone_label, compute_sensitivity_analysis
+
+# Load PRince subzone lookup map
+subzone_map = load_prince_subzones("path/to/1ASYP.int", cutoff=15.0)
+
+# Classify residue
+label = get_subzone_label(subzone_map, chain="A", resnum="119", sasa_flag="I")
+
+# Run cutoff sensitivity analysis
+df_sensitivity = compute_sensitivity_analysis("path/to/1ASYP.int")
+```
+
+---
+
+### 7. `merge_pipeline.py` & Test Script (`test/rota_conf_assign.py`)
 Master pipeline executing end-to-end processing for a Protein-RNA complex pair:
 1. Calculates protein & RNA dihedrals, DSSP, and NACCESS SASA ($\rightarrow$ `dataset/results/1ASY_protein_torsions.csv`).
 2. Assigns protein rotamer states using BBD library ($\rightarrow$ `dataset/results/1ASY_protein_rotastates.csv`).

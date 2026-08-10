@@ -3,18 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Temporary analysis outputs in dataset/
-dataset/*.asa
-dataset/*.rsa
-dataset/*.log
-dataset/*.int
-dataset/*.sur
-dataset/*.hb2
-dataset/*.intnew
-dataset/*.wat*
-dataset/*.res
-dataset/*.txt
-dataset/*.html
 
 # Script
 script/__pycache__/

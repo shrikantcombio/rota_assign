@@ -115,6 +115,7 @@ class RNABackboneCalculator:
         labels = []
         alpha, beta, gamma, delta, epsilon, zeta = [], [], [], [], [], []
         delm, epsm, zetm = [], [], []
+        self.step_pairs = []
 
         n_res = len(valid_residues)
 
@@ -142,6 +143,7 @@ class RNABackboneCalculator:
                 zetm.append(zm)
 
                 labels.append(valid_residues[i])
+                self.step_pairs.append((valid_residues[i - 1], valid_residues[i]))
             except Exception:
                 continue
 

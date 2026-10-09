@@ -99,7 +99,11 @@ class SasaAnalyzer:
         residues are classified as interface residues if their SASA decreases
         by at least 1.0 Angstrom^2 (delta SASA >= 1.0 A^2) upon complex formation.
         """
-        chains_set = set(bound_chains) if isinstance(bound_chains, (list, tuple, set)) else set(str(bound_chains))
+        if isinstance(bound_chains, (list, tuple, set)):
+            chains_set = set(bound_chains)
+        else:
+            s_chains = str(bound_chains).replace(',', '').replace('+', '').replace(' ', '')
+            chains_set = set(s_chains)
 
         bound_dict = {}
         for line in bound_rsa_lines:
@@ -164,31 +168,63 @@ class SasaAnalyzer:
                         res_label = f"{resname:<3s} {chain:1s} {res_seq:>4s}".strip()
                         interface.append(res_label)
                         interface.append((chain, res_seq))
-        return interface
+                        if res_seq.isdigit():
+                            interface.append((chain, str(int(res_seq))))
+                            interface.append((chain, int(res_seq)))
+        return list(set(interface))
 
-    def classify_residues(self, bound_structure, unbound_structure, bound_chains, output_dir=None, int_file=None):
-        # 1. Check if an .int file is provided or exists for this structure
+    def classify_residues(self, bound_structure, unbound_structure, bound_chains, output_dir=None, int_file=None, int_type='protein'):
+        """
+        Classifies residues into interface, non-interface, surface, and core.
+        Searches for interface files in 263 subdirectories ({PDB}_p{protein}_r{rna}).
+        int_type: 'protein' ({PDB}P.int), 'rna' ({PDB}R.int), or 'complex' ({PDB}.int).
+        """
         b_p = Path(bound_structure)
-        pdb_tag = b_p.stem.split('_')[0]
+        pdb_tag = b_p.stem.split('_')[0].upper()
 
         int_candidates = []
         if int_file:
             int_candidates.append(Path(int_file))
 
-        int_candidates.extend([
-            b_p.parent / f"{pdb_tag}.int",
-            b_p.parent / f"{pdb_tag}P.int",
-            Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}.int",
-            Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}P.int",
-        ])
+        # 1. Search in 263 subdirectories matching {PDB}_p* (e.g. 1C0A_pA_rB)
+        parent_dir = b_p.parent
+        subdirs = [d for d in parent_dir.glob(f"{pdb_tag}_p*") if d.is_dir()]
+        for sd in subdirs:
+            if int_type == 'protein':
+                int_candidates.extend([sd / f"{pdb_tag}P.int", sd / f"{pdb_tag}.int"])
+            elif int_type == 'rna':
+                int_candidates.extend([sd / f"{pdb_tag}R.int", sd / f"{pdb_tag}.int"])
+            else:
+                int_candidates.extend([sd / f"{pdb_tag}.int", sd / f"{pdb_tag}P.int", sd / f"{pdb_tag}R.int"])
+
+        # 2. Check structure directory directly
+        if int_type == 'protein':
+            int_candidates.extend([
+                parent_dir / f"{pdb_tag}P.int",
+                parent_dir / f"{pdb_tag}.int",
+                Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}P.int",
+                Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}.int",
+            ])
+        elif int_type == 'rna':
+            int_candidates.extend([
+                parent_dir / f"{pdb_tag}R.int",
+                parent_dir / f"{pdb_tag}.int",
+                Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}R.int",
+                Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}.int",
+            ])
+        else:
+            int_candidates.extend([
+                parent_dir / f"{pdb_tag}.int",
+                parent_dir / f"{pdb_tag}P.int",
+                parent_dir / f"{pdb_tag}R.int",
+            ])
 
         for cand in int_candidates:
             if cand.exists():
                 interface = self.parse_int_file(cand)
-                if interface:
-                    return interface, [], [], []
+                return interface, [], [], []
 
-        # 2. Fallback to running NACCESS SASA calculation
+        # 3. Fallback to running NACCESS SASA calculation
         try:
             b_rsa, _ = self.run_naccess(bound_structure, output_dir=output_dir)
             u_rsa, _ = self.run_naccess(unbound_structure, output_dir=output_dir)

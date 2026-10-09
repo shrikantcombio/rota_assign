@@ -37,12 +37,24 @@ class DsspAnalyzer:
         if file_p.suffix.lower() == '.dssp':
             return file_p
 
+        stem = file_p.stem.split('.')[0].split('_')[0]
+        dssp_cache_dir = Path("/home/labuser/Projects/results/PRDBv35_clean/proRNA_data/dssp")
+        if output_dssp:
+            out_p = Path(output_dssp)
+        elif dssp_cache_dir.exists():
+            out_p = dssp_cache_dir / f"{stem}.dssp"
+        else:
+            out_p = file_p.with_suffix('.dssp')
+
+        if out_p.exists() and out_p.stat().st_size > 0:
+            return out_p
+
         dssp_same = file_p.with_suffix('.dssp')
         if dssp_same.exists() and dssp_same.stat().st_size > 0:
             return dssp_same
 
+        out_p.parent.mkdir(parents=True, exist_ok=True)
         pdb_file = StructureReader.write_temp_pdb(file_p)
-        out_p = Path(output_dssp) if output_dssp else file_p.with_suffix('.dssp')
 
         cmd = f"{self.dssp_binary} -i {pdb_file} -o {out_p}"
         res = subprocess.run(cmd, shell=True, capture_output=True, text=True)

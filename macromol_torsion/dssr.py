@@ -163,12 +163,30 @@ class DSSRParser:
         Executes x3dna-dssr binary with --json --more flags in an isolated temp directory
         to prevent un-prefixed dssr-* scratch file collisions across multiple PDBs.
         """
+        stem = structure_file.stem.split('.')[0].split('_')[0].upper()
+        dssr_dir = Path("/home/labuser/Projects/results/PRDBv35_clean/proRNA_data/x3dna-dssr")
+        cache_file = dssr_dir / f"{stem}_dssr.json"
+        if cache_file.exists() and cache_file.stat().st_size > 0:
+            try:
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    self._raw_json = data
+                    return data
+            except Exception:
+                pass
+
         with tempfile.TemporaryDirectory() as tmpdir:
             cmd = [self.dssr_bin, f"-i={structure_file.resolve()}", "--json", "--more"]
             try:
                 res = subprocess.run(cmd, capture_output=True, text=True, check=True, cwd=tmpdir)
                 data = json.loads(res.stdout)
                 self._raw_json = data
+                if dssr_dir.exists():
+                    try:
+                        with open(cache_file, 'w', encoding='utf-8') as f_out:
+                            json.dump(data, f_out)
+                    except Exception:
+                        pass
                 return data
             except (subprocess.CalledProcessError, json.JSONDecodeError, FileNotFoundError) as e:
                 logger.error(f"Failed to execute x3dna-dssr on {structure_file}: {e}")

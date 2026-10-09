@@ -12,6 +12,7 @@ from macromol_torsion.structure_reader import StructureReader
 from macromol_torsion.protein_backbone import ProteinBackboneCalculator
 from macromol_torsion.protein_sidechain import ProteinSidechainCalculator
 from macromol_torsion.dssp import DsspAnalyzer
+from macromol_torsion.dssr import DSSRParser, DSSRAnalyzer, parse_dssr
 from macromol_torsion.sasa import SasaAnalyzer
 
 from macromol_torsion.rna_backbone import RNABackboneCalculator
@@ -27,6 +28,9 @@ __all__ = [
     "ProteinBackboneCalculator",
     "ProteinSidechainCalculator",
     "DsspAnalyzer",
+    "DSSRParser",
+    "DSSRAnalyzer",
+    "parse_dssr",
     "SasaAnalyzer",
     "RNABackboneCalculator",
     "RNAPseudoTorsionCalculator",
@@ -34,3 +38,4 @@ __all__ = [
     "RNASidechainCalculator",
     "ComplexTorsionCalculator",
 ]
+

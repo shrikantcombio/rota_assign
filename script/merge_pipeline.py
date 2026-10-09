@@ -19,9 +19,15 @@ import numpy as np
 # Path setup
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT_DIR = SCRIPT_DIR.parent
-RESULTS_DIR = ROOT_DIR / "dataset" / "results"
-TEST_DIR = ROOT_DIR / "test"
-DATASET_DIR = ROOT_DIR / "dataset"
+PRO_RNA_DATA_DIR = Path("/home/labuser/Projects/results/PRDBv35_clean/proRNA_data")
+RESULTS_DIR = PRO_RNA_DATA_DIR / "results"
+NAPXPLORER_DATA = PRO_RNA_DATA_DIR / "napxplorer"
+DSSP_DIR = PRO_RNA_DATA_DIR / "dssp"
+DSSR_DIR = PRO_RNA_DATA_DIR / "x3dna-dssr"
+
+# If not dir presnt create dir
+for dir_path in [RESULTS_DIR, DSSP_DIR, DSSR_DIR]:
+    dir_path.mkdir(parents=True, exist_ok=True)
 
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
@@ -34,10 +40,13 @@ from script.rna_conformer_assigner import RNAConformerAssigner
 from script.analyze_rotastates import run_full_rotastate_analysis
 
 
-def map_complex_interactions_and_conformers(df_interactions, df_protein_assigned, df_rna_assigned, target_pdb="1ASY"):
+def map_complex_interactions_and_conformers(df_interactions, df_protein_assigned, df_rna_assigned, target_pdb="1ASY", rna_ss_map=None):
     """
-    Maps interactions, energy, bound/unbound rotamers, SASA, and RNA conformers into the exact 29-column schema:
-    PDB_ID, AA, AA_atom, AA_chain, AA_pos, Nuc, Nuc_atom, Nuc_chain, Nuc_pos, b_phi, b_psi, b_ss, b_rotastate, u_phi, u_psi, u_ss, u_rotastate, SASA, NtC, CANA, confalA, dist, interaction_type, edge, score, mediator_info, E_int_kcalmol, status, source
+    Maps interactions, energy, bound/unbound rotamers, SASA, RNA conformers, and x3dna-dssr secondary structure details
+    into merged output dataframe schema:
+    PDB_ID, AA, AA_atom, AA_chain, AA_pos, Nuc, Nuc_atom, Nuc_chain, Nuc_pos, b_phi, b_psi, b_ss, b_rotastate, SASA,
+    NtC, CANA, confalA, SS_DBN, SS_TYPE, PAIRED_WITH, BP_TYPE, DSSR_SUMMARY,
+    dist, interaction_type, edge, score, mediator_info, E_int_kcalmol, status, source
     """
     prot_map = {}
     if df_protein_assigned is not None and not df_protein_assigned.empty:
@@ -82,8 +91,36 @@ def map_complex_interactions_and_conformers(df_interactions, df_protein_assigned
             rna_map[(chain, str(pos))] = {
                 'NtC': row.get('NtC', 'NANT'),
                 'CANA': row.get('CANA', 'NAN'),
-                'confalA': row.get('confalA', 0.0)
+                'confalA': row.get('confalA', 0.0),
+                'SS_DBN': row.get('SS_DBN', '.'),
+                'SS_TYPE': row.get('SS_TYPE', 'unpaired'),
+                'PAIRED_WITH': row.get('PAIRED_WITH', '.'),
+                'BP_TYPE': row.get('BP_TYPE', '.'),
+                'DSSR_SUMMARY': row.get('DSSR_SUMMARY', '')
             }
+
+    if rna_ss_map:
+        for k, v in rna_ss_map.items():
+            if isinstance(k, tuple) and len(k) == 2:
+                chain, pos = str(k[0]), str(k[1])
+                if (chain, pos) not in rna_map:
+                    rna_map[(chain, pos)] = {
+                        'NtC': 'NANT',
+                        'CANA': 'NAN',
+                        'confalA': 0.0,
+                        'SS_DBN': v.get('dbn', '.'),
+                        'SS_TYPE': v.get('ss_type', 'unpaired'),
+                        'PAIRED_WITH': v.get('paired_with', '.'),
+                        'BP_TYPE': v.get('bp_type', '.'),
+                        'DSSR_SUMMARY': v.get('summary', '')
+                    }
+                else:
+                    if rna_map[(chain, pos)]['SS_DBN'] == '.':
+                        rna_map[(chain, pos)]['SS_DBN'] = v.get('dbn', '.')
+                        rna_map[(chain, pos)]['SS_TYPE'] = v.get('ss_type', 'unpaired')
+                        rna_map[(chain, pos)]['PAIRED_WITH'] = v.get('paired_with', '.')
+                        rna_map[(chain, pos)]['BP_TYPE'] = v.get('bp_type', '.')
+                        rna_map[(chain, pos)]['DSSR_SUMMARY'] = v.get('summary', '')
 
     rows = []
     for idx, r in df_interactions.iterrows():
@@ -130,7 +167,12 @@ def map_complex_interactions_and_conformers(df_interactions, df_protein_assigned
         r_data = rna_map.get((nuc_chain, nuc_pos), {
             'NtC': r.get('NtC', 'NANT'),
             'CANA': r.get('CANA', 'NAN'),
-            'confalA': r.get('confalA', 0.0)
+            'confalA': r.get('confalA', 0.0),
+            'SS_DBN': r.get('SS_DBN', '.'),
+            'SS_TYPE': r.get('SS_TYPE', 'unpaired'),
+            'PAIRED_WITH': r.get('PAIRED_WITH', '.'),
+            'BP_TYPE': r.get('BP_TYPE', '.'),
+            'DSSR_SUMMARY': r.get('DSSR_SUMMARY', '')
         })
 
         b_rot_val = p_data['b_rotastate']
@@ -163,6 +205,11 @@ def map_complex_interactions_and_conformers(df_interactions, df_protein_assigned
             'NtC': r_data['NtC'],
             'CANA': r_data['CANA'],
             'confalA': r_data['confalA'],
+            'SS_DBN': r_data.get('SS_DBN', '.'),
+            'SS_TYPE': r_data.get('SS_TYPE', 'unpaired'),
+            'PAIRED_WITH': r_data.get('PAIRED_WITH', '.'),
+            'BP_TYPE': r_data.get('BP_TYPE', '.'),
+            'DSSR_SUMMARY': r_data.get('DSSR_SUMMARY', ''),
             'dist': dist_val,
             'interaction_type': int_type,
             'edge': edge_val,
@@ -183,6 +230,7 @@ def map_complex_interactions_and_conformers(df_interactions, df_protein_assigned
             'b_phi', 'b_psi', 'b_ss', 'b_rotastate',
             'u_phi', 'u_psi', 'u_ss', 'u_rotastate', 'SASA',
             'NtC', 'CANA', 'confalA',
+            'SS_DBN', 'SS_TYPE', 'PAIRED_WITH', 'BP_TYPE', 'DSSR_SUMMARY',
             'dist', 'interaction_type', 'edge', 'score',
             'mediator_info', 'E_int_kcalmol', 'status', 'source'
         ]
@@ -192,10 +240,14 @@ def map_complex_interactions_and_conformers(df_interactions, df_protein_assigned
             'Nuc', 'Nuc_atom', 'Nuc_chain', 'Nuc_pos',
             'b_phi', 'b_psi', 'b_ss', 'b_rotastate', 'SASA',
             'NtC', 'CANA', 'confalA',
+            'SS_DBN', 'SS_TYPE', 'PAIRED_WITH', 'BP_TYPE', 'DSSR_SUMMARY',
             'dist', 'interaction_type', 'edge', 'score',
             'mediator_info', 'E_int_kcalmol', 'status', 'source'
         ]
+    if df_out.empty:
+        return pd.DataFrame(columns=target_cols)
     return df_out[target_cols]
+
 
 
 class ComplexMergePipeline:
@@ -212,128 +264,241 @@ class ComplexMergePipeline:
         self.rna_assigner = RNAConformerAssigner()
         self.calculator = ComplexTorsionCalculator()
 
-    def process_interactions_file(self, interactions_source, target_pdb="1ASY"):
+    def process_interactions_file(self, interactions_source=None, target_pdb="1ASY"):
         """
-        Loads interaction details from NAxplorer dataset/1ASY_interactions_NAxplorer.csv,
-        1ASY_rnp_interactions_model1_energy.csv, or standard CSV files and writes intermediate dataset/results/1ASY_interactions.csv.
-        Populates score from 1ASY_interactions_NAxplorer.csv if missing.
+        Loads interaction details from NAxplorer JSON or CSV files:
+        1. Checks {clean_pdb}_rnp_interactions_model1_energy.json
+        2. Populates score from {clean_pdb}_rnp_interactions_model1.json (or CSV)
+        3. Falls back to CSV if JSON is not available.
+        4. Handles empty interaction datasets cleanly.
         """
-        src_p = Path(interactions_source)
-        if not src_p.exists():
-            raise FileNotFoundError(f"Interactions source file not found: {src_p}")
-
+        import json
         clean_pdb = target_pdb.split('.')[0].split('_')[0].upper()
+        src_p = None
 
-        try:
-            df_raw = pd.read_csv(src_p, sep=',')
-            if len(df_raw.columns) == 1 and ('\t' in str(df_raw.columns[0]) or ' ' in str(df_raw.columns[0])):
-                df_raw = pd.read_csv(src_p, sep=r'\s+', engine='python')
-        except Exception:
-            df_raw = pd.read_csv(src_p, sep=r'\s+', engine='python')
+        if interactions_source is not None:
+            cand = Path(interactions_source)
+            if cand.exists():
+                src_p = cand
 
-        # Load score lookup map from NAxplorer file if available
-        nax_map = {}
-        nax_file = DATASET_DIR / f"{clean_pdb}_interactions_NAxplorer.csv"
-        if not nax_file.exists():
-            nax_file = DATASET_DIR / f"{target_pdb}_interactions_NAxplorer.csv"
+        if src_p is None:
+            search_cands = [
+                NAPXPLORER_DATA / f"{clean_pdb}_rnp_interactions_model1_energy.json",
+                NAPXPLORER_DATA / f"{clean_pdb}_rnp_interactions_model1.json",
+                NAPXPLORER_DATA / f"{clean_pdb}_rnp_interactions_model1_energy.csv",
+                NAPXPLORER_DATA / f"{clean_pdb}_rnp_interactions_model1.csv",
+                PRO_RNA_DATA_DIR / f"{clean_pdb}_rnp_interactions_model1_energy.csv",
+                PRO_RNA_DATA_DIR / f"{clean_pdb}_interactions_NAxplorer.csv",
+            ]
+            for cand in search_cands:
+                if cand.exists():
+                    src_p = cand
+                    break
 
-        if nax_file.exists():
+        columns = [
+            'PDB_ID', 'AA', 'AA_atom', 'AA_chain', 'AA_pos',
+            'Nuc', 'Nuc_atom', 'Nuc_chain', 'Nuc_pos',
+            'dist', 'interaction_type', 'edge', 'score',
+            'mediator_info', 'E_int_kcalmol', 'status', 'source'
+        ]
+
+        if src_p is None:
+            df_empty = pd.DataFrame(columns=columns)
+            out_file = self.output_dir / f"{clean_pdb}_interactions.csv"
+            df_empty.to_csv(out_file, index=False)
+            return out_file, df_empty
+
+        # Load score map from model1.json or model1.csv
+        score_map = {}
+        score_by_idx = {}
+        model1_json = NAPXPLORER_DATA / f"{clean_pdb}_rnp_interactions_model1.json"
+        model1_csv = NAPXPLORER_DATA / f"{clean_pdb}_rnp_interactions_model1.csv"
+        if not model1_csv.exists():
+            model1_csv = PRO_RNA_DATA_DIR / f"{clean_pdb}_rnp_interactions_model1.csv"
+
+        if model1_json.exists():
+            try:
+                with open(model1_json, 'r', encoding='utf-8') as f_m:
+                    m_data = json.load(f_m)
+                for i_m, m_item in enumerate(m_data):
+                    sc = m_item.get('score', '-')
+                    score_by_idx[i_m] = sc
+                    p_chain = str(m_item.get('PROT_chain', m_item.get('prot_chain', ''))).strip()
+                    p_res = str(m_item.get('prot_resid', '')).strip()
+                    r_chain = str(m_item.get('RNA_chain', m_item.get('rna_chain', ''))).strip()
+                    r_res = str(m_item.get('rna_resid', '')).strip()
+                    atoms_s = str(m_item.get('atoms', '')).strip()
+                    score_map[(p_chain, p_res, r_chain, r_res, atoms_s)] = sc
+            except Exception:
+                pass
+        elif model1_csv.exists():
             try:
                 try:
-                    df_nax = pd.read_csv(nax_file, sep=r'\s+', engine='python')
+                    df_nax = pd.read_csv(model1_csv, sep=r'\s+', engine='python')
                 except Exception:
-                    df_nax = pd.read_csv(nax_file)
-                for _, nr in df_nax.iterrows():
-                    p_parts = str(nr.get('prot_aa', '')).split(':')
-                    r_parts = str(nr.get('rna_nt', '')).split(':')
-                    atoms_str = str(nr.get('atoms', ''))
-                    if len(p_parts) >= 3 and len(r_parts) >= 3:
-                        key = (p_parts[0], str(p_parts[2]), r_parts[0], str(r_parts[2]), atoms_str)
-                        nax_map[key] = nr.get('score', '-')
+                    df_nax = pd.read_csv(model1_csv)
+                for i_m, nr in df_nax.iterrows():
+                    sc = nr.get('score', '-')
+                    score_by_idx[i_m] = sc
+                    p_chain = str(nr.get('PROT_chain', nr.get('prot_chain', ''))).strip()
+                    p_res = str(nr.get('prot_resid', '')).strip()
+                    r_chain = str(nr.get('RNA_chain', nr.get('rna_chain', ''))).strip()
+                    r_res = str(nr.get('rna_resid', '')).strip()
+                    atoms_s = str(nr.get('atoms', '')).strip()
+                    if not p_chain and 'prot_aa' in nr:
+                        p_parts = str(nr['prot_aa']).split(':')
+                        if len(p_parts) >= 3:
+                            p_chain, p_res = p_parts[0], p_parts[2]
+                    if not r_chain and 'rna_nt' in nr:
+                        r_parts = str(nr['rna_nt']).split(':')
+                        if len(r_parts) >= 3:
+                            r_chain, r_res = r_parts[0], r_parts[2]
+                    score_map[(p_chain, p_res, r_chain, r_res, atoms_s)] = sc
             except Exception:
                 pass
 
         rows = []
-        for idx, r in df_raw.iterrows():
-            pdb_id = str(r.get('pdb4', r.get('pdb_id', r.get('PDB_ID', clean_pdb)))).split('.')[0].strip().upper()
+        if src_p.suffix.lower() == '.json':
+            try:
+                with open(src_p, 'r', encoding='utf-8') as f:
+                    raw_items = json.load(f)
+            except Exception:
+                raw_items = []
 
-            # Parse Protein Residue Info
-            if 'prot_resn' in r and not pd.isna(r['prot_resn']):
-                aa = str(r['prot_resn']).strip()
-                aa_chain = str(r.get('prot_chain', 'A')).strip()
+            for i, r in enumerate(raw_items):
+                pdb_id = str(r.get('pdb4', r.get('pdb_id', r.get('PDB_ID', clean_pdb)))).split('.')[0].strip().upper()
+                aa = str(r.get('prot_resn', r.get('AA', 'GLY'))).strip()
+                aa_chain = str(r.get('prot_chain', r.get('PROT_chain', 'A'))).strip()
                 aa_pos = str(r.get('prot_resid', '0')).strip()
-            elif 'prot_aa' in r and not pd.isna(r['prot_aa']):
-                prot_parts = str(r['prot_aa']).split(':')
-                aa_chain = prot_parts[0] if len(prot_parts) > 0 else 'A'
-                aa = prot_parts[1] if len(prot_parts) > 1 else 'GLY'
-                aa_pos = prot_parts[2] if len(prot_parts) > 2 else '0'
-            else:
-                aa = str(r.get('AA', 'GLY')).strip()
-                aa_chain = str(r.get('AA_chain', 'A')).strip()
-                aa_pos = str(r.get('AA_pos', '0')).strip()
 
-            # Parse RNA Residue Info
-            if 'rna_base' in r and not pd.isna(r['rna_base']):
-                nuc = str(r['rna_base']).strip()
-                nuc_chain = str(r.get('rna_chain', 'R')).strip()
+                nuc = str(r.get('rna_base', r.get('Nuc', 'U'))).strip()
+                nuc_chain = str(r.get('rna_chain', r.get('RNA_chain', 'R'))).strip()
                 nuc_pos = str(r.get('rna_resid', '0')).strip()
-            elif 'rna_nt' in r and not pd.isna(r['rna_nt']):
-                rna_parts = str(r['rna_nt']).split(':')
-                nuc_chain = rna_parts[0] if len(rna_parts) > 0 else 'R'
-                nuc = rna_parts[1] if len(rna_parts) > 1 else 'U'
-                nuc_pos = rna_parts[2] if len(rna_parts) > 2 else '0'
-            else:
-                nuc = str(r.get('Nuc', 'U')).strip()
-                nuc_chain = str(r.get('Nuc_chain', 'R')).strip()
-                nuc_pos = str(r.get('Nuc_pos', '0')).strip()
 
-            # Parse Atoms
-            if 'atoms' in r and not pd.isna(r['atoms']):
-                atom_str = str(r['atoms'])
-                atom_parts = atom_str.split(':') if ':' in atom_str else [atom_str, '']
-                nuc_atom = str(r.get('Nuc_atom', atom_parts[0] if len(atom_parts) > 0 else ''))
-                aa_atom = str(r.get('AA_atom', atom_parts[1] if len(atom_parts) > 1 else ''))
-            else:
-                nuc_atom = str(r.get('Nuc_atom', ''))
-                aa_atom = str(r.get('AA_atom', ''))
+                atom_str = str(r.get('atoms', ''))
+                if ':' in atom_str:
+                    parts = atom_str.split(':')
+                    nuc_atom, aa_atom = parts[0], parts[1]
+                else:
+                    nuc_atom = str(r.get('Nuc_atom', atom_str))
+                    aa_atom = str(r.get('AA_atom', ''))
 
-            # Parse Interaction, Energy, Status details
-            dist_val = r.get('dist', r.get('hb_dis', '-'))
-            int_type = r.get('interaction', r.get('interaction_type', 'H-BOND'))
-            edge_val = r.get('edge', '-')
-            score_val = r.get('score', r.get('overlap', '-'))
+                dist_val = r.get('dist', r.get('hb_dis', '-'))
+                int_type = r.get('interaction', r.get('interaction_type', 'H-BOND'))
+                edge_val = r.get('edge', '-')
+                mediator_val = r.get('mediator_info', '-')
+                e_int_val = r.get('E_int_kcalmol', '-')
+                status_val = r.get('status', 'ok')
+                source_val = 'NAxplorer_energy' if 'E_int_kcalmol' in r else 'NAxplorer'
 
-            if (pd.isna(score_val) or str(score_val).strip() in ['-', '']) and nax_map:
-                key = (aa_chain, str(aa_pos), nuc_chain, str(nuc_pos), f"{nuc_atom}:{aa_atom}")
-                if key in nax_map:
-                    score_val = nax_map[key]
+                score_val = r.get('score', '-')
+                if pd.isna(score_val) or str(score_val).strip() in ['-', '']:
+                    key = (aa_chain, aa_pos, nuc_chain, nuc_pos, atom_str)
+                    score_val = score_map.get(key, score_by_idx.get(i, '-'))
 
-            mediator_val = r.get('mediator_info', '-')
-            e_int_val = r.get('E_int_kcalmol', '-')
-            status_val = r.get('status', 'ok')
-            source_val = r.get('source', 'NAxplorer_energy' if 'E_int_kcalmol' in r else 'NAxplorer')
+                rows.append({
+                    'PDB_ID': pdb_id,
+                    'AA': aa,
+                    'AA_atom': aa_atom,
+                    'AA_chain': aa_chain,
+                    'AA_pos': aa_pos,
+                    'Nuc': nuc,
+                    'Nuc_atom': nuc_atom,
+                    'Nuc_chain': nuc_chain,
+                    'Nuc_pos': nuc_pos,
+                    'dist': dist_val,
+                    'interaction_type': int_type,
+                    'edge': edge_val,
+                    'score': score_val,
+                    'mediator_info': mediator_val,
+                    'E_int_kcalmol': e_int_val,
+                    'status': status_val,
+                    'source': source_val
+                })
+        else:
+            try:
+                try:
+                    df_raw = pd.read_csv(src_p, sep=',')
+                    if len(df_raw.columns) == 1 and ('\t' in str(df_raw.columns[0]) or ' ' in str(df_raw.columns[0])):
+                        df_raw = pd.read_csv(src_p, sep=r'\s+', engine='python')
+                except Exception:
+                    df_raw = pd.read_csv(src_p, sep=r'\s+', engine='python')
+            except Exception:
+                df_raw = pd.DataFrame()
 
-            rows.append({
-                'PDB_ID': pdb_id,
-                'AA': aa,
-                'AA_atom': aa_atom,
-                'AA_chain': aa_chain,
-                'AA_pos': aa_pos,
-                'Nuc': nuc,
-                'Nuc_atom': nuc_atom,
-                'Nuc_chain': nuc_chain,
-                'Nuc_pos': nuc_pos,
-                'dist': dist_val,
-                'interaction_type': int_type,
-                'edge': edge_val,
-                'score': score_val,
-                'mediator_info': mediator_val,
-                'E_int_kcalmol': e_int_val,
-                'status': status_val,
-                'source': source_val
-            })
+            for i, r in df_raw.iterrows():
+                pdb_id = str(r.get('pdb4', r.get('pdb_id', r.get('PDB_ID', clean_pdb)))).split('.')[0].strip().upper()
 
-        df_int = pd.DataFrame(rows)
+                if 'prot_resn' in r and not pd.isna(r['prot_resn']):
+                    aa = str(r['prot_resn']).strip()
+                    aa_chain = str(r.get('prot_chain', r.get('PROT_chain', 'A'))).strip()
+                    aa_pos = str(r.get('prot_resid', '0')).strip()
+                elif 'prot_aa' in r and not pd.isna(r['prot_aa']):
+                    prot_parts = str(r['prot_aa']).split(':')
+                    aa_chain = prot_parts[0] if len(prot_parts) > 0 else 'A'
+                    aa = prot_parts[1] if len(prot_parts) > 1 else 'GLY'
+                    aa_pos = prot_parts[2] if len(prot_parts) > 2 else '0'
+                else:
+                    aa = str(r.get('AA', 'GLY')).strip()
+                    aa_chain = str(r.get('AA_chain', 'A')).strip()
+                    aa_pos = str(r.get('AA_pos', '0')).strip()
+
+                if 'rna_base' in r and not pd.isna(r['rna_base']):
+                    nuc = str(r['rna_base']).strip()
+                    nuc_chain = str(r.get('rna_chain', r.get('RNA_chain', 'R'))).strip()
+                    nuc_pos = str(r.get('rna_resid', '0')).strip()
+                elif 'rna_nt' in r and not pd.isna(r['rna_nt']):
+                    rna_parts = str(r['rna_nt']).split(':')
+                    nuc_chain = rna_parts[0] if len(rna_parts) > 0 else 'R'
+                    nuc = rna_parts[1] if len(rna_parts) > 1 else 'U'
+                    nuc_pos = rna_parts[2] if len(rna_parts) > 2 else '0'
+                else:
+                    nuc = str(r.get('Nuc', 'U')).strip()
+                    nuc_chain = str(r.get('Nuc_chain', 'R')).strip()
+                    nuc_pos = str(r.get('Nuc_pos', '0')).strip()
+
+                atom_str = str(r.get('atoms', ''))
+                if ':' in atom_str:
+                    parts = atom_str.split(':')
+                    nuc_atom, aa_atom = parts[0], parts[1]
+                else:
+                    nuc_atom = str(r.get('Nuc_atom', ''))
+                    aa_atom = str(r.get('AA_atom', ''))
+
+                dist_val = r.get('dist', r.get('hb_dis', '-'))
+                int_type = r.get('interaction', r.get('interaction_type', 'H-BOND'))
+                edge_val = r.get('edge', '-')
+                score_val = r.get('score', r.get('overlap', '-'))
+                if (pd.isna(score_val) or str(score_val).strip() in ['-', '']):
+                    key = (aa_chain, str(aa_pos), nuc_chain, str(nuc_pos), atom_str)
+                    score_val = score_map.get(key, score_by_idx.get(i, '-'))
+
+                mediator_val = r.get('mediator_info', '-')
+                e_int_val = r.get('E_int_kcalmol', '-')
+                status_val = r.get('status', 'ok')
+                source_val = 'NAxplorer_energy' if 'E_int_kcalmol' in r else 'NAxplorer'
+
+                rows.append({
+                    'PDB_ID': pdb_id,
+                    'AA': aa,
+                    'AA_atom': aa_atom,
+                    'AA_chain': aa_chain,
+                    'AA_pos': aa_pos,
+                    'Nuc': nuc,
+                    'Nuc_atom': nuc_atom,
+                    'Nuc_chain': nuc_chain,
+                    'Nuc_pos': nuc_pos,
+                    'dist': dist_val,
+                    'interaction_type': int_type,
+                    'edge': edge_val,
+                    'score': score_val,
+                    'mediator_info': mediator_val,
+                    'E_int_kcalmol': e_int_val,
+                    'status': status_val,
+                    'source': source_val
+                })
+
+        df_int = pd.DataFrame(rows, columns=columns)
         out_int_file = self.output_dir / f"{clean_pdb}_interactions.csv"
         df_int.to_csv(out_int_file, index=False)
         return out_int_file, df_int
@@ -459,37 +624,54 @@ class ComplexMergePipeline:
         df_rna_assigned.to_csv(rna_conf_file, index=False)
 
         # Process Interactions
-        if interactions_file:
-            int_file_path, df_interactions = self.process_interactions_file(interactions_file, target_pdb=target_pdb)
-        else:
-            default_energy = DATASET_DIR / f"{target_pdb}_rnp_interactions_model1_energy.csv"
-            default_naxplorer = DATASET_DIR / f"{target_pdb}_interactions_NAxplorer.csv"
-            if default_energy.exists():
-                int_file_path, df_interactions = self.process_interactions_file(default_energy, target_pdb=target_pdb)
-            elif default_naxplorer.exists():
-                int_file_path, df_interactions = self.process_interactions_file(default_naxplorer, target_pdb=target_pdb)
-            else:
-                df_interactions = None
-                int_file_path = None
+        int_file_path, df_interactions = self.process_interactions_file(interactions_file, target_pdb=target_pdb)
 
-        # Build 1ASY_rotastate_RNA_conf.csv (Complex merged output)
+        # Build {target_pdb}_rotastate_RNA_conf.csv (Complex merged output) and {target_pdb}_final_output.csv
         if df_interactions is not None:
+            rna_ss_map = {}
+            if bound_p and bound_p.exists():
+                try:
+                    rna_ss_map = self.calculator.dssr_analyzer.get_secondary_structure(bound_p)
+                except Exception:
+                    pass
+
             df_merged = map_complex_interactions_and_conformers(
                 df_interactions=df_interactions,
                 df_protein_assigned=df_protein_assigned,
                 df_rna_assigned=df_rna_assigned,
-                target_pdb=target_pdb
+                target_pdb=target_pdb,
+                rna_ss_map=rna_ss_map
             )
             complex_merged_file = self.output_dir / f"{target_pdb}_rotastate_RNA_conf.csv"
             df_merged.to_csv(complex_merged_file, index=False)
             
-            # Legacy alias 1ASY_final_output.csv
-            df_merged.to_csv(self.output_dir / f"{target_pdb}_final_output.csv", index=False)
-            analysis_results = run_full_rotastate_analysis(complex_merged_file, output_dir=self.output_dir)
+            # Legacy alias {target_pdb}_final_output.csv
+            final_out_file = self.output_dir / f"{target_pdb}_final_output.csv"
+            df_merged.to_csv(final_out_file, index=False)
+
+            # Build unified NtC interactions JSON (both interface and non-interface conformers)
+            try:
+                from script.build_unified_ntc_json import build_complex_unified_json
+                comp_json = build_complex_unified_json(target_pdb, self.output_dir)
+                if comp_json:
+                    import json
+                    with open(self.output_dir / f"{target_pdb}_unified_ntc_interactions.json", 'w', encoding='utf-8') as f_json:
+                        json.dump(comp_json, f_json, indent=2)
+            except Exception:
+                pass
+
+            try:
+                if not df_merged.empty:
+                    analysis_results = run_full_rotastate_analysis(complex_merged_file, output_dir=self.output_dir)
+                else:
+                    analysis_results = None
+            except Exception:
+                analysis_results = None
         else:
             complex_merged_file = None
             df_merged = None
             analysis_results = None
+
 
         # If Unbound Case: Generate pair files
         prot_pair_file = None
@@ -553,29 +735,116 @@ class ComplexMergePipeline:
             'ANALYSIS': analysis_results
         }
 
+    def run_batch_from_csv(self, catalog_csv=None, force=False, limit=None):
+        """
+        Runs the full merge pipeline for complexes listed in PRDBv35.csv.
+        """
+        csv_p = Path(catalog_csv) if catalog_csv else (PRO_RNA_DATA_DIR / "PRDBv35.csv")
+        if not csv_p.exists():
+            raise FileNotFoundError(f"Catalog CSV not found: {csv_p}")
+
+        df_cat = pd.read_csv(csv_p)
+        if limit:
+            df_cat = df_cat.head(limit)
+        total = len(df_cat)
+
+        print(f"\n========================================================")
+        print(f"Starting batch processing of {total} complexes from {csv_p.name}")
+        print(f"Output directory: {self.output_dir}")
+        print(f"DSSP directory:   {DSSP_DIR}")
+        print(f"DSSR directory:   {DSSR_DIR}")
+        print(f"========================================================\n")
+
+        success_count = 0
+        skipped_count = 0
+        failed_count = 0
+        failed_list = []
+
+        for idx, row in df_cat.iterrows():
+            pdb_id = str(row['PDB_ID']).strip().upper()
+            pro_chains = str(row.get('C_pro_chain', 'A')).strip()
+            rna_chains = str(row.get('C_RNA_chain', 'R')).strip()
+
+            target_out = self.output_dir / f"{pdb_id}_rotastate_RNA_conf.csv"
+            if not force and target_out.exists() and target_out.stat().st_size > 0:
+                print(f"[{idx+1}/{total}] {pdb_id}: Already processed -> Skipping")
+                skipped_count += 1
+                success_count += 1
+                continue
+
+            cif_file = PRO_RNA_DATA_DIR / f"{pdb_id}.cif"
+            if not cif_file.exists():
+                cif_file = PRO_RNA_DATA_DIR / f"{pdb_id}.pdb"
+
+            print(f"[{idx+1}/{total}] Processing {pdb_id} (Protein: {pro_chains}, RNA: {rna_chains})...")
+            try:
+                res = self.run_pipeline(
+                    bound_file=cif_file,
+                    protein_chains=pro_chains,
+                    rna_chains=rna_chains,
+                    pdb_id=pdb_id,
+                    mode='complex'
+                )
+                print(f"  -> {pdb_id} completed successfully.")
+                success_count += 1
+            except Exception as e:
+                print(f"  -> ERROR processing {pdb_id}: {e}")
+                import traceback
+                traceback.print_exc()
+                failed_count += 1
+                failed_list.append((pdb_id, str(e)))
+
+        print(f"\n========================================================")
+        print(f"Batch Processing Summary:")
+        print(f"  Total Processed: {total}")
+        print(f"  Successful:      {success_count} (including {skipped_count} skipped)")
+        print(f"  Failed:          {failed_count}")
+        if failed_list:
+            print(f"  Failed PDBs:     {failed_list}")
+        print(f"========================================================\n")
+        return {
+            'total': total,
+            'success': success_count,
+            'skipped': skipped_count,
+            'failed': failed_count,
+            'failed_list': failed_list
+        }
+
 
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="End-to-End Complex Merge Pipeline")
-    parser.add_argument("--pdb", default="1ASY", help="PDB ID to process (default: 1ASY)")
-    parser.add_argument("--bound", default=None, help="Bound PDB file path")
+    parser.add_argument("--pdb", default=None, help="PDB ID to process (default: None)")
+    parser.add_argument("--bound", default=None, help="Bound PDB/CIF file path")
     parser.add_argument("--ub_protein", "--unbound", default=None, help="Unbound protein PDB/CIF file path")
     parser.add_argument("--ub_RNA", "--ub_rna", "--unbound-rna", default=None, help="Unbound RNA PDB/CIF file path")
-    parser.add_argument("--interactions", default=None, help="Interactions CSV file path")
+    parser.add_argument("--interactions", default=None, help="Interactions CSV/JSON file path")
     parser.add_argument("--mode", default=None, help="Execution mode (unbound-unbound, complex, free-protein, free-rna)")
-    parser.add_argument("-o", "--output-dir", default=None, help="Output directory (default: dataset/results)")
+    parser.add_argument("-o", "--output-dir", default=None, help="Output directory (default: proRNA_data/results)")
+    parser.add_argument("--batch", action="store_true", help="Run batch processing across PRDBv35.csv complexes")
+    parser.add_argument("--batch-csv", default=str(PRO_RNA_DATA_DIR / "PRDBv35.csv"), help="Path to batch catalog CSV")
+    parser.add_argument("--limit", type=int, default=None, help="Limit number of complexes to process in batch mode")
+    parser.add_argument("--force", action="store_true", help="Force overwrite existing outputs in batch mode")
 
     args = parser.parse_args()
 
     out_dir = Path(args.output_dir) if args.output_dir else RESULTS_DIR
-    clean_pdb = args.pdb.split('.')[0].split('_')[0].upper()
+    pipeline = ComplexMergePipeline(output_dir=out_dir)
 
-    bound_file = Path(args.bound) if args.bound else (DATASET_DIR / f"{clean_pdb}.cif" if (DATASET_DIR / f"{clean_pdb}.cif").exists() else DATASET_DIR / f"{clean_pdb}.pdb")
+    if args.batch or (args.pdb is None and args.bound is None):
+        res = pipeline.run_batch_from_csv(
+            catalog_csv=args.batch_csv,
+            force=args.force,
+            limit=args.limit
+        )
+        return
+
+    clean_pdb = args.pdb.split('.')[0].split('_')[0].upper()
+    bound_file = Path(args.bound) if args.bound else (PRO_RNA_DATA_DIR / f"{clean_pdb}.cif" if (PRO_RNA_DATA_DIR / f"{clean_pdb}.cif").exists() else PRO_RNA_DATA_DIR / f"{clean_pdb}.pdb")
     ub_protein_file = Path(args.ub_protein) if args.ub_protein else None
     ub_rna_file = Path(args.ub_RNA) if args.ub_RNA else None
-    int_file = Path(args.interactions) if args.interactions else DATASET_DIR / f"{clean_pdb}_rnp_interactions_model1_energy.csv"
+    int_file = Path(args.interactions) if args.interactions else None
 
-    pipeline = ComplexMergePipeline(output_dir=out_dir)
     res = pipeline.run_pipeline(
         bound_file=bound_file if bound_file and bound_file.exists() else None,
         ub_protein=ub_protein_file if ub_protein_file and ub_protein_file.exists() else None,

@@ -23,12 +23,8 @@ import re
 from collections import OrderedDict
 
 # Import StructureReader for PDB & CIF parsing
-ROTAMER_LIB_SCRIPT = Path('/home/labuser/Projects/PhD_projects/RBPs_rotamer_lib/script')
-if ROTAMER_LIB_SCRIPT.exists() and str(ROTAMER_LIB_SCRIPT) not in sys.path:
-    sys.path.insert(0, str(ROTAMER_LIB_SCRIPT))
-
-ROTA_ASSIGN_DIR = Path('/home/labuser/Projects/PhD_projects/rota_assign')
-if ROTA_ASSIGN_DIR.exists() and str(ROTA_ASSIGN_DIR) not in sys.path:
+ROTA_ASSIGN_DIR = Path(__file__).resolve().parent.parent
+if str(ROTA_ASSIGN_DIR) not in sys.path:
     sys.path.insert(0, str(ROTA_ASSIGN_DIR))
 
 try:
@@ -59,20 +55,8 @@ class EqualResidueAligner:
         if clustalw2_binary:
             self.clustalw2_binary = str(clustalw2_binary)
         else:
-            found_bin = shutil.which("clustalw2") or shutil.which("clustalw")
-            if found_bin:
-                self.clustalw2_binary = found_bin
-            else:
-                for candidate in [
-                    Path("/home/labuser/clustalw-2.1/clustalw2"),
-                    Path("/home/labuser/bin/clustalw2"),
-                    Path("/usr/bin/clustalw2")
-                ]:
-                    if candidate.exists():
-                        self.clustalw2_binary = str(candidate)
-                        break
-                else:
-                    self.clustalw2_binary = "clustalw2"
+            self.clustalw2_binary = (os.environ.get("CLUSTALW2_BIN") or shutil.which("clustalw2")
+                                     or shutil.which("clustalw") or "clustalw2")
 
         self.default_output_dir = Path(default_output_dir)
 
@@ -330,7 +314,7 @@ def main():
     parser.add_argument("--unbound-chains", required=True, help="Chain ID(s) for unbound structure")
     parser.add_argument("--rna-chains", default=None, help="Chain ID(s) for RNA in bound structure")
     parser.add_argument("-o", "--output-dir", default="dataset", help="Output directory for equal-residue dataset files")
-    parser.add_argument("--clustalw2", default="/home/labuser/clustalw-2.1/clustalw2", help="Path to clustalw2 executable")
+    parser.add_argument("--clustalw2", default=None, help="Path to clustalw2 executable (default: $CLUSTALW2_BIN or PATH)")
 
     args = parser.parse_args()
 

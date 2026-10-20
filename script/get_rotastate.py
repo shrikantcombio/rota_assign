@@ -5,7 +5,8 @@ Module for calculating and assigning amino acid rotamer states for all 20 amino 
 SCWRL4 / MODELLER / PyMOL / Chimera rotamer matching algorithms extended for custom rotamer libraries.
 - Supports both ON-rotamers (p, t, m) and OFF-rotamers (P, T, M).
 - Uses backbone Ramachandran neighborhood search (30-60 deg radius) to handle sparse grid cells.
-- Evaluates rotamer matches using log-likelihood weighted angular deviation scoring over n - 1 primary dihedrals.
+- Evaluates rotamer matches using log-likelihood weighted angular deviation scoring over all chis (up to chi4).
+- Names rotamers Lovell/Richardson style: letters for rotameric chis, the value for a terminal sp2 chi.
 - Supports user-selected library type ('BBD' default, 'SSD', or 'BBI').
 - Outputs 'no_chi' for ALA/GLY, and 'NA' (Not Available) for unassigned or missing chi states.
 """
@@ -57,6 +58,14 @@ aa_chis_dict = build_rotalib.aa_chis_dict
 ) = build_rotalib.run_bbi_files()
 
 
+# Residues whose last chi is a terminal sp2 torsion: named with that chi's value (Lovell et al. 2000,
+# e.g. ASP 'm-20', GLN 'mt-30', ARG 'mtt180'). All other chis are rotameric and named by letter only.
+SP2_TERMINAL_AA = {'ASN', 'ASP', 'GLN', 'GLU', 'HIS', 'PHE', 'TYR', 'TRP', 'ARG'}
+# Terminal chis with two-fold symmetry (1-indexed), compared after folding into [-90, 90)
+SYMMETRIC_CHI_IDX = build_rotalib.SYMMETRIC_CHI_IDX
+MAX_COMPARED_CHIS = 4  # ARG chi5 (planar guanidinium) is not part of the rotamer definition
+
+
 def wrap_180(angle):
     """
     Wraps angle in degrees to [-180, 180].
@@ -64,101 +73,125 @@ def wrap_180(angle):
     return angle - np.ceil(angle / 360.0 - 0.5) * 360.0
 
 
-def find_best_bbd_rotamer(aa, chis, phi, psi, bbd_lib, max_grid_radius=3600):
+def _is_missing(value):
+    return value is None or (isinstance(value, (int, float, np.floating)) and np.isnan(float(value)))
+
+
+def _n_compared_chis(aa):
+    return min(aa_chis_dict.get(aa, 0), MAX_COMPARED_CHIS)
+
+
+def _comparable(aa, idx, angle):
+    """Angle prepared for comparison: symmetric terminal chis are folded."""
+    if SYMMETRIC_CHI_IDX.get(aa) == idx + 1:
+        return build_rotalib.fold_symmetric_chi(angle)
+    return float(angle)
+
+
+def _best_rotamer(aa, chis, aa_rota_library):
     """
-    SCWRL4 / MODELLER / PyMOL style rotamer search algorithm for Backbone-Dependent (BBD) libraries.
-    1. Searches neighboring Ramachandran grid cells within max_grid_radius (30-60 deg).
-    2. Evaluates rotamer candidates using log-likelihood weighted chi-squared angular deviation over n - 1 primary dihedrals.
-    3. Selects optimal rotamer state supporting both ON (p,t,m) and OFF (P,T,M) rotameric states.
+    Scores every library rotamer against the residue's chis and names the best one.
+
+    score = sum of squared circular chi deviations - 100 * ln(P(rotamer)); all chis of the
+    residue (up to chi4) are compared. Library rows are [chi1, ..., chiN, prob].
     """
-    aa_clean = str(aa).upper().strip()
-    n_chis = aa_chis_dict.get(aa_clean, 0)
-    if n_chis == 0 or aa_clean in ['ALA', 'GLY']:
-        return 'no_chi'
+    n_cmp = _n_compared_chis(aa)
+    obs = [_comparable(aa, i, chis[i]) for i in range(n_cmp)]
 
-    n_check = n_chis - 1 if n_chis > 1 else 1
-
-    clean_chis = [c for c in chis[:n_chis] if c is not None and not (isinstance(c, (int, float)) and np.isnan(float(c)))]
-    if len(clean_chis) < n_check:
-        return 'NA'
-
-    if not bbd_lib or aa_clean not in bbd_lib:
-        return 'NA'
-
-    # Step 1: Search nearest grid points on Ramachandran map
-    best_conf = None
-    min_grid_dist = float('inf')
-
-    for conf, rotas in bbd_lib[aa_clean].items():
-        if not rotas:
-            continue
-        try:
-            phi_str, psi_str = conf.split(',')
-            c_phi, c_psi = float(phi_str), float(psi_str)
-            d_phi = wrap_180(phi - c_phi)
-            d_psi = wrap_180(psi - c_psi)
-            dist = d_phi**2 + d_psi**2
-            if dist < min_grid_dist and dist <= max_grid_radius:
-                min_grid_dist = dist
-                best_conf = conf
-        except ValueError:
-            continue
-
-    if not best_conf:
-        # Distance cap: do not fallback to cells further than 2 grid steps (e.g. 60° radius, sq_dist <= 3600)
-        cap = (2 * 30)**2 * 2  # = 3600 (3600 sq_deg = 60 deg max distance)
-        valid_confs = [
-            c for c, val in bbd_lib[aa_clean].items()
-            if len(val) > 0 and (wrap_180(phi - float(c.split(',')[0]))**2 + wrap_180(psi - float(c.split(',')[1]))**2) <= cap
-        ]
-        if not valid_confs:
-            return 'NA'
-        best_conf = min(
-            valid_confs,
-            key=lambda c: (wrap_180(phi - float(c.split(',')[0]))**2 + wrap_180(psi - float(c.split(',')[1]))**2)
-        )
-
-    aa_rota_library = bbd_lib[aa_clean][best_conf]
-
-    # Step 2: Log-Likelihood + Chi-squared Angular Deviation Scoring over n - 1 primary dihedrals
-    best_rotastate = 'NA'
-    best_score = float('inf')
-
+    best_rotastate, best_score = 'NA', float('inf')
     for r_prefix, r_vals in aa_rota_library.items():
         for val_row in r_vals:
-            if len(val_row) < 2:
+            if len(val_row) < n_cmp + 1:
                 continue
             prob = float(val_row[-1])
             chi_diff_sq = sum(
-                (wrap_180(clean_chis[idx] - float(val_row[idx])))**2
-                for idx in range(min(n_check, len(val_row) - 1))
+                wrap_180(obs[i] - _comparable(aa, i, val_row[i])) ** 2 for i in range(n_cmp)
             )
             score = chi_diff_sq - 100.0 * np.log(max(prob, 1e-4))
             if score < best_score:
                 best_score = score
-                last_chi_idx = min(n_chis - 1, len(val_row) - 2)
-                last_chi = round(val_row[last_chi_idx])
-                best_rotastate = f"{r_prefix}{last_chi}"
-
+                best_rotastate = _rotamer_name(aa, r_prefix, val_row, n_cmp)
     return best_rotastate
+
+
+def _rotamer_name(aa, r_prefix, val_row, n_cmp):
+    """Lovell/Richardson style name from the library prefix (letters of chi1..chi(n-1)) and row."""
+    if n_cmp == 1:
+        return r_prefix
+    last = val_row[n_cmp - 1]
+    if aa in SP2_TERMINAL_AA:
+        return f"{r_prefix}{round(_comparable(aa, n_cmp - 1, last))}"
+    return f"{r_prefix}{build_rotalib.assign_ptm_state(last)}"
+
+
+def _residue_chis(aa, chis):
+    """chi1..chiN for comparison, or None if any of them is missing (positions are preserved)."""
+    n_cmp = _n_compared_chis(aa)
+    vals = list(chis[:n_cmp])
+    if len(vals) < n_cmp or any(_is_missing(v) for v in vals):
+        return None
+    return [float(v) for v in vals]
+
+
+def classify_rotamer(aa, chis):
+    """
+    Rotamer class read directly from a residue's own chi angles (no library): one letter per
+    rotameric chi from build_rotalib.assign_ptm_state (p/t/m on-rotamer, P/T/M off-rotamer).
+    For residues with a terminal sp2 chi (SP2_TERMINAL_AA) that chi is not part of the class,
+    matching the letter part of the Lovell names produced by the library assignment.
+    Returns 'no_chi' for ALA/GLY and 'NA' when a required chi is missing.
+    """
+    aa_clean = str(aa).upper().strip()
+    if aa_chis_dict.get(aa_clean, 0) == 0:
+        return 'no_chi'
+    res_chis = _residue_chis(aa_clean, chis)
+    if res_chis is None:
+        return 'NA'
+    n_letters = len(res_chis) - 1 if (aa_clean in SP2_TERMINAL_AA and len(res_chis) > 1) else len(res_chis)
+    return "".join(build_rotalib.assign_ptm_state(c) for c in res_chis[:n_letters])
+
+
+def find_best_bbd_rotamer(aa, chis, phi, psi, bbd_lib, max_grid_radius=3600):
+    """
+    Rotamer search for Backbone-Dependent (BBD) libraries.
+    1. Uses the nearest populated Ramachandran grid cell within sqrt(max_grid_radius) degrees.
+    2. Scores library rotamers by squared chi deviation and log-probability (see _best_rotamer).
+    """
+    aa_clean = str(aa).upper().strip()
+    if aa_chis_dict.get(aa_clean, 0) == 0:
+        return 'no_chi'
+
+    res_chis = _residue_chis(aa_clean, chis)
+    if res_chis is None or not bbd_lib or aa_clean not in bbd_lib:
+        return 'NA'
+
+    best_conf, min_grid_dist = None, float('inf')
+    for conf, rotas in bbd_lib[aa_clean].items():
+        if not rotas:
+            continue
+        try:
+            c_phi, c_psi = (float(x) for x in conf.split(','))
+        except ValueError:
+            continue
+        dist = wrap_180(phi - c_phi) ** 2 + wrap_180(psi - c_psi) ** 2
+        if dist < min_grid_dist and dist <= max_grid_radius:
+            min_grid_dist, best_conf = dist, conf
+
+    if best_conf is None:
+        return 'NA'
+    return _best_rotamer(aa_clean, res_chis, bbd_lib[aa_clean][best_conf])
 
 
 def find_best_ssd_rotamer(aa, chis, ss, ssd_lib):
     """
-    SCWRL / MODELLER style rotamer search algorithm for Secondary Structure-Dependent (SSD) libraries.
+    Rotamer search for Secondary Structure-Dependent (SSD) and Backbone-Independent libraries.
     """
     aa_clean = str(aa).upper().strip()
-    n_chis = aa_chis_dict.get(aa_clean, 0)
-    if n_chis == 0 or aa_clean in ['ALA', 'GLY']:
+    if aa_chis_dict.get(aa_clean, 0) == 0:
         return 'no_chi'
 
-    n_check = n_chis - 1 if n_chis > 1 else 1
-
-    clean_chis = [c for c in chis[:n_chis] if c is not None and not (isinstance(c, (int, float)) and np.isnan(float(c)))]
-    if len(clean_chis) < n_check:
-        return 'NA'
-
-    if not ssd_lib or aa_clean not in ssd_lib:
+    res_chis = _residue_chis(aa_clean, chis)
+    if res_chis is None or not ssd_lib or aa_clean not in ssd_lib:
         return 'NA'
 
     aa_rota_library = ssd_lib[aa_clean].get(ss, {})
@@ -171,27 +204,7 @@ def find_best_ssd_rotamer(aa, chis, ss, ssd_lib):
 
     if not aa_rota_library:
         return 'NA'
-
-    best_rotastate = 'NA'
-    best_score = float('inf')
-
-    for r_prefix, r_vals in aa_rota_library.items():
-        for val_row in r_vals:
-            if len(val_row) < 2:
-                continue
-            prob = float(val_row[-1])
-            chi_diff_sq = sum(
-                (wrap_180(clean_chis[idx] - float(val_row[idx])))**2
-                for idx in range(min(n_check, len(val_row) - 1))
-            )
-            score = chi_diff_sq - 100.0 * np.log(max(prob, 1e-4))
-            if score < best_score:
-                best_score = score
-                last_chi_idx = min(n_chis - 1, len(val_row) - 2)
-                last_chi = round(val_row[last_chi_idx])
-                best_rotastate = f"{r_prefix}{last_chi}"
-
-    return best_rotastate
+    return _best_rotamer(aa_clean, res_chis, aa_rota_library)
 
 
 class RotamerStateAssigner:
@@ -224,7 +237,7 @@ def get_aa_rotamer(aa, ss, b_ub, interface, chi_1=None, chi_2=None, chi_3=None, 
     - Returns 'no_chi' for ALA/GLY.
     - Returns 'NA' (Not Available) for missing chi states.
     - Supports ON-rotamers (p,t,m) and OFF-rotamers (P,T,M).
-    - Standardized n - 1 chi criteria applied for multi-chi amino acids.
+    - All chis up to chi4 are compared; names follow Lovell/Richardson (see _rotamer_name).
     """
     aa_clean = str(aa).upper().strip()
     aa_chis = aa_chis_dict.get(aa_clean, 0)
@@ -232,12 +245,8 @@ def get_aa_rotamer(aa, ss, b_ub, interface, chi_1=None, chi_2=None, chi_3=None, 
     if aa_clean in ['ALA', 'GLY'] or aa_chis == 0:
         return 'no_chi'
 
-    chis_temp = [chi_1, chi_2, chi_3, chi_4, chi_5]
-    chis = [val for val in chis_temp if val is not None and not (isinstance(val, (int, float)) and np.isnan(float(val)))]
-
-    n_check = aa_chis - 1 if aa_chis > 1 else 1
-
-    if len(chis) < n_check:
+    chis = [chi_1, chi_2, chi_3, chi_4, chi_5]
+    if _residue_chis(aa_clean, chis) is None:
         return 'NA'
 
     b_ub_clean = str(b_ub).lower().strip()

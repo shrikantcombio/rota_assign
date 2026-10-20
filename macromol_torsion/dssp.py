@@ -26,32 +26,21 @@ class DsspAnalyzer:
         if dssp_binary:
             self.dssp_binary = str(dssp_binary)
         else:
-            default_bin = Path("/home/labuser/bin/dssp")
-            if default_bin.exists():
-                self.dssp_binary = str(default_bin)
-            else:
-                self.dssp_binary = shutil.which("dssp") or shutil.which("mkdssp") or "dssp"
+            self.dssp_binary = (os.environ.get("DSSP_BIN") or shutil.which("mkdssp")
+                                or shutil.which("dssp") or "dssp")
 
     def run_dssp(self, structure_file, output_dssp=None):
         file_p = Path(structure_file)
         if file_p.suffix.lower() == '.dssp':
             return file_p
 
-        stem = file_p.stem.split('.')[0].split('_')[0]
-        dssp_cache_dir = Path("/home/labuser/Projects/results/PRDBv35_clean/proRNA_data/dssp")
-        if output_dssp:
-            out_p = Path(output_dssp)
-        elif dssp_cache_dir.exists():
-            out_p = dssp_cache_dir / f"{stem}.dssp"
-        else:
-            out_p = file_p.with_suffix('.dssp')
-
-        if out_p.exists() and out_p.stat().st_size > 0:
+        # The DSSP file is kept next to the structure under the structure's full name, and reused
+        # only while it is newer than the structure. (A shared cache keyed by PDB code gave bound
+        # and unbound files such as 1ASY_1EOV_C.pdb / 1ASY_1EOV_U.pdb the same DSSP result.)
+        out_p = Path(output_dssp) if output_dssp else file_p.with_suffix('.dssp')
+        if (out_p.exists() and out_p.stat().st_size > 0
+                and out_p.stat().st_mtime >= file_p.stat().st_mtime):
             return out_p
-
-        dssp_same = file_p.with_suffix('.dssp')
-        if dssp_same.exists() and dssp_same.stat().st_size > 0:
-            return dssp_same
 
         out_p.parent.mkdir(parents=True, exist_ok=True)
         pdb_file = StructureReader.write_temp_pdb(file_p)

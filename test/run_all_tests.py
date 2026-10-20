@@ -23,7 +23,7 @@ def main():
     print(f"Output Directory: {RESULTS_DIR}\n")
 
     # 1. Run test_torsion_calculation.py
-    print(">>> [Test 1/2] Running Complex Torsion, DSSP, and SASA Calculation Test...")
+    print(">>> [Test 1/3] Running Complex Torsion, DSSP, and SASA Calculation Test...")
     cmd1 = [sys.executable, str(TEST_DIR / "test_torsion_calculation.py")]
     res1 = subprocess.run(cmd1, capture_output=False)
 
@@ -34,13 +34,24 @@ def main():
     print("\n--------------------------------------------------------------------------")
 
     # 2. Run rota_conf_assign.py
-    print(">>> [Test 2/2] Running Rotamer & RNA Conformer Assignment Test...")
+    print(">>> [Test 2/3] Running Rotamer & RNA Conformer Assignment Test...")
     cmd2 = [sys.executable, str(TEST_DIR / "rota_conf_assign.py")]
     res2 = subprocess.run(cmd2, capture_output=False)
 
     if res2.returncode != 0:
         print("\n❌ Test 2 (rota_conf_assign.py) failed!")
         sys.exit(res2.returncode)
+
+    print("\n--------------------------------------------------------------------------")
+
+    # 3. Run test_regressions.py (unit tests for fixed defects)
+    print(">>> [Test 3/3] Running Regression Unit Tests...")
+    cmd3 = [sys.executable, str(TEST_DIR / "test_regressions.py")]
+    res3 = subprocess.run(cmd3, capture_output=False)
+
+    if res3.returncode != 0:
+        print("\n❌ Test 3 (test_regressions.py) failed!")
+        sys.exit(res3.returncode)
 
     print("\n==========================================================================")
     print("  ALL ROTA_ASSIGN UTILITY TESTS PASSED SUCCESSFULLY!                      ")

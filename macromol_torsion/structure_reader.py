@@ -9,9 +9,10 @@ import sys
 import os
 import tempfile
 
-ROTAMER_LIB_SCRIPT = Path('/home/labuser/Projects/PhD_projects/RBPs_rotamer_lib/script')
-if ROTAMER_LIB_SCRIPT.exists() and str(ROTAMER_LIB_SCRIPT) not in sys.path:
-    sys.path.insert(0, str(ROTAMER_LIB_SCRIPT))
+# utils.mmcif_clean_reader is rota_assign's own copy (previously imported from RBPs_rotamer_lib)
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
 try:
     from utils.mmcif_clean_reader import parse_file as parse_cif_or_pdb
@@ -58,8 +59,9 @@ class StructureReader:
 
                 elem = r.get('_atom_site.type_symbol', '').strip()
 
-                # Format standard residue label matching legacy code (e.g. 'ARG A  18' or '  A B  12')
-                res_label = f"{resname:<3s} {chain:1s} {res_seq:>4s}".strip()
+                # Format standard residue label matching legacy code (e.g. 'ARG A  18' or '  A B  12');
+                # an insertion code is appended so residues 52 and 52A stay distinct
+                res_label = f"{resname:<3s} {chain:1s} {res_seq:>4s}{icode.strip()}".strip()
 
                 atoms.append({
                     'record': rec,
@@ -98,7 +100,7 @@ class StructureReader:
                     except ValueError:
                         continue
 
-                    res_label = f"{resname:<3s} {chain:1s} {res_seq:>4s}".strip()
+                    res_label = f"{resname:<3s} {chain:1s} {res_seq:>4s}{icode.strip()}".strip()
                     atoms.append({
                         'record': rec,
                         'atom_name': aname,

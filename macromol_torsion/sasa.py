@@ -12,6 +12,9 @@ import subprocess
 from macromol_torsion.structure_reader import StructureReader
 
 
+REPO_DATASET_DIR = Path(__file__).resolve().parent.parent / "dataset"
+
+
 class SasaAnalyzer:
     """
     Interface to NACCESS executable for SASA calculation and interface classification.
@@ -21,11 +24,7 @@ class SasaAnalyzer:
         if naccess_binary:
             self.naccess_binary = str(naccess_binary)
         else:
-            default_bin = Path("/home/labuser/naccess2.1.1/naccess")
-            if default_bin.exists():
-                self.naccess_binary = str(default_bin)
-            else:
-                self.naccess_binary = shutil.which("naccess") or "naccess"
+            self.naccess_binary = os.environ.get("NACCESS_BIN") or shutil.which("naccess") or "naccess"
 
     def run_naccess(self, structure_file, output_dir=None):
         file_p = Path(structure_file)
@@ -202,15 +201,15 @@ class SasaAnalyzer:
             int_candidates.extend([
                 parent_dir / f"{pdb_tag}P.int",
                 parent_dir / f"{pdb_tag}.int",
-                Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}P.int",
-                Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}.int",
+                REPO_DATASET_DIR / f"{pdb_tag}P.int",
+                REPO_DATASET_DIR / f"{pdb_tag}.int",
             ])
         elif int_type == 'rna':
             int_candidates.extend([
                 parent_dir / f"{pdb_tag}R.int",
                 parent_dir / f"{pdb_tag}.int",
-                Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}R.int",
-                Path("/home/labuser/Projects/PhD_projects/rota_assign/dataset") / f"{pdb_tag}.int",
+                REPO_DATASET_DIR / f"{pdb_tag}R.int",
+                REPO_DATASET_DIR / f"{pdb_tag}.int",
             ])
         else:
             int_candidates.extend([

@@ -23,6 +23,10 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 
+# Protein-RNA results directory; set ROTA_ASSIGN_PRORNA_DIR
+PRO_RNA_RESULTS_DIR = Path(os.environ.get("ROTA_ASSIGN_PRORNA_DIR", Path(__file__).resolve().parent.parent / "dataset")) / "results"
+
+
 # Path setup
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT_DIR = SCRIPT_DIR.parent
@@ -524,8 +528,8 @@ def run_full_ntc_analysis(benchmark_json_path, output_dir=None):
 
 def main():
     parser = argparse.ArgumentParser(description="Statistical analysis of RNA dinucleotide conformer (NtC) recognition by proteins.")
-    parser.add_argument("--json", default="/home/labuser/Projects/results/PRDBv35_clean/proRNA_data/results/PRDBv35_unified_ntc_interactions.json", help="Path to unified benchmark JSON")
-    parser.add_argument("-o", "--output-dir", default="/home/labuser/Projects/results/PRDBv35_clean/proRNA_data/results", help="Directory to save output CSVs and reports")
+    parser.add_argument("--json", default=str(PRO_RNA_RESULTS_DIR / "PRDBv35_unified_ntc_interactions.json"), help="Path to unified benchmark JSON")
+    parser.add_argument("-o", "--output-dir", default=str(PRO_RNA_RESULTS_DIR), help="Directory to save output CSVs and reports")
     args = parser.parse_args()
 
     run_full_ntc_analysis(args.json, output_dir=args.output_dir)

@@ -6,6 +6,7 @@ Loads existing json dictionaries from rota_lib_dict if available.
 """
 
 from pathlib import Path
+import os
 import sys
 import json
 import copy
@@ -319,174 +320,94 @@ class RotamerLibraryPipeline:
         return results
 
 
-def should_rebuild_library(dump_dir, required_files, force_rebuild=False, prompt_user=False):
+# Source rotamer libraries shipped with rota_assign (copies of the RBPs_rotamer_lib releases).
+# Set ROTA_ASSIGN_LIBRARY_DIR to use another directory with the same layout.
+LIBRARY_DIR = Path(os.environ.get("ROTA_ASSIGN_LIBRARY_DIR", Path(__file__).resolve().parent.parent / "library"))
+CACHE_DIR = Path(__file__).resolve().parent.parent / "rota_lib_dict"
+
+# (cache subdir, source subdir, builder, {cache name: source file prefix})
+LIBRARY_SPECS = {
+    "BBD": ("bbd", "RBPs_BBD_rotamer_lib", "BBD", {
+        "bbd_b_I": "RBPs_I_bbd_B_rotamer_lib", "bbd_b_N": "RBPs_N_bbd_B_rotamer_lib",
+        "bbd_ub_I": "RBPs_I_bbd_U_rotamer_lib", "bbd_ub_N": "RBPs_N_bbd_U_rotamer_lib"}),
+    "BBI": ("bbi", "RBPs_BBI_rotamer_lib", "BBI", {
+        "bbi_b_I": "RBPs_I_bbi_B_rotamer_lib", "bbi_b_N": "RBPs_N_bbi_B_rotamer_lib",
+        "bbi_ub_I": "RBPs_I_bbi_U_rotamer_lib", "bbi_ub_N": "RBPs_N_bbi_U_rotamer_lib"}),
+    "SSD": ("ssd", "RBPs_SSD_rotamer_lib", "SSD", {
+        "b_I": "InterfaceResidueBound", "b_N": "NonInterfaceResidueBound",
+        "ub_I": "InterfaceResidueUnbound", "ub_N": "NonInterfaceResidueUnbound"}),
+}
+
+
+def _source_file(src_dir, prefix):
+    for ext in (".json", ".csv", ".tsv"):
+        p = src_dir / f"{prefix}{ext}"
+        if p.exists():
+            return p
+    raise FileNotFoundError(f"No rotamer library file for {prefix} in {src_dir}")
+
+
+def _sources_digest(files):
+    import hashlib
+    h = hashlib.sha256()
+    for f in files:
+        h.update(f.name.encode())
+        h.update(f.read_bytes())
+    return h.hexdigest()
+
+
+def load_libraries(lib_type, force_rebuild=False, save_to_cache=True):
     """
-    Checks if required rotamer library JSON files exist in dump_dir.
-    If all exist and force_rebuild is False:
-      - If prompt_user is True and sys.stdin.isatty(), asks the user if they want to override and rebuild.
-      - Otherwise returns False (use cached files).
-    If any file is missing or rebuild requested, returns True.
+    Rotamer library dictionaries for lib_type ('BBD', 'BBI' or 'SSD'), as
+    {name: (full_dict, on_rotamer_dict)}.
+
+    The JSON cache in rota_lib_dict/<type>/ is used only while it was built from the current
+    source files (SHA-256 recorded in source.sha256); otherwise it is rebuilt.
     """
-    if not dump_dir.exists():
-        return True
+    cache_sub, src_sub, builder_type, names = LIBRARY_SPECS[lib_type]
+    src_dir = LIBRARY_DIR / src_sub
+    cache_dir = CACHE_DIR / cache_sub
+    sources = {name: _source_file(src_dir, prefix) for name, prefix in names.items()}
+    digest = _sources_digest(sources.values())
+    manifest = cache_dir / "source.sha256"
 
-    all_exist = all((dump_dir / fname).exists() for fname in required_files)
-    if not all_exist:
-        return True
+    cache_files = {n: (cache_dir / f"full_rota_lib_{n}.json", cache_dir / f"rota_lib_{n}.json") for n in names}
+    cached = (not force_rebuild and manifest.exists() and manifest.read_text().strip() == digest
+              and all(f.exists() for pair in cache_files.values() for f in pair))
+    if cached:
+        return {n: tuple(json.loads(f.read_text()) for f in pair) for n, pair in cache_files.items()}
 
-    if force_rebuild:
-        return True
-
-    if prompt_user and hasattr(sys.stdin, 'isatty') and sys.stdin.isatty():
-        try:
-            answer = input(f"Rotamer library dictionary JSON files already exist in '{dump_dir}'. Override and rebuild? [y/N]: ").strip().lower()
-            if answer in ['y', 'yes']:
-                return True
-        except (KeyboardInterrupt, EOFError):
-            pass
-
-    return False
+    builder = RotamerLibraryPipeline().get_builder(builder_type)
+    libs = {}
+    for name, src in sources.items():
+        full_dict, on_dict, _, _ = builder.build_library(src)
+        libs[name] = (full_dict, on_dict)
+    if save_to_cache:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        for name, (full_dict, on_dict) in libs.items():
+            builder.export_json(full_dict, cache_files[name][0])
+            builder.export_json(on_dict, cache_files[name][1])
+        manifest.write_text(digest + "\n")
+    return libs
 
 
 def run_all_files(force_rebuild=False, prompt_user=False):
-    current_dir = Path(__file__).resolve().parent
-    root_dir = current_dir.parent
-
-    dump_dir = root_dir / 'rota_lib_dict'
-    if not dump_dir.exists():
-        dump_dir = current_dir / 'rota_lib_dict'
-
-    required_json_files = [
-        'full_rota_lib_b_I.json', 'full_rota_lib_b_N.json',
-        'full_rota_lib_ub_I.json', 'full_rota_lib_ub_N.json',
-        'rota_lib_b_I.json', 'rota_lib_b_N.json',
-        'rota_lib_ub_I.json', 'rota_lib_ub_N.json'
-    ]
-
-    rebuild = should_rebuild_library(dump_dir, required_json_files, force_rebuild=force_rebuild, prompt_user=prompt_user)
-
-    if not rebuild:
-        dicts = []
-        for fname in required_json_files:
-            with open(dump_dir / fname, 'r') as f:
-                dicts.append(json.load(f))
-        return tuple(dicts)
-
-    return ({}, {}, {}, {}, {}, {}, {}, {})
+    """SSD libraries: (full b_I, full b_N, full ub_I, full ub_N, on b_I, on b_N, on ub_I, on ub_N)."""
+    libs = load_libraries("SSD", force_rebuild=force_rebuild)
+    order = ("b_I", "b_N", "ub_I", "ub_N")
+    return tuple(libs[n][0] for n in order) + tuple(libs[n][1] for n in order)
 
 
 def run_bbd_files(force_rebuild=False, prompt_user=False, save_to_cache=True):
-    """
-    Loads BBD rotamer library dictionaries from JSON files in rota_lib_dict/bbd directory,
-    or builds them directly from JSON/CSV files in RBPs_BBD_rotamer_lib and caches JSON files in rota_lib_dict/bbd.
-    """
-    current_dir = Path(__file__).resolve().parent
-    root_dir = current_dir.parent
-
-    dump_dir = root_dir / 'rota_lib_dict' / 'bbd'
-
-    bbd_files = [
-        'full_rota_lib_bbd_b_I.json',
-        'full_rota_lib_bbd_b_N.json',
-        'full_rota_lib_bbd_ub_I.json',
-        'full_rota_lib_bbd_ub_N.json'
-    ]
-
-    rebuild = should_rebuild_library(dump_dir, bbd_files, force_rebuild=force_rebuild, prompt_user=prompt_user)
-
-    if not rebuild:
-        dicts = []
-        for fname in bbd_files:
-            with open(dump_dir / fname, 'r') as f:
-                dicts.append(json.load(f))
-        return tuple(dicts)
-
-    csv_dir = root_dir.parent / 'RBPs_rotamer_lib' / 'RBPs_BBD_rotamer_lib'
-    if not csv_dir.exists():
-        csv_dir = root_dir / 'library' / 'RBPs_BBD_rotamer_lib'
-
-    if csv_dir.exists():
-        builder = BBDRotamerLibBuilder()
-
-        def get_input_file(prefix):
-            for ext in ['.json', '.csv', '.tsv']:
-                p = csv_dir / f"{prefix}{ext}"
-                if p.exists():
-                    return p
-            raise FileNotFoundError(f"No input library file found for {prefix} in {csv_dir}")
-
-        b_I, _, _, _ = builder.build_library(get_input_file('RBPs_I_bbd_B_rotamer_lib'))
-        b_N, _, _, _ = builder.build_library(get_input_file('RBPs_N_bbd_B_rotamer_lib'))
-        ub_I, _, _, _ = builder.build_library(get_input_file('RBPs_I_bbd_U_rotamer_lib'))
-        ub_N, _, _, _ = builder.build_library(get_input_file('RBPs_N_bbd_U_rotamer_lib'))
-
-        if save_to_cache:
-            dump_dir.mkdir(parents=True, exist_ok=True)
-            builder.export_json(b_I, dump_dir / 'full_rota_lib_bbd_b_I.json')
-            builder.export_json(b_N, dump_dir / 'full_rota_lib_bbd_b_N.json')
-            builder.export_json(ub_I, dump_dir / 'full_rota_lib_bbd_ub_I.json')
-            builder.export_json(ub_N, dump_dir / 'full_rota_lib_bbd_ub_N.json')
-
-        return (b_I, b_N, ub_I, ub_N)
-
-    return ({}, {}, {}, {})
+    """BBD libraries (full dictionaries): (b_I, b_N, ub_I, ub_N)."""
+    libs = load_libraries("BBD", force_rebuild=force_rebuild, save_to_cache=save_to_cache)
+    return tuple(libs[n][0] for n in ("bbd_b_I", "bbd_b_N", "bbd_ub_I", "bbd_ub_N"))
 
 
 def run_bbi_files(force_rebuild=False, prompt_user=False, save_to_cache=True):
-    """
-    Loads BBI rotamer library dictionaries from JSON files in rota_lib_dict/bbi directory,
-    or builds them directly from JSON/CSV files in RBPs_BBI_rotamer_lib and caches JSON files in rota_lib_dict/bbi.
-    """
-    current_dir = Path(__file__).resolve().parent
-    root_dir = current_dir.parent
-
-    dump_dir = root_dir / 'rota_lib_dict' / 'bbi'
-
-    bbi_files = [
-        'full_rota_lib_bbi_b_I.json',
-        'full_rota_lib_bbi_b_N.json',
-        'full_rota_lib_bbi_ub_I.json',
-        'full_rota_lib_bbi_ub_N.json'
-    ]
-
-    rebuild = should_rebuild_library(dump_dir, bbi_files, force_rebuild=force_rebuild, prompt_user=prompt_user)
-
-    if not rebuild:
-        dicts = []
-        for fname in bbi_files:
-            with open(dump_dir / fname, 'r') as f:
-                dicts.append(json.load(f))
-        return tuple(dicts)
-
-    csv_dir = root_dir.parent / 'RBPs_rotamer_lib' / 'RBPs_BBI_rotamer_lib'
-    if not csv_dir.exists():
-        csv_dir = root_dir / 'library' / 'RBPs_BBI_rotamer_lib'
-
-    if csv_dir.exists():
-        builder = BBIRotamerLibBuilder()
-
-        def get_input_file(prefix):
-            for ext in ['.json', '.csv', '.tsv']:
-                p = csv_dir / f"{prefix}{ext}"
-                if p.exists():
-                    return p
-            raise FileNotFoundError(f"No input library file found for {prefix} in {csv_dir}")
-
-        b_I, _, _, _ = builder.build_library(get_input_file('RBPs_I_bbi_B_rotamer_lib'))
-        b_N, _, _, _ = builder.build_library(get_input_file('RBPs_N_bbi_B_rotamer_lib'))
-        ub_I, _, _, _ = builder.build_library(get_input_file('RBPs_I_bbi_U_rotamer_lib'))
-        ub_N, _, _, _ = builder.build_library(get_input_file('RBPs_N_bbi_U_rotamer_lib'))
-
-        if save_to_cache:
-            dump_dir.mkdir(parents=True, exist_ok=True)
-            builder.export_json(b_I, dump_dir / 'full_rota_lib_bbi_b_I.json')
-            builder.export_json(b_N, dump_dir / 'full_rota_lib_bbi_b_N.json')
-            builder.export_json(ub_I, dump_dir / 'full_rota_lib_bbi_ub_I.json')
-            builder.export_json(ub_N, dump_dir / 'full_rota_lib_bbi_ub_N.json')
-
-        return (b_I, b_N, ub_I, ub_N)
-
-    return ({}, {}, {}, {})
+    """BBI libraries (full dictionaries): (b_I, b_N, ub_I, ub_N)."""
+    libs = load_libraries("BBI", force_rebuild=force_rebuild, save_to_cache=save_to_cache)
+    return tuple(libs[n][0] for n in ("bbi_b_I", "bbi_b_N", "bbi_ub_I", "bbi_ub_N"))
 
 
 if __name__ == '__main__':

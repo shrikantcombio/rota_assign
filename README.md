@@ -33,9 +33,9 @@ Running `rota_assign` requires Python 3.9+, core scientific Python libraries, an
 
 | Tool / Binary | Version | Purpose in Pipeline | Detection / Default Paths |
 | :--- | :--- | :--- | :--- |
-| **NACCESS** (`naccess`) | `2.1.1` | Calculates Solvent Accessible Surface Area (SASA) and classifies residues into Interface (`I`) vs. Non-Interface (`N`) states based on $\Delta\text{SASA} \ge 1.0\ \text{Å}^2$. | Searches system `$PATH` or `/home/labuser/naccess2.1.1/naccess`. |
-| **DSSP** (`mkdssp` / `dssp`) | `3.x` / `4.x` | Assigns protein 3-state secondary structure (`H`: Helix, `S`: Sheet, `L`: Loop). | Searches system `$PATH` (`mkdssp` or `dssp`). |
-| **ClustalW2** (`clustalw2` / `clustalw`) | `2.1` | Performs pairwise sequence alignment between bound complex and unbound free protein structures to extract equal residue length datasets. | Searches system `$PATH` or `/home/labuser/clustalw-2.1/clustalw2`. |
+| **NACCESS** (`naccess`) | `2.1.1` | Calculates Solvent Accessible Surface Area (SASA) and classifies residues into Interface (`I`) vs. Non-Interface (`N`) states based on $\Delta\text{SASA} \ge 1.0\ \text{Å}^2$. | `$NACCESS_BIN`, else `naccess` on `$PATH`. |
+| **DSSP** (`mkdssp` / `dssp`) | `3.x` / `4.x` | Assigns protein 3-state secondary structure (`H`: Helix, `S`: Sheet, `L`: Loop). | `$DSSP_BIN`, else `mkdssp` / `dssp` on `$PATH`. |
+| **ClustalW2** (`clustalw2` / `clustalw`) | `2.1` | Performs pairwise sequence alignment between bound complex and unbound free protein structures to extract equal residue length datasets. | `$CLUSTALW2_BIN`, else `clustalw2` / `clustalw` on `$PATH`. |
 
 ---
 
@@ -56,9 +56,11 @@ Running `rota_assign` requires Python 3.9+, core scientific Python libraries, an
 ### 3. Bundled Package Modules & Reference Libraries
 
 The repository includes pre-packaged reference libraries and third-party tools:
-- **StructAnnotate** ([`StructAnnotate/`](file:///home/labuser/Projects/PhD_projects/rota_assign/StructAnnotate/)): Cloned package for RNA 7D suite dinucleotide conformer assignment (`NtC`, `CANA`, `confalA`).
-- **BBD Rotamer Library** ([`library/RBPs_BBD_rotamer_lib/`](file:///home/labuser/Projects/PhD_projects/rota_assign/library/RBPs_BBD_rotamer_lib/)): Dunbrack Backbone Dependent (BBD) rotamer libraries.
-- **Structure Cleaner** ([`utils/clean_structure.py`](file:///home/labuser/Projects/PhD_projects/rota_assign/utils/clean_structure.py)): Standardized PDB structure cleaner module.
+- **StructAnnotate** (`StructAnnotate/`, git submodule of https://github.com/Eredtywe/StructAnnotate): RNA 7D suite dinucleotide conformer assignment (`NtC`, `CANA`, `confalA`).
+- **Rotamer libraries** (`library/RBPs_{BBD,BBI,SSD}_rotamer_lib/`): copies of the RBPs_rotamer_lib releases. `script/build_rotalib.py` caches them as dictionaries in `rota_lib_dict/` and rebuilds the cache whenever the source files change (SHA-256 in `rota_lib_dict/<type>/source.sha256`). Set `ROTA_ASSIGN_LIBRARY_DIR` to use another library directory with the same layout.
+- **Structure Cleaner** (`utils/structure_cleaner.py`, imported via `utils/clean_structure.py`): PDB/mmCIF cleaner (modified residues, altlocs, waters/ions).
+
+Optional environment variables: `ROTA_ASSIGN_PRORNA_DIR` (protein-RNA working data for `merge_pipeline.py` and the NtC scripts; default `dataset/`) and `ROTA_ASSIGN_DSSR_CACHE` (directory for cached x3dna-dssr JSON; no caching if unset).
 
 ---
 
@@ -68,7 +70,7 @@ The repository includes pre-packaged reference libraries and third-party tools:
 
 1. **Clone the Repository**:
    ```bash
-   git clone git@github.com:shrikantcombio/rota_assign.git
+   git clone --recurse-submodules git@github.com:shrikantcombio/rota_assign.git
    cd rota_assign
    ```
 
@@ -226,6 +228,20 @@ df_protein_assigned = assign_rotamer_states(df_protein, mode='both')
 df_rna_assigned = assign_rna_conformers(df_rna)
 ```
 
+**Rotamer names** follow Lovell et al. (2000): every chi up to chi4 is compared with the library, and
+rotameric chis are named by letter (`p` ≈ +60°, `t` ≈ 180°, `m` ≈ −60°; capitals `P`/`T`/`M` mark the
+off-rotamer bins between them). A terminal sp2 chi (ASN, ASP, GLN, GLU, HIS, PHE, TYR, TRP, and ARG chi4)
+is given as the matched library value instead, e.g. ASP `m-20`, GLN `mt-30`; LEU is `tp`, LYS `mttt`.
+The assigned name is that of the closest rotamer in the library cell, so a residue whose own
+conformation is not populated in that cell receives the nearest populated rotamer.
+`get_rotastate.classify_rotamer(aa, chis)` gives the class directly from a residue's own chi angles,
+without a library.
+
+**Bound/unbound pairing.** `macromol_torsion.pairing` pairs residues by chain order and sequence
+(`pair_equal_residues` for equal-residue files, `pair_residues_across_entries` for different PDB
+entries); residue labels are not used because unbound chains are usually relabelled or renumbered.
+Angles that cannot be computed (chain termini and breaks, missing atoms, no unbound partner) are NaN.
+
 ---
 
 ### Step 5: Master Integration Pipeline (`script/merge_pipeline.py`)
@@ -247,8 +263,11 @@ python script/merge_pipeline.py --pdb dataset/1ASY.cif --ub_RNA dataset/2TRA.cif
 To verify that all dependencies and external binaries are functioning properly, run the test suite:
 
 ```bash
-# Run master test suite
+# Run master test suite (integration tests + regression unit tests)
 python3 test/run_all_tests.py
+
+# Regression unit tests only
+python3 test/test_regressions.py
 ```
 
 Outputs will be saved in `test/test_results/`.

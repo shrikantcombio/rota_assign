@@ -1,0 +1,3 @@
+[submodule "StructAnnotate"]
+	path = StructAnnotate
+	url = https://github.com/Eredtywe/StructAnnotate.git

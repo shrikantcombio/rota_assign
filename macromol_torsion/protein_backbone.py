@@ -8,6 +8,9 @@ from pathlib import Path
 from macromol_torsion.geometry import PDBGeometry
 from macromol_torsion.structure_reader import StructureReader
 
+# Longest C(i)-N(i+1) distance still treated as a peptide bond (ideal 1.33 A)
+MAX_PEPTIDE_BOND = 2.0
+
 STANDARD_AA = [
     "ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE",
     "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL"
@@ -47,6 +50,7 @@ class ProteinBackboneCalculator:
         N_coords = []
         CA_coords = []
         C_coords = []
+        chains = []
         valid_residues = []
 
         for res_key in residue_order:
@@ -56,32 +60,35 @@ class ProteinBackboneCalculator:
                 CA_coords.append(r_dict["CA"])
                 C_coords.append(r_dict["C"])
                 resname, chain, seq, icode = res_key
-                formatted_label = f"{resname:<3s} {chain:1s} {seq:>4s}".strip()
+                chains.append(chain)
+                formatted_label = f"{resname:<3s} {chain:1s} {seq:>4s}{(icode or '').strip()}".strip()
                 valid_residues.append(formatted_label)
 
-        phi, psi, omega, tau, xi, labels = [], [], [], [], [], []
         n_res = len(valid_residues)
 
-        for i in range(1, n_res - 1):
-            try:
-                p_angle = PDBGeometry.get_dihedral(C_coords[i - 1], N_coords[i], CA_coords[i], C_coords[i])
-                s_angle = PDBGeometry.get_dihedral(N_coords[i], CA_coords[i], C_coords[i], N_coords[i + 1])
-                o_angle = PDBGeometry.get_dihedral(CA_coords[i], C_coords[i], N_coords[i + 1], CA_coords[i + 1])
-                t_angle = PDBGeometry.tau_angle(N_coords[i], CA_coords[i], C_coords[i])
+        # Residue i is peptide-bonded to i + 1 only within a chain and with C(i)-N(i+1) <= 2.0 A;
+        # dihedrals spanning a chain break or a chain boundary are undefined (NaN)
+        bonded = [
+            chains[i] == chains[i + 1] and PDBGeometry.distance(C_coords[i], N_coords[i + 1]) <= MAX_PEPTIDE_BOND
+            for i in range(n_res - 1)
+        ]
 
-                phi.append(p_angle)
-                psi.append(s_angle)
-                omega.append(o_angle)
-                tau.append(t_angle)
-                labels.append(valid_residues[i])
-            except Exception:
-                continue
-
-        for i in range(1, n_res - 2):
+        def _dihedral(*pts):
             try:
-                x_angle = PDBGeometry.get_dihedral(CA_coords[i - 1], CA_coords[i], CA_coords[i + 1], CA_coords[i + 2])
-                xi.append(x_angle)
+                return PDBGeometry.get_dihedral(*pts)
             except Exception:
-                xi.append(0.0)
+                return float("nan")
+
+        phi, psi, omega, tau, xi, labels = [], [], [], [], [], []
+        for i in range(n_res):
+            prev_ok = i > 0 and bonded[i - 1]
+            next_ok = i < n_res - 1 and bonded[i]
+            phi.append(_dihedral(C_coords[i - 1], N_coords[i], CA_coords[i], C_coords[i]) if prev_ok else float("nan"))
+            psi.append(_dihedral(N_coords[i], CA_coords[i], C_coords[i], N_coords[i + 1]) if next_ok else float("nan"))
+            omega.append(_dihedral(CA_coords[i], C_coords[i], N_coords[i + 1], CA_coords[i + 1]) if next_ok else float("nan"))
+            tau.append(PDBGeometry.tau_angle(N_coords[i], CA_coords[i], C_coords[i]))
+            xi_ok = prev_ok and next_ok and i < n_res - 2 and bonded[i + 1]
+            xi.append(_dihedral(CA_coords[i - 1], CA_coords[i], CA_coords[i + 1], CA_coords[i + 2]) if xi_ok else float("nan"))
+            labels.append(valid_residues[i])
 
         return phi, psi, omega, tau, xi, labels

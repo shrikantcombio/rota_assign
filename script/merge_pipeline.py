@@ -12,6 +12,7 @@ Master end-to-end processing pipeline module.
 """
 
 from pathlib import Path
+import os
 import sys
 import pandas as pd
 import numpy as np
@@ -19,7 +20,8 @@ import numpy as np
 # Path setup
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT_DIR = SCRIPT_DIR.parent
-PRO_RNA_DATA_DIR = Path("/home/labuser/Projects/results/PRDBv35_clean/proRNA_data")
+# Protein-RNA working data (results/, napxplorer/, dssp/, x3dna-dssr/); set ROTA_ASSIGN_PRORNA_DIR
+PRO_RNA_DATA_DIR = Path(os.environ.get("ROTA_ASSIGN_PRORNA_DIR", Path(__file__).resolve().parent.parent / "dataset"))
 RESULTS_DIR = PRO_RNA_DATA_DIR / "results"
 NAPXPLORER_DATA = PRO_RNA_DATA_DIR / "napxplorer"
 DSSP_DIR = PRO_RNA_DATA_DIR / "dssp"

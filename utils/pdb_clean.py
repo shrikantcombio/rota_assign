@@ -10,7 +10,7 @@ import os
 import glob
 
 # Ensure clean_pdb directory is in path
-CLEAN_PDB_DIR = Path('/home/labuser/clean_pdb')
+CLEAN_PDB_DIR = Path(__file__).resolve().parent  # bundled structure_cleaner.py
 if CLEAN_PDB_DIR.exists() and str(CLEAN_PDB_DIR) not in sys.path:
     sys.path.insert(0, str(CLEAN_PDB_DIR))
 

@@ -16,6 +16,7 @@ Literature Reference:
 import os
 import re
 import json
+import hashlib
 import shutil
 import logging
 import tempfile
@@ -163,10 +164,15 @@ class DSSRParser:
         Executes x3dna-dssr binary with --json --more flags in an isolated temp directory
         to prevent un-prefixed dssr-* scratch file collisions across multiple PDBs.
         """
-        stem = structure_file.stem.split('.')[0].split('_')[0].upper()
-        dssr_dir = Path("/home/labuser/Projects/results/PRDBv35_clean/proRNA_data/x3dna-dssr")
-        cache_file = dssr_dir / f"{stem}_dssr.json"
-        if cache_file.exists() and cache_file.stat().st_size > 0:
+        # Optional cache (ROTA_ASSIGN_DSSR_CACHE), keyed by file name and content hash so that
+        # different structures of the same PDB entry (complex, unbound RNA) never share a result
+        cache_dir = os.environ.get("ROTA_ASSIGN_DSSR_CACHE")
+        dssr_dir = Path(cache_dir) if cache_dir else None
+        cache_file = None
+        if dssr_dir is not None:
+            digest = hashlib.sha1(structure_file.read_bytes()).hexdigest()[:12]
+            cache_file = dssr_dir / f"{structure_file.stem}_{digest}_dssr.json"
+        if cache_file is not None and cache_file.exists() and cache_file.stat().st_size > 0:
             try:
                 with open(cache_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
@@ -181,7 +187,8 @@ class DSSRParser:
                 res = subprocess.run(cmd, capture_output=True, text=True, check=True, cwd=tmpdir)
                 data = json.loads(res.stdout)
                 self._raw_json = data
-                if dssr_dir.exists():
+                if cache_file is not None:
+                    dssr_dir.mkdir(parents=True, exist_ok=True)
                     try:
                         with open(cache_file, 'w', encoding='utf-8') as f_out:
                             json.dump(data, f_out)

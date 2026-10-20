@@ -58,13 +58,12 @@ def main():
         default_output_dir=RESULTS_DIR
     )
 
+    # Test inputs are tracked in dataset/
     bound_src = DATASET_DIR / "1ASY.pdb"
-    if not bound_src.exists():
-        bound_src = Path("/home/labuser/Projects/datasets/PRDBv3_dataset/PRDBv3.0/1ASY/1ASY.pdb")
-
     unbound_src = DATASET_DIR / "1ASY_1EOV_U.pdb"
-    if not unbound_src.exists():
-        unbound_src = Path("/home/labuser/Projects/datasets/PRDBv3_dataset/PRDBv3.0/1ASY/1EOV_full.pdb")
+    for src in (bound_src, unbound_src):
+        if not src.exists():
+            raise FileNotFoundError(f"Test input missing: {src}")
 
     clean_bound, _ = cleaner.clean_structure(bound_src, "1ASY.pdb")
     clean_unbound, _ = cleaner.clean_structure(unbound_src, "1EOV.pdb")

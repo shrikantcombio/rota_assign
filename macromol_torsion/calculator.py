@@ -15,6 +15,7 @@ import numpy as np
 from macromol_torsion.structure_reader import StructureReader
 from macromol_torsion.protein_backbone import ProteinBackboneCalculator
 from macromol_torsion.protein_sidechain import ProteinSidechainCalculator
+from macromol_torsion.pairing import pair_equal_residues
 from macromol_torsion.dssp import DsspAnalyzer
 from macromol_torsion.dssr import DSSRAnalyzer
 from macromol_torsion.sasa import SasaAnalyzer
@@ -63,27 +64,20 @@ class ComplexTorsionCalculator:
         has_unbound = (unbound_file is not None and Path(unbound_file).resolve() != bound_p.resolve())
 
         u_map = {}
+        pair_map = {}
         if has_unbound and unbound_p.exists():
             u_phi, u_psi, u_omega, u_tau, u_xi, u_labels = self.protein_bb_calc.calculate_dihedrals(unbound_p)
             u_chis = self.protein_sc_calc.calculate_all_chis(unbound_p)
 
+            # Missing angles are NaN, never 0.0 (a real dihedral can be 0 degrees)
             for i, lbl in enumerate(u_labels):
-                parts = lbl.split()
-                chain = parts[1] if len(parts) > 1 else 'A'
-                seq = parts[2] if len(parts) > 2 else '0'
-                res_key = (chain, seq)
-
-                data_item = {
+                u_map[lbl] = {
                     'PHI': u_phi[i], 'PSI': u_psi[i], 'OMEGA': u_omega[i],
-                    'TAU': u_tau[i], 'XI': u_xi[i] if i < len(u_xi) else 0.0,
-                    'CHI1': u_chis['CHI1'].get(lbl, 0.0),
-                    'CHI2': u_chis['CHI2'].get(lbl, 0.0),
-                    'CHI3': u_chis['CHI3'].get(lbl, 0.0),
-                    'CHI4': u_chis['CHI4'].get(lbl, 0.0),
-                    'CHI5': u_chis['CHI5'].get(lbl, 0.0),
+                    'TAU': u_tau[i], 'XI': u_xi[i],
+                    **{c: u_chis[c].get(lbl, np.nan) for c in ('CHI1', 'CHI2', 'CHI3', 'CHI4', 'CHI5')},
                 }
-                u_map[lbl] = data_item
-                u_map[res_key] = data_item
+            # Unbound chains are usually relabelled/renumbered: pair by chain order and sequence
+            pair_map, _ = pair_equal_residues(b_labels, u_labels)
 
         # 3. DSSP Secondary Structure on original cleaned structure files
         b_ss_map = {}
@@ -116,19 +110,24 @@ class ComplexTorsionCalculator:
             res_key = (chain, seq)
             int_seq = int(seq) if seq.isdigit() else seq
 
-            b_c1 = b_chis['CHI1'].get(lbl, 0.0)
-            b_c2 = b_chis['CHI2'].get(lbl, 0.0)
-            b_c3 = b_chis['CHI3'].get(lbl, 0.0)
-            b_c4 = b_chis['CHI4'].get(lbl, 0.0)
-            b_c5 = b_chis['CHI5'].get(lbl, 0.0)
+            b_c1 = b_chis['CHI1'].get(lbl, np.nan)
+            b_c2 = b_chis['CHI2'].get(lbl, np.nan)
+            b_c3 = b_chis['CHI3'].get(lbl, np.nan)
+            b_c4 = b_chis['CHI4'].get(lbl, np.nan)
+            b_c5 = b_chis['CHI5'].get(lbl, np.nan)
 
-            u_item = u_map.get(lbl) or u_map.get(res_key, {
-                'PHI': 0.0, 'PSI': 0.0, 'OMEGA': 0.0, 'TAU': 0.0, 'XI': 0.0,
-                'CHI1': 0.0, 'CHI2': 0.0, 'CHI3': 0.0, 'CHI4': 0.0, 'CHI5': 0.0
-            })
+            u_lbl = pair_map.get(lbl)
+            u_item = u_map.get(u_lbl) if u_lbl else None
+            if u_item is None:
+                u_item = {k: np.nan for k in ('PHI', 'PSI', 'OMEGA', 'TAU', 'XI', 'CHI1', 'CHI2', 'CHI3', 'CHI4', 'CHI5')}
 
             b_ss = b_ss_map.get(lbl) or b_ss_map.get(res_key) or 'L'
-            u_ss = u_ss_map.get(lbl) or u_ss_map.get(res_key) or 'L'
+            if u_lbl:
+                u_parts = u_lbl.split()
+                u_res_key = (u_parts[1], u_parts[2]) if len(u_parts) > 2 else None
+                u_ss = u_ss_map.get(u_lbl) or u_ss_map.get(u_res_key) or 'L'
+            else:
+                u_ss = np.nan
 
             sasa_type = 'I' if (lbl in interface_set or res_key in interface_set or (chain, str(int_seq)) in interface_set or (chain, int_seq) in interface_set) else 'N'
 

@@ -18,6 +18,10 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
+# Protein-RNA results directory; set ROTA_ASSIGN_PRORNA_DIR
+PRO_RNA_RESULTS_DIR = Path(os.environ.get("ROTA_ASSIGN_PRORNA_DIR", Path(__file__).resolve().parent.parent / "dataset")) / "results"
+
+
 # Path setup
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT_DIR = SCRIPT_DIR.parent
@@ -208,7 +212,7 @@ def build_complex_unified_json(pdb_id, results_dir):
     return complex_data
 
 
-def run_build_unified_json(results_dir="/home/labuser/Projects/results/PRDBv35_clean/proRNA_data/results", pdb=None):
+def run_build_unified_json(results_dir=str(PRO_RNA_RESULTS_DIR), pdb=None):
     """
     Builds per-complex and dataset-wide unified JSON files.
     """
@@ -277,7 +281,7 @@ def run_build_unified_json(results_dir="/home/labuser/Projects/results/PRDBv35_c
 def main():
     parser = argparse.ArgumentParser(description="Construct unified JSON dataset combining interface and non-interface RNA conformers.")
     parser.add_argument("--pdb", default=None, help="Process single PDB ID")
-    parser.add_argument("-d", "--dir", default="/home/labuser/Projects/results/PRDBv35_clean/proRNA_data/results", help="Directory containing results CSVs")
+    parser.add_argument("-d", "--dir", default=str(PRO_RNA_RESULTS_DIR), help="Directory containing results CSVs")
     args = parser.parse_args()
 
     run_build_unified_json(results_dir=args.dir, pdb=args.pdb)

@@ -57,7 +57,12 @@ Running `rota_assign` requires Python 3.9+, core scientific Python libraries, an
 
 The repository includes pre-packaged reference libraries and third-party tools:
 - **StructAnnotate** (`StructAnnotate/`, git submodule of https://github.com/Eredtywe/StructAnnotate): RNA 7D suite dinucleotide conformer assignment (`NtC`, `CANA`, `confalA`).
-- **Rotamer libraries** (`library/RBPs_{BBD,BBI,SSD}_rotamer_lib/`): copies of the RBPs_rotamer_lib releases. `script/build_rotalib.py` caches them as dictionaries in `rota_lib_dict/` and rebuilds the cache whenever the source files change (SHA-256 in `rota_lib_dict/<type>/source.sha256`). Set `ROTA_ASSIGN_LIBRARY_DIR` to use another library directory with the same layout.
+- **Rotamer libraries** (`library/`): copies of the RBPs_rotamer_lib releases. BBD and BBI come in two releases, selected with `ROTA_ASSIGN_LIBRARY_VERSION`:
+  - `v2` (default): `library/RBPs_{BBD,BBI}_rotamer_lib_v2/`. The terminal sp2 chi of ASP, GLU, PHE, TYR, ASN, GLN, HIS and TRP is binned by residue-specific ranges (see RBPs_rotamer_lib `script/rotamer_definitions.py`).
+  - `v1`: `library/RBPs_{BBD,BBI}_rotamer_lib/`, every chi in three 120° bins (original manuscript analyses).
+
+  The SSD library (`library/RBPs_SSD_rotamer_lib/`) has a single release. `script/build_rotalib.py` caches the libraries as dictionaries in `rota_lib_dict/<type>/` (v1) or `rota_lib_dict/v2/<type>/` and rebuilds a cache whenever its source files change (SHA-256 in `source.sha256`). Set `ROTA_ASSIGN_LIBRARY_DIR` to use another library directory with the same layout.
+- **Symmetric terminal chis** (ASP χ2, GLU χ3, PHE χ2, TYR χ2) are compared with library rotamers using a 180° period (χ and χ + 180° are the same conformation) and named after folding into [−90°, 90°). This comparison is used with either library release; reproducing the original analyses exactly needs the code from before this change as well as `v1`.
 - **Structure Cleaner** (`utils/structure_cleaner.py`, imported via `utils/clean_structure.py`): PDB/mmCIF cleaner (modified residues, altlocs, waters/ions).
 
 Optional environment variables: `ROTA_ASSIGN_PRORNA_DIR` (protein-RNA working data for `merge_pipeline.py` and the NtC scripts; default `dataset/`) and `ROTA_ASSIGN_DSSR_CACHE` (directory for cached x3dna-dssr JSON; no caching if unset).
@@ -113,7 +118,7 @@ rota_assign/
 │   ├── rna_backbone.py             # RNA 7D suite dihedrals (Alpha..Zeta, Delta, Chi)
 │   ├── dssp_runner.py              # Secondary Structure assignment (H, S, L)
 │   └── naccess_runner.py           # SASA & Interface status assignment (I vs N)
-├── rota_lib_dict/                  # Cached JSON Rotamer Library Dictionaries
+├── rota_lib_dict/                  # Cached JSON Rotamer Library Dictionaries (v1; v2 in rota_lib_dict/v2/)
 │   ├── bbd/                        # Pre-built Backbone Dependent JSON dictionaries
 │   └── bbi/                        # Pre-built Backbone Independent JSON dictionaries
 ├── script/                         # High-level pipeline & analysis modules

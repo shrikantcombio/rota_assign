@@ -49,7 +49,7 @@ def assign_ptm_state(val):
         return str(int(val))
 
 
-SYMMETRIC_CHI_IDX = {'ASP': 2, 'GLU': 3, 'PHE': 2, 'TYR': 2}  # 1-indexed
+SYMMETRIC_CHI_IDX = {'ASP': 2, 'GLU': 3, 'PHE': 2, 'TYR': 2}  # 1-indexed, two-fold symmetric (period 180)
 
 def fold_symmetric_chi(angle):
     angle = float(angle)
@@ -323,14 +323,26 @@ class RotamerLibraryPipeline:
 # Source rotamer libraries shipped with rota_assign (copies of the RBPs_rotamer_lib releases).
 # Set ROTA_ASSIGN_LIBRARY_DIR to use another directory with the same layout.
 LIBRARY_DIR = Path(os.environ.get("ROTA_ASSIGN_LIBRARY_DIR", Path(__file__).resolve().parent.parent / "library"))
-CACHE_DIR = Path(__file__).resolve().parent.parent / "rota_lib_dict"
+
+# BBD/BBI library release: 'v2' (default; terminal sp2 chis binned by residue-specific ranges) or
+# 'v1' (every chi in three 120-degree bins; used for the original manuscript analyses).
+# The SSD library has a single release.
+LIBRARY_VERSIONS = ("v1", "v2")
+LIBRARY_VERSION = os.environ.get("ROTA_ASSIGN_LIBRARY_VERSION", "v2")
+if LIBRARY_VERSION not in LIBRARY_VERSIONS:
+    raise ValueError(f"ROTA_ASSIGN_LIBRARY_VERSION must be one of {LIBRARY_VERSIONS}, got {LIBRARY_VERSION!r}")
+_VERSION_SUFFIX = "" if LIBRARY_VERSION == "v1" else f"_{LIBRARY_VERSION}"
+
+# v1 caches stay in rota_lib_dict/<type>/, later releases in rota_lib_dict/<version>/<type>/
+_CACHE_ROOT = Path(__file__).resolve().parent.parent / "rota_lib_dict"
+CACHE_DIR = _CACHE_ROOT if LIBRARY_VERSION == "v1" else _CACHE_ROOT / LIBRARY_VERSION
 
 # (cache subdir, source subdir, builder, {cache name: source file prefix})
 LIBRARY_SPECS = {
-    "BBD": ("bbd", "RBPs_BBD_rotamer_lib", "BBD", {
+    "BBD": ("bbd", f"RBPs_BBD_rotamer_lib{_VERSION_SUFFIX}", "BBD", {
         "bbd_b_I": "RBPs_I_bbd_B_rotamer_lib", "bbd_b_N": "RBPs_N_bbd_B_rotamer_lib",
         "bbd_ub_I": "RBPs_I_bbd_U_rotamer_lib", "bbd_ub_N": "RBPs_N_bbd_U_rotamer_lib"}),
-    "BBI": ("bbi", "RBPs_BBI_rotamer_lib", "BBI", {
+    "BBI": ("bbi", f"RBPs_BBI_rotamer_lib{_VERSION_SUFFIX}", "BBI", {
         "bbi_b_I": "RBPs_I_bbi_B_rotamer_lib", "bbi_b_N": "RBPs_N_bbi_B_rotamer_lib",
         "bbi_ub_I": "RBPs_I_bbi_U_rotamer_lib", "bbi_ub_N": "RBPs_N_bbi_U_rotamer_lib"}),
     "SSD": ("ssd", "RBPs_SSD_rotamer_lib", "SSD", {

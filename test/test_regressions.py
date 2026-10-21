@@ -10,6 +10,7 @@ Unit tests for defects fixed in October 2026. Each test fails on the earlier cod
   - residues with insertion codes shared a label
   - rotamer assignment ignored the last chi (LEU tp vs tt were indistinguishable)
   - missing chis shifted later chis into the wrong position
+  - symmetric terminal chis (PHE/TYR chi2, ...) were folded and then compared on a 360-degree circle
 
 Run:  python test/test_regressions.py
 """
@@ -133,6 +134,20 @@ class RotamerTests(unittest.TestCase):
         b = get_rotastate.get_aa_rotamer("LEU", "L", "bound", "N", -177.0, 65.0, phi=-65.0, psi=-40.0)
         self.assertNotEqual(a, b)
         self.assertTrue(a.isalpha() and b.isalpha(), "LEU names are letters only (Lovell)")
+
+    def test_symmetric_chi_compared_with_180_period(self):
+        # PHE chi2 = 91 is the ring orientation of -89: the same library row must match both
+        self.assertAlmostEqual(get_rotastate._chi_diff("PHE", 1, 91.0, -89.0), 0.0)
+        self.assertAlmostEqual(get_rotastate._chi_diff("PHE", 1, 89.0, -89.0), -2.0)
+        self.assertAlmostEqual(get_rotastate._chi_diff("PHE", 0, 89.0, -89.0), 178.0)
+        lib = {"m": [[-65.0, 95.0, 0.6], [-65.0, 10.0, 0.4]]}
+        self.assertEqual(get_rotastate._best_rotamer("PHE", [-65.0, -86.0], lib),
+                         get_rotastate._best_rotamer("PHE", [-65.0, 94.0], lib))
+
+    def test_v2_libraries_are_the_default(self):
+        import build_rotalib
+        self.assertEqual(build_rotalib.LIBRARY_VERSION, "v2")
+        self.assertTrue(build_rotalib.LIBRARY_SPECS["BBD"][1].endswith("_v2"))
 
 
 if __name__ == "__main__":

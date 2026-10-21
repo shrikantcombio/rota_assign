@@ -61,7 +61,8 @@ aa_chis_dict = build_rotalib.aa_chis_dict
 # Residues whose last chi is a terminal sp2 torsion: named with that chi's value (Lovell et al. 2000,
 # e.g. ASP 'm-20', GLN 'mt-30', ARG 'mtt180'). All other chis are rotameric and named by letter only.
 SP2_TERMINAL_AA = {'ASN', 'ASP', 'GLN', 'GLU', 'HIS', 'PHE', 'TYR', 'TRP', 'ARG'}
-# Terminal chis with two-fold symmetry (1-indexed), compared after folding into [-90, 90)
+# Terminal chis with two-fold symmetry (1-indexed): compared with a 180-degree period and named
+# after folding into [-90, 90)
 SYMMETRIC_CHI_IDX = build_rotalib.SYMMETRIC_CHI_IDX
 MAX_COMPARED_CHIS = 4  # ARG chi5 (planar guanidinium) is not part of the rotamer definition
 
@@ -82,10 +83,20 @@ def _n_compared_chis(aa):
 
 
 def _comparable(aa, idx, angle):
-    """Angle prepared for comparison: symmetric terminal chis are folded."""
+    """Angle used in rotamer names: symmetric terminal chis are folded into [-90, 90)."""
     if SYMMETRIC_CHI_IDX.get(aa) == idx + 1:
         return build_rotalib.fold_symmetric_chi(angle)
     return float(angle)
+
+
+def _chi_diff(aa, idx, a, b):
+    """
+    Circular difference a - b of chi `idx` (0-based). Two-fold symmetric terminal chis have a
+    180-degree period: PHE chi2 = 89 and -89 differ by 2 degrees, not 178.
+    """
+    if SYMMETRIC_CHI_IDX.get(aa) == idx + 1:
+        return (float(a) - float(b) + 90.0) % 180.0 - 90.0
+    return wrap_180(float(a) - float(b))
 
 
 def _best_rotamer(aa, chis, aa_rota_library):
@@ -96,7 +107,7 @@ def _best_rotamer(aa, chis, aa_rota_library):
     residue (up to chi4) are compared. Library rows are [chi1, ..., chiN, prob].
     """
     n_cmp = _n_compared_chis(aa)
-    obs = [_comparable(aa, i, chis[i]) for i in range(n_cmp)]
+    obs = [float(chis[i]) for i in range(n_cmp)]
 
     best_rotastate, best_score = 'NA', float('inf')
     for r_prefix, r_vals in aa_rota_library.items():
@@ -105,7 +116,7 @@ def _best_rotamer(aa, chis, aa_rota_library):
                 continue
             prob = float(val_row[-1])
             chi_diff_sq = sum(
-                wrap_180(obs[i] - _comparable(aa, i, val_row[i])) ** 2 for i in range(n_cmp)
+                _chi_diff(aa, i, obs[i], val_row[i]) ** 2 for i in range(n_cmp)
             )
             score = chi_diff_sq - 100.0 * np.log(max(prob, 1e-4))
             if score < best_score:

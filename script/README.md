@@ -25,7 +25,7 @@ script/
 
 ### 1. `build_rotalib.py`
 Builds rotamer library dictionaries from Secondary Structure Dependent (`SSD`), Backbone Dependent (`BBD`), and Backbone Independent (`BBI`) library files (supporting `.json`, `.csv`, `.tsv`).
-- Caches pre-built JSON dictionary files under `rota_lib_dict/bbd/` and `rota_lib_dict/bbi/`.
+- Caches pre-built JSON dictionary files under `rota_lib_dict/{bbd,bbi,ssd}/` (v1 libraries) or `rota_lib_dict/v2/{bbd,bbi,ssd}/` (v2, default; `ROTA_ASSIGN_LIBRARY_VERSION`).
 - Includes `should_rebuild_library()` check & user override prompt logic when existing JSON dictionary files are found.
 
 **Usage:**

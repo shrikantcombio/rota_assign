@@ -10,6 +10,7 @@ Unit tests for defects fixed in October 2026. Each test fails on the earlier cod
   - residues with insertion codes shared a label
   - rotamer assignment ignored the last chi (LEU tp vs tt were indistinguishable)
   - missing chis shifted later chis into the wrong position
+  - proline was named with 6-state letters, so both ring puckers were the off-rotamer 'T'
   - symmetric terminal chis (PHE/TYR chi2, ...) were folded and then compared on a 360-degree circle
 
 Run:  python test/test_regressions.py
@@ -143,6 +144,14 @@ class RotamerTests(unittest.TestCase):
         lib = {"m": [[-65.0, 95.0, 0.6], [-65.0, 10.0, 0.4]]}
         self.assertEqual(get_rotastate._best_rotamer("PHE", [-65.0, -86.0], lib),
                          get_rotastate._best_rotamer("PHE", [-65.0, 94.0], lib))
+
+    def test_proline_named_by_ring_pucker(self):
+        self.assertEqual(get_rotastate.classify_rotamer("PRO", [28.0, -35.0]), "endo")
+        self.assertEqual(get_rotastate.classify_rotamer("PRO", [-35.0, 40.0]), "exo")
+        self.assertEqual(get_rotastate.get_aa_rotamer("PRO", "L", "bound", "N", 25.0, -35.0,
+                                                      phi=-65.0, psi=-35.0), "endo")
+        self.assertEqual(get_rotastate.get_aa_rotamer("PRO", "L", "bound", "N", -28.0, 38.0,
+                                                      phi=-65.0, psi=-35.0), "exo")
 
     def test_v2_libraries_are_the_default(self):
         import build_rotalib

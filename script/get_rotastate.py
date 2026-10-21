@@ -6,7 +6,8 @@ SCWRL4 / MODELLER / PyMOL / Chimera rotamer matching algorithms extended for cus
 - Supports both ON-rotamers (p, t, m) and OFF-rotamers (P, T, M).
 - Uses backbone Ramachandran neighborhood search (30-60 deg radius) to handle sparse grid cells.
 - Evaluates rotamer matches using log-likelihood weighted angular deviation scoring over all chis (up to chi4).
-- Names rotamers Lovell/Richardson style: letters for rotameric chis, the value for a terminal sp2 chi.
+- Names rotamers Lovell/Richardson style: letters for rotameric chis, the value for a terminal sp2 chi,
+  and the ring pucker ('endo' / 'exo') for PRO.
 - Supports user-selected library type ('BBD' default, 'SSD', or 'BBI').
 - Outputs 'no_chi' for ALA/GLY, and 'NA' (Not Available) for unassigned or missing chi states.
 """
@@ -127,7 +128,7 @@ def _best_rotamer(aa, chis, aa_rota_library):
 
 def _rotamer_name(aa, r_prefix, val_row, n_cmp):
     """Lovell/Richardson style name from the library prefix (letters of chi1..chi(n-1)) and row."""
-    if n_cmp == 1:
+    if n_cmp == 1 or aa == 'PRO':  # PRO: prefix is the ring pucker, 'endo' or 'exo'
         return r_prefix
     last = val_row[n_cmp - 1]
     if aa in SP2_TERMINAL_AA:
@@ -149,7 +150,8 @@ def classify_rotamer(aa, chis):
     Rotamer class read directly from a residue's own chi angles (no library): one letter per
     rotameric chi from build_rotalib.assign_ptm_state (p/t/m on-rotamer, P/T/M off-rotamer).
     For residues with a terminal sp2 chi (SP2_TERMINAL_AA) that chi is not part of the class,
-    matching the letter part of the Lovell names produced by the library assignment.
+    matching the letter part of the Lovell names produced by the library assignment. PRO is
+    classified by ring pucker ('endo' / 'exo').
     Returns 'no_chi' for ALA/GLY and 'NA' when a required chi is missing.
     """
     aa_clean = str(aa).upper().strip()
@@ -158,6 +160,8 @@ def classify_rotamer(aa, chis):
     res_chis = _residue_chis(aa_clean, chis)
     if res_chis is None:
         return 'NA'
+    if aa_clean == 'PRO':
+        return build_rotalib.proline_pucker(res_chis[0])
     n_letters = len(res_chis) - 1 if (aa_clean in SP2_TERMINAL_AA and len(res_chis) > 1) else len(res_chis)
     return "".join(build_rotalib.assign_ptm_state(c) for c in res_chis[:n_letters])
 

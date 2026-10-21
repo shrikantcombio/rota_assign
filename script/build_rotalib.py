@@ -59,8 +59,19 @@ def fold_symmetric_chi(angle):
         return angle + 180.0
     return angle
 
+def proline_pucker(chi1):
+    """
+    Proline ring pucker from chi1: 'endo' (C-gamma endo, chi1 > 0, chi2 < 0) or 'exo' (C-gamma exo,
+    chi1 < 0, chi2 > 0). The pyrrolidine ring has no staggered chi minima, so the 6-state letters
+    (which would call both puckers the off-rotamer 'T') do not apply.
+    """
+    return 'endo' if float(chi1) > 0 else 'exo'
+
+
 def chi_state(row):
     aa = row['AA']
+    if aa == 'PRO':
+        return proline_pucker(row['Chi1'])
     n_chis = AA_CHIS_DICT.get(aa, 0)
     sym_idx = SYMMETRIC_CHI_IDX.get(aa, None)
 
@@ -154,7 +165,7 @@ class BaseRotamerLibBuilder:
 
             n_chis = min(self.aa_chis_dict.get(aa, 0), 4)
 
-            if self.aa_chis_dict.get(aa, 0) != 1 and len(r_state) > 1:
+            if aa != 'PRO' and self.aa_chis_dict.get(aa, 0) != 1 and len(r_state) > 1:
                 key_prefix = r_state[:-1]
             else:
                 key_prefix = r_state
@@ -359,9 +370,14 @@ def _source_file(src_dir, prefix):
     raise FileNotFoundError(f"No rotamer library file for {prefix} in {src_dir}")
 
 
+# Bump when the dictionary layout built from the sources changes, so caches are rebuilt
+# (2: PRO keyed by ring pucker)
+CACHE_FORMAT = "2"
+
+
 def _sources_digest(files):
     import hashlib
-    h = hashlib.sha256()
+    h = hashlib.sha256(CACHE_FORMAT.encode())
     for f in files:
         h.update(f.name.encode())
         h.update(f.read_bytes())

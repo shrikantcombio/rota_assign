@@ -62,6 +62,7 @@ The repository includes pre-packaged reference libraries and third-party tools:
   - `v1`: `library/RBPs_{BBD,BBI}_rotamer_lib/`, every chi in three 120° bins (original manuscript analyses).
 
   The SSD library (`library/RBPs_SSD_rotamer_lib/`) has a single release. `script/build_rotalib.py` caches the libraries as dictionaries in `rota_lib_dict/<type>/` (v1) or `rota_lib_dict/v2/<type>/` and rebuilds a cache whenever its source files change (SHA-256 in `source.sha256`). Set `ROTA_ASSIGN_LIBRARY_DIR` to use another library directory with the same layout.
+- **Proline** is named by ring pucker, `endo` (Cγ-endo, χ1 > 0, χ2 < 0) or `exo` (Cγ-exo, χ1 < 0, χ2 > 0), and is always on-rotamer: the 6-state letters would call both puckers the off-rotamer `T`. Cached dictionaries record a format version (`CACHE_FORMAT` in `script/build_rotalib.py`), so they are rebuilt when the keying changes.
 - **Symmetric terminal chis** (ASP χ2, GLU χ3, PHE χ2, TYR χ2) are compared with library rotamers using a 180° period (χ and χ + 180° are the same conformation) and named after folding into [−90°, 90°). This comparison is used with either library release; reproducing the original analyses exactly needs the code from before this change as well as `v1`.
 - **Structure Cleaner** (`utils/structure_cleaner.py`, imported via `utils/clean_structure.py`): PDB/mmCIF cleaner (modified residues, altlocs, waters/ions).
 
